@@ -9,5 +9,5 @@ import com.mycompany.let_ffle.dao.MemberDao;
 public class MemberService {
 	@Autowired
 	private MemberDao memberDao;
-
+	
 }
