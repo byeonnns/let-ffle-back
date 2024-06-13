@@ -5,10 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import com.mycompany.let_ffle.dto.Member;
 
 @Mapper
-public class MemberDao {
+public interface MemberDao {
 
-	public Member selectByMid(String username) {
-		return null;
-	}
+	Member selectByMid(String username);
 
 }
