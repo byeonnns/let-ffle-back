@@ -12,13 +12,15 @@ public class Inquiry {
 	private String mid;
 	private String ititle;
 	private String icontent;
-	private String iattachoname;
+
+	// 문의 첨부파일
 	private MultipartFile iattach;
 	private byte[] iattachdata;
 	private String iattachtype;
+	private String iattachoname;
+	
 	private Timestamp icreatedat;
 	private Timestamp iupdatedat;
 	private String ireply;
-	private String istatus;
-	
+	private boolean istatus;
 }

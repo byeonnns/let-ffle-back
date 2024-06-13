@@ -13,10 +13,13 @@ public class Notice {
 	private String ncontent;
 	private String nmaincategory;
 	private String nsubcategory;
-	private String nattachoname;
-	private String nattachtype;
+
+	// 공지 첨부파일
 	private MultipartFile nattach;
 	private byte[] nattachdata;
+	private String nattachtype;
+	private String nattachoname;
+
 	private Timestamp ncreatedat;
 	private Timestamp nupdatedat;
 }

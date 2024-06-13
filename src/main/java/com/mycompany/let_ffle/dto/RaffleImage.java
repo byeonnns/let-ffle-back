@@ -1,7 +1,5 @@
 package com.mycompany.let_ffle.dto;
 
-
-
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;

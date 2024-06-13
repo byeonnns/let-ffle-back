@@ -10,4 +10,5 @@ public class QuizMission {
 	private String qoption2; // 퀴즈 문제 옵션2
 	private String qoption3; // 퀴즈 문제 옵션3
 	private String qoption4; // 퀴즈 문제 옵션4
+	private String qanswer; // 퀴즈 문제 정답
 }

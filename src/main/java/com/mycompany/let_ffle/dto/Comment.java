@@ -11,5 +11,5 @@ public class Comment {
 	private String mid;
 	private String ccontent;
 	private Timestamp ccreatedat;
-	private String cenabled;
+	private boolean cenabled;
 }

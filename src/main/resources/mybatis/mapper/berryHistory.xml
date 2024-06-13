@@ -3,6 +3,4 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.BerryHistoryDao">
 
-
-
 </mapper>    

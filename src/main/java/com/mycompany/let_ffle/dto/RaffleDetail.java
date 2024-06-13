@@ -1,10 +1,8 @@
 package com.mycompany.let_ffle.dto;
 
-
 import java.sql.Timestamp;
 
 import lombok.Data;
-
 
 @Data
 public class RaffleDetail {
