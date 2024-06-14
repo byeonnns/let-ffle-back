@@ -3,4 +3,10 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.raffleDetailDao">
 
+	<select getRaffleEntryList>
+		
+		select *
+		from RaffleDetail
+		where mid = #mid
+	</select>
 </mapper>    
