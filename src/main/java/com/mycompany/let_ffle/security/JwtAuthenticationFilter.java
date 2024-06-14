@@ -21,8 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 
 // 클라이언트에서 넘어온 Access Token을 받아 유효성 검증하는 필터
 @Slf4j
-@Component
+@Component // 다른 빈에 의존성 주입을 하기 위해 컴포넌트 어노테이션을 붙인다.
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+	// 클라이언트가 제공한 JWT의 유효성을 검사 
 	@Autowired
 	private JwtProvider jwtProvider;
 	@Autowired

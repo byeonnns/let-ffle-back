@@ -20,10 +20,16 @@ public class DataSourceConfig {
       config.setJdbcUrl("jdbc:oracle:thin:@kosa164.iptime.org:1521:orcl");
       //config.setDriverClassName("net.sf.log4jdbc.DriverSpy");
       //config.setJdbcUrl("jdbc:log4jdbc:oracle:thin:@kosa164.iptime.org:orcl");      
-      config.setUsername("user_spring");
+      config.setUsername("user_final_team4");
       config.setPassword("oracle");
       config.setMaximumPoolSize(3);
       HikariDataSource hikariDataSource = new HikariDataSource(config);
       return hikariDataSource;
+    // 의존성 주입을 하기 위해 bean 객체로 관리함( 코드의 재사용성과 유지보수에 용이 ) 
+    // HikariConfig 객체를 생성
+    // 데이터 베이스를 연결할 시 사용할 드라이버를 명시
+    // 호스트 이름, 포트번호, SID 를 설정
+    // 사용자의 이름을 명시 / 비밀번호 지정 / 데이터베이스 연결 수??
+    // hikariDataSource에 config에 set해준 값을 반환?? 어째서 ?? 이미 config변수에 담겨있는데 다시 객체를 생성해서 다시 리턴해주는 이유??
    }
 }
