@@ -4,7 +4,11 @@
 <configuration>
 
 	<settings>
+		<!-- Mybatis는 쿼리문에 매핑되는 파라미터에 Null 값이 있으면 에러 처리 -->
+		<!-- Null 값이 있더라도 에러 처리하지 않고 그대로 Null을 저장하도록 하는 코드 -->
 		<setting name="jdbcTypeForNull" value="NULL" />
+		
+		<!-- Java에서 Camel 표기법으로 작성된 이름을 인식하고 매핑할 수 있도록 설정 -->
 		<setting name="mapUnderscoreToCamelCase" value="true" />
 	</settings>
 	

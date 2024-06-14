@@ -27,26 +27,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
 	// JwtProvider 객체를 주입받음 -> JwtProvider가 가지고 있는 메소드를 사용하기 위함
 	@Autowired
 	private JwtProvider jwtProvider;
-	// 
+	// LetffleUserDetailsService 객체를 주입받음 -> LetffleUserDetailsService가 가지고 있는 메소드를 사용하기 위함
 	@Autowired
 	private LetffleUserDetailsService userDetailsService;
 
-	// 
+	// 구현한 OncePerRequestFilter 인터페이스의 추상 메소드를 재정의
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
 		String accessToken = null;
-
-		// 요청 헤더에서 Access Token 얻기
-		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		String headerValue = httpServletRequest.getHeader("Authorization");
+		
+		// 이름이 Authorization인 헤더의 값을 저장
+		String headerValue = request.getHeader("Authorization");
+		// Authorization 헤더 값이 null이 아니고, Bearer로 시작한다면,
 		if (headerValue != null && headerValue.startsWith("Bearer")) {
+			// "Bearer "를 제거하고 실제 Access Token 값만 저장
 			accessToken = headerValue.substring(7);
 			log.info(accessToken);
 		}
 
-		// Query String으로 전달된 Access Token 얻기
+		// Access Token이 Query String으로 전달된 경우
 		// <img src="/board/battach/1?accessToken=xxx...>
 		if (accessToken == null) {
 			// 파라미터로 accessToken이 넘어온 경우 그 값을 accessToken에 넘겨줌
@@ -55,9 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
 			}
 		}
 
+		// Access Token이 null이 아니라면 어떤 값이 실려들어왔다는 것
 		if (accessToken != null) {
-			// Access Token 유효성 검사
+			// 그 Access Token의 유효성을 검사
 			Jws<Claims> jws = jwtProvider.validateToken(accessToken);
+			// jws가 null이 아니다 -> 해당 Access Token이 유효하다 (로그인 가능하다) 
 			if (jws != null) {
 				// 유효한 경우
 				log.info("Access Token이 유효함");
@@ -77,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRe
 			}
 		}
 
-		// 다음 필터를 실행 (반드시 넣어줘야 함)
+		// 다음 필터를 실행 (반드시 넣어줘야 함) -> 그냥 Spring의 작동 구조이므로 나도 잘 모름..
 		filterChain.doFilter(request, response);
 	}
 

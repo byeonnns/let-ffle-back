@@ -25,7 +25,7 @@ public class WebSecurityConfig {
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-	// 인증 필터 체인을 관리 객체로 등록
+	// @Bean : 인증 필터 체인을 관리 객체로 등록
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		// REST API는 로그인 form을 제공하지 않으므로 form을 통한 로그인 인증을 사용하지 않도록 설정
@@ -34,7 +34,7 @@ public class WebSecurityConfig {
 
 		// 로그아웃은 토큰 보유 여부로 판단 -> 필요 없는 설정
 
-		// HttpSession을 사용하지 않도록 설정
+		// HttpSession을 사용하지 않도록 설정 -> 우리 프로젝트는 Session이 아닌 JWT로 인증을 처리할 것이므로
 		http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		// 사이트 간 요청 위조 방지 비활성화 (GET 이외 요청은 csrf 토큰을 요구함)
