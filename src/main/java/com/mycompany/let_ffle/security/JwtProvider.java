@@ -29,6 +29,9 @@ public class JwtProvider {
 	// Access Token의 유효 기간을 밀리초로 설정
 	private final long accessTokenDuration = 24 * 60 * 60 * 1000;
 
+
+	// 생성자 @Value 외부 설정 파일에서 정의된 값을 간편하게 주입 받아 사용할 수 있다.
+
 	// 생성자 선언
 	public JwtProvider(@Value("${jwt.security.key}") String jwtSecurityKey) {
 		log.info(jwtSecurityKey);
