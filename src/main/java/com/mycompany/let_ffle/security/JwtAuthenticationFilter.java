@@ -21,14 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 
 // 클라이언트에서 넘어온 Access Token을 받아 유효성 검증하는 필터
 @Slf4j
-@Component // 다른 빈에 의존성 주입을 하기 위해 컴포넌트 어노테이션을 붙인다.
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	// 클라이언트가 제공한 JWT의 유효성을 검사 
+@Component // 관리 객체로 등록해줘야 하지만 이 파일은 Controller도 아니고 Service도 아님 -> Component 어노테이션으로 관리 객체 등록
+public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRequestFilter를 상속받는 이유 : 2번 실행되는 오류를 방지하고자 1번만 실행하게끔 만들어진 필터를 상속받음
+	
+	// JwtProvider 객체를 주입받음 -> JwtProvider가 가지고 있는 메소드를 사용하기 위함
 	@Autowired
 	private JwtProvider jwtProvider;
+	// 
 	@Autowired
 	private LetffleUserDetailsService userDetailsService;
 
+	// 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
