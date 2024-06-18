@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping("/board")
-public class BoardController {
+public class CommunityController {
 
 	@GetMapping("/getBoardList")
 	public Map<String, Object> getBoardList() {

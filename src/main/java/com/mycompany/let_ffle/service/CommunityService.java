@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.mycompany.let_ffle.dao.BoardDao;
 
 @Service
-public class BoardService {
+public class CommunityService {
 	@Autowired
 	private BoardDao boardDao;
 	
