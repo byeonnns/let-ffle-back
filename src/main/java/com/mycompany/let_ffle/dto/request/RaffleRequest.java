@@ -9,8 +9,8 @@ import lombok.Data;
 
 @Data
 public class RaffleRequest {
-	private Raffle raffle;
-	private RaffleImage raffleImage;
-	private QuizMission quizMission;
-	private TimeMission timeMission;
+	public Raffle raffle;
+	public RaffleImage raffleImage;
+	public QuizMission quizMission;
+	public TimeMission timeMission;
 }

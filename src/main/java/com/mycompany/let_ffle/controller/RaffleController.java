@@ -1,9 +1,12 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.let_ffle.dto.Raffle;
+import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.service.RaffleService;
 
@@ -27,9 +31,20 @@ public class RaffleController {
 	@Autowired
 	private RaffleService raffleService;
 
+	@Transactional
 	@PostMapping("/createRaffle")
-	public RaffleRequest createRaffle(@RequestBody RaffleRequest raffleRequest) {
-		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null && raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
+	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
+		
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		
+		TimeMission timeMission = new TimeMission();
+		timeMission.setTstartedat(timestamp);
+		timeMission.setTfinishedat(timestamp);
+		raffleRequest.setTimeMission(timeMission);
+		raffleRequest.getRaffle().setRstartedat(timestamp);
+		raffleRequest.getRaffle().setRfinishedat(timestamp);
+		
+		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null && !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
 			// 파일 이름을 설정
 			raffleRequest.getRaffleImage().setRthumbnailimgoname(mf.getOriginalFilename());
@@ -42,7 +57,7 @@ public class RaffleController {
 			}
 		}
 		
-		if(raffleRequest.getRaffleImage().getRgiftattach() != null && raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
+		if(raffleRequest.getRaffleImage().getRgiftattach() != null && !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
 			// 파일 이름 설정
 			raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
@@ -56,7 +71,7 @@ public class RaffleController {
 			
 		}
 		
-		if(raffleRequest.getRaffleImage().getRdetailattach() != null && raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
+		if(raffleRequest.getRaffleImage().getRdetailattach() != null && !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
 			// 파일 이름 설정
 			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
@@ -68,6 +83,8 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
+		
+		log.info(raffleRequest.getRaffleImage().getRthumbnailimgoname());
 		
 		raffleService.insertRaffle(raffleRequest);
 		return raffleRequest;
