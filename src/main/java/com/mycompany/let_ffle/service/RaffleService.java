@@ -22,8 +22,10 @@ public class RaffleService {
 	
 	
 	public void insertRaffle(RaffleRequest raffleRequest){
+		
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
 		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
+		
 		if(raffleRequest.getTimeMission() != null) {
 			timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
 		} else {

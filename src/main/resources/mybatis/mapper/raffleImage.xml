@@ -7,4 +7,15 @@
 		from raffleImage
 		where rno=#{rno}
 	</select>
+	<insert id="insertRaffleImage" parameterType="RaffleImage">
+
+		insert into raffleimage (rno, rthumbnailimg, rthumbnailimgtype,
+		rthumbnailimgoname, rgiftimg,
+		rgiftimgtype, rgiftimgoname, rdetailimg,
+		rdetailimgtype, rdetailimgoname)
+		values
+		(18,
+		#{rthumbnailimg},#{rthumbnailimgtype},#{rthumbnailimgoname},#{rgiftimg},
+		#{rgiftimgtype},#{rgiftimgoname},#{rdetailimg},#{rdetailimgtype},#{rdetailimgoname})
+	</insert>
 </mapper>    

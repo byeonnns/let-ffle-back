@@ -7,4 +7,9 @@
       from timemission
       where rno=#{rno}
    </select>
+	<insert id="insertTimeMisson" parameterType="TimeMission">
+		insert into timemission (rno,tstartedat, tfinishedat)
+		values (18, #{tstartedat},
+		#{tfinishedat})
+	</insert>
 </mapper>    

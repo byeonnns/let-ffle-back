@@ -1,6 +1,7 @@
 package com.mycompany.let_ffle.dto;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 import lombok.Data;
 
