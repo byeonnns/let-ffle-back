@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.let_ffle.dao.MemberDao">
 
+	<insert id="insert" parameterType="Member">
+		insert into member(mid, mpassword, mname, mnickname, mphone,
+		maddress,mzipcode, mrole, menabled, mberry)
+		values (#{mid}, #{mpassword}, #{mname}, #{mnickname},
+		#{mphone},#{maddress},#{mzipcode},#{mrole},#{menabled},#{mberry})
+	</insert>
+	<!--insert문에 id=insert의 의미는 Dao에 있는 변수의 명을 의미하여 parameterType=memberDto(전달될 파라미터의 타입을 지정)
+ insert into member의 테이블열의 목록들을 지정한후 , values란 각각의 열에 대응하는 값들을 나열을 한다. #{}이런 방식으로 쓴 이유는 파라미터의 값을 삽입하기위해
+ 사용된 것이다. #{mid}는 파라미터로 전달된 mid의 값을 의미한다. -->
 
 
 </mapper>    
