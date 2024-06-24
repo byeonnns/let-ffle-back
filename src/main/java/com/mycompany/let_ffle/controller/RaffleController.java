@@ -1,5 +1,6 @@
 package com.mycompany.let_ffle.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
@@ -23,28 +25,27 @@ public class RaffleController {
 
 	@Autowired
 	private RaffleService raffleService;
-	
+
 	@PostMapping("/createRaffle")
-	public Raffle createRaffle(RaffleRequest raffleRequest) {
-		
-		return null;
+	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
+		return raffleRequest;
 	}
-	
+
 	@GetMapping("/getRaffleList")
-	public List<RaffleRequest> getRaffleList(){
+	public List<RaffleRequest> getRaffleList() {
 		return null;
 	}
-	
+
 	@GetMapping("/readRaffle")
 	public RaffleRequest readRaffle(int rno) {
 		return null;
 	}
-	
+
 	@PutMapping("/updateRaffle")
 	public RaffleRequest updateRaffle(RaffleRequest raffleRequest) {
 		return null;
 	}
-	
+
 	@PutMapping("/deleteRaffle")
 	public Raffle deleteRaffle(int rno) {
 		return null;

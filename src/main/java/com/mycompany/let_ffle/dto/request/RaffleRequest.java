@@ -6,8 +6,8 @@ import com.mycompany.let_ffle.dto.RaffleImage;
 import com.mycompany.let_ffle.dto.TimeMission;
 
 public class RaffleRequest {
-	Raffle raffle;
-	RaffleImage raffleImage;
-	QuizMission quizMission;
-	TimeMission timeMission;
+	private Raffle raffle;
+	private RaffleImage raffleImage;
+	private QuizMission quizMission;
+	private TimeMission timeMission;
 }

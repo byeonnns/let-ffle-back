@@ -9,5 +9,4 @@ public class LetffleBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LetffleBackendApplication.class, args);
 	}
-
 }
