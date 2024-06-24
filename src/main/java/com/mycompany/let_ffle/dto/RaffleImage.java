@@ -16,9 +16,9 @@ public class RaffleImage {
 	
 	// 헤드 이미지
 	private MultipartFile rheadattach;
-	private byte[] rheadimg;	
-	private String rheadimgtype;
-	private String rheadimgoname;
+	private byte[] rgiftimg;	
+	private String rgiftimgtype;
+	private String rgiftimgoname;
 	
 	// 디테일 이미지
 	private MultipartFile rdetailattach;
