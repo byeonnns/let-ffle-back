@@ -18,4 +18,18 @@ public class MemberService {
 		// join이라는 변수명을 준 후 MemberDto에서 있는 값을, Memberdao에 insert라는 변수의 담아져 있는 member를 가져와라 라는 의미이다.
 	}
 
+	public Member selectByMid(String mid) {
+		
+		Member member = memberDao.selectByMid(mid);
+		
+		return member;
+	}
+	
+	public void deleteByMid(String mid) {
+		// TODO Auto-generated method stub
+		
+		memberDao.delete(mid);
+	}
+
+
 }

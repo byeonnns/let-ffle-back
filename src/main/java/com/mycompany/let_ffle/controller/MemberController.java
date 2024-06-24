@@ -1,5 +1,6 @@
 package com.mycompany.let_ffle.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.let_ffle.dto.BerryHistory;
@@ -119,11 +121,13 @@ public class MemberController {
 
 	// 회원 탈퇴
 	@PutMapping("/deleteMember")
-	public Member deleteMember(String mid) {
-
+	public void deleteMember(@RequestParam String mid) {
+		// 1. 매개변수로 전달받은 mid가 실제 우리 DB에 있는지 검사
+		Member member = memberService.selectByMid(mid);
+		
+		// 1-1. 있으면?
 		// 해당 Member 객체의 menabled 값을 false로 변환하는 코드
-
-		return null;
+		memberService.deleteByMid(member.getMid());
 	}
 
 	// 문의 관련 CRUD 메소드
