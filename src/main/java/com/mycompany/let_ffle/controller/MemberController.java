@@ -22,6 +22,8 @@ import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.security.LetffleUserDetails;
+import com.mycompany.let_ffle.security.LetffleUserDetailsService;
 import com.mycompany.let_ffle.service.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -113,10 +115,19 @@ public class MemberController {
 	}
 
 	// 휴대폰 번호 수정
-	@PutMapping("/chagnePhone")
-	public Member changePhone(String mid, String mphone) {
+	@PutMapping("/changeMphone")
+	public void changeMphone(String mid, String mphone) {
+		// 여기서의 Mid는 로그인한 유저의 mid, 그치만 mphone은 우리가 변경하고싶은 mphone이며 바꿔줄 값인것이다.(그전에 등록되어있던
+		// 전화번호가 아님)
+		// Member에 있는 아이디를 먼저 불러온후
+		Member member = memberService.selectByMid(mid);
 
-		return null;
+		// 바꿔줄 mphone의 값을 setter로 지정후
+		member.setMphone(mphone);
+
+		// memberService에 changeMphone이라는 변수명에 가져올 값인 MemberDto에서 불러온다.
+		memberService.changeMphone(member);
+
 	}
 
 	// 회원 탈퇴
@@ -124,7 +135,7 @@ public class MemberController {
 	public void deleteMember(@RequestParam String mid) {
 		// 1. 매개변수로 전달받은 mid가 실제 우리 DB에 있는지 검사
 		Member member = memberService.selectByMid(mid);
-		
+
 		// 1-1. 있으면?
 		// 해당 Member 객체의 menabled 값을 false로 변환하는 코드
 		memberService.deleteByMid(member.getMid());
