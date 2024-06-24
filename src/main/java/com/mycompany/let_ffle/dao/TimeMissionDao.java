@@ -8,5 +8,7 @@ import com.mycompany.let_ffle.dto.TimeMission;
 public interface TimeMissionDao {
 
 	public int insertTimeMisson(TimeMission timeMission);
+
+	public TimeMission selectByRno(int rno);
 	
 }

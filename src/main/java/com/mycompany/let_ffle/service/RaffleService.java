@@ -20,6 +20,7 @@ public class RaffleService {
 	@Autowired
 	QuizMissionDao quizMissionDao;
 	
+	
 	public void insertRaffle(RaffleRequest raffleRequest){
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
 		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
@@ -30,4 +31,10 @@ public class RaffleService {
 		}
 	}
 
+	public RaffleRequest getRaffle(int rno) {
+		RaffleRequest raffleRequest = new RaffleRequest();
+		raffleRequest.setRaffle(raffleDao.selectByRno(rno));
+		raffleRequest.setTimeMission(timeMissionDao.selectByRno(rno));
+		return raffleRequest;
+	}
 }

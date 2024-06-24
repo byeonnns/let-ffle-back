@@ -9,4 +9,5 @@ public interface RaffleDao {
 
 	public int insertRaffle(Raffle raffle);
 
+	public Raffle selectByRno(int rno);
 }

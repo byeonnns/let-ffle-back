@@ -2,5 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDao">
-
+   <select id="selectByRno" parameterType="int" resultType="Raffle">
+      select *
+      from raffle
+      where rno=#{rno}
+   </select>
 </mapper>    
