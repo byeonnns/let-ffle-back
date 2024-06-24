@@ -41,6 +41,34 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
+		
+		if(raffleRequest.getRaffleImage().getRgiftattach() != null && raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
+			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
+			// 파일 이름 설정
+			raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
+			// 파일 종류 설정
+			raffleRequest.getRaffleImage().setRgiftimgtype(mf.getContentType());
+			try {
+				// 파일 데이터를 설정
+				raffleRequest.getRaffleImage().setRgiftimg(mf.getBytes());
+			} catch (IOException e) {
+			}
+			
+		}
+		
+		if(raffleRequest.getRaffleImage().getRdetailattach() != null && raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
+			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
+			// 파일 이름 설정
+			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
+			// 파일 종류 설정
+			raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
+			try {
+				// 파일 데이터를 설정
+				raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
+			} catch (IOException e) {
+			}
+		}
+		
 		raffleService.insertRaffle(raffleRequest);
 		return raffleRequest;
 	}

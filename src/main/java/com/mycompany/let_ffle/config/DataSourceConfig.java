@@ -31,7 +31,7 @@ public class DataSourceConfig {
     // 데이터 베이스를 연결할 시 사용할 드라이버를 명시
     // 호스트 이름, 포트번호, SID 를 설정
     // 사용자의 이름을 명시 / 비밀번호 지정 / 데이터베이스 연결 수??
-    // hikariDataSource에 config에 set해준 값을 반환?? 어째서 ?? 이미 config변수에 담겨있는데 다시 객체를 생성해서 다시 리턴해주는 이유??
+    
    }
 	// application.properties 파일에서 작성된 Hikari DataSource 설정을 Java의 클래스로도 가능 : spring boot의 기능
 	// 코드 내용은 application.properties 안에 있는 주석을 참고
