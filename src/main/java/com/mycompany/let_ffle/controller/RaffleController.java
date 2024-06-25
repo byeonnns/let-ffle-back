@@ -32,7 +32,8 @@ public class RaffleController {
 
 	@PostMapping("/createRaffle")
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
-
+		
+		//(임시) - 나중에 db로 받아올 것 Timestamp가 postman형식으로 넘어가지 못해 객체를 생성해 TimeMission(dto), Raffle(dto)의 Timestamp 를 설정
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 		TimeMission timeMission = new TimeMission();
@@ -41,7 +42,8 @@ public class RaffleController {
 		raffleRequest.setTimeMission(timeMission);
 		raffleRequest.getRaffle().setRstartedat(timestamp);
 		raffleRequest.getRaffle().setRfinishedat(timestamp);
-
+		
+		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rthumbnailattach 가 null값이 아니고 비어있지 않으면 파일 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
 				&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
@@ -55,7 +57,8 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
-
+		
+		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rgiftattach가 null 값이 아니고 비어있지 않으면 파일 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRgiftattach() != null
 				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
@@ -70,7 +73,8 @@ public class RaffleController {
 			}
 
 		}
-
+		
+		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rdetailattach가 null 값이 아니고 비어있지 않으면 파일 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRdetailattach() != null
 				&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
@@ -86,6 +90,7 @@ public class RaffleController {
 
 			}
 		}
+		// json으로 변환되지 않는 필드를 null 처리하기 위함
 		raffleService.insertRaffle(raffleRequest);
 		raffleRequest.getRaffleImage().setRthumbnailattach(null);
 		raffleRequest.getRaffleImage().setRthumbnailimg(null);

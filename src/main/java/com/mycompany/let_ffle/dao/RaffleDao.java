@@ -10,7 +10,9 @@ import com.mycompany.let_ffle.dto.Raffle;
 @Mapper
 public interface RaffleDao {
 
+	// raffle(dto)의 값들을 생성하는 메소드
 	public int insertRaffle(Raffle raffle);
 
+	// rno 래플 번호를 통해 해당 래플dto를 가져옴
 	public Raffle selectByRno(int rno);
 }

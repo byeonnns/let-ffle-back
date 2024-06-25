@@ -7,7 +7,7 @@
 		select seq_rno.currval from dual
 	</selectKey>
 		insert into quizmission (rno, qcontent, qoption1, qoption2, qoption3, qoption4, qanswer)
-		values (#{rno},#{qcontent},#{qoption1},#{qoption2},#{qoption3},#{qoption4})
+		values (#{rno},#{qcontent},#{qoption1},#{qoption2},#{qoption3},#{qoption4},#{qanswer})
 		
 	</insert>
 </mapper>
