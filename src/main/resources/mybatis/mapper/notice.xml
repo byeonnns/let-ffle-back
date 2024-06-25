@@ -3,6 +3,24 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.NoticeDao">
 
+
+	<select id="selectByPage" parameterType="pager"
+		resultType="Inquiry">
+      <![CDATA[
+      select rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
+      from (
+          select rownum as rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
+          from (
+              select ino, ititle, mid, icreatedat, iupdatedat, ireply
+              from inquiry
+              order by ino desc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+      ]]>
+	</select>
+
 	<insert id="insertInquiry" parameterType="Inquiry">
 
 		<selectKey keyProperty="ino" resultType="int" order="BEFORE">
@@ -11,11 +29,23 @@
 		</selectKey>
 		insert into
 		Inquiry(ino, mid, ititle , icontent, iattachoname,
-		iattachdata,iattachtype, icreatedat,iupdatedat,ireply,istatus)
+		iattachdata,iattachtype, icreatedat,iupdatedat,ireply)
 		values
 		(#{ino},#{mid}, #{ititle}, #{ icontent}, #{iattachoname},
 		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp,
-		#{ireply}, #{istatus})
+		#{ireply})
 	</insert>
+
+	<select id="InquiryCount" resultType="int">
+		select count(*)
+		from Inquiry
+	</select>
+
+	<select id="readInquiry" parameterType="int"
+		resultType="inquiry">
+		select *
+		from inquiry
+		where ino=#{ino}
+	</select>
 
 </mapper>    

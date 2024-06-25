@@ -22,5 +22,5 @@ public class Inquiry {
 	private Timestamp icreatedat;
 	private Timestamp iupdatedat;
 	private String ireply;
-	private boolean istatus;
+
 }
