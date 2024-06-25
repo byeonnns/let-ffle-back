@@ -3,4 +3,19 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.NoticeDao">
 
+	<insert id="insertInquiry" parameterType="Inquiry">
+
+		<selectKey keyProperty="ino" resultType="int" order="BEFORE">
+			SELECT
+			SEQ_INO.NEXTVAL FROM dual
+		</selectKey>
+		insert into
+		Inquiry(ino, mid, ititle , icontent, iattachoname,
+		iattachdata,iattachtype, icreatedat,iupdatedat,ireply,istatus)
+		values
+		(#{ino},#{mid}, #{ititle}, #{ icontent}, #{iattachoname},
+		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp,
+		#{ireply}, #{istatus})
+	</insert>
+
 </mapper>    
