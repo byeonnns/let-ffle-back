@@ -21,4 +21,12 @@ public interface MemberDao {
 	// 유저의 아이디랑 비밀번호 매개변수로 주고 비밀번호를 변경함
 	void updateMpassword(String mid, String mpassword);
 
+	// 유저의 아이디와 주소를 매개변수로 주고 주소를 변경하기 위한 메소드 정의
+	void updateMaddress(String mid, String maddress, String mzipcode);
+
+	// 여기입니둥
+	void login(Member member, String mid, String mpassword);
+	
+	
+
 }

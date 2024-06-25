@@ -47,4 +47,18 @@ public class MemberService {
 		memberDao.updateMpassword(mid, mpassword);
 	}
 
+	public void updateMaddress(String mid, String maddress, String mzipcode) {
+		// 컨트롤러에서 받아온 로그인한 유저의 아이디와 주소를 매개변수로 받아 dao를 호출해 데이터베이스에서 주소를 변경하도록 함
+		memberDao.updateMaddress(mid, maddress, mzipcode);
+	}
+
+	// 여기입둥
+	public void login(Member member, String mid, String mpassword) {
+		memberDao.login(member, mid, mpassword);
+		
+	}
+
+
+	
+
 }

@@ -42,5 +42,21 @@
 		where mid = #{mid}
 	</update>
 
+	<!-- id= 추상 메소드명과 동일하게 작성, parameterType = 매개변수로 받은 타입 
+		 mid에 맞는 address를 변경한다.-->
+	<update id="updateMaddress" parameterType="String">
+		update member
+		set maddress = #{maddress}, mzipcode = #{mzipcode}
+		where mid = #{mid}
+	</update>
+	
+	
+	<!-- 여기부터 입니둥 -->
+	<select id="login" parameterType="String">
+		select *
+		from member
+		where member.mid = #{mid} , member.mpassword = #{mpassword}
+		
+	</select>
 
 </mapper>    

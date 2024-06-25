@@ -1,9 +1,13 @@
 package com.mycompany.let_ffle.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +25,7 @@ import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
 import com.mycompany.let_ffle.security.LetffleUserDetailsService;
 import com.mycompany.let_ffle.service.MemberService;
@@ -35,6 +40,9 @@ public class MemberController {
 	@Autowired
 	private LetffleUserDetailsService letffleUserDetailsService;
 
+	@Autowired
+	private JwtProvider jwtProvider;
+
 	// member 서비스 주입
 	@Autowired
 	private MemberService memberService;
@@ -42,8 +50,36 @@ public class MemberController {
 	// 로그인
 	@PostMapping("/login")
 	public Map<String, String> login(String mid, String mpassword) {
+		// letffleUserDetailsService 메소드를 통해 mid를 주고 로그인한 회원의 정보들을 letffleUserDetails 에 반환
+		LetffleUserDetails letffleUserDetails = letffleUserDetailsService.loadUserByUsername(mid);
+		
+		// 로그인시 비밀번호를 암호화한 후 db의 암호화된 비밀번호와 같은 비밀번호인지 비교를하여 
+		// true,false 값을 리턴 ( 암호화된 값은 다르지만 같은 값을 암호화한것인지는 spring이 알기에 제공해줌 )
+		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		boolean passwordResult = passwordEncoder.matches(mpassword, letffleUserDetails.getMember().getMpassword());
 
-		return null;
+		Map<String, String> map = new HashMap<>();
+
+		if (passwordResult) {
+			// 비밀번호가 일치한 경우 -> 로그인 처리
+			Authentication authentication = new UsernamePasswordAuthenticationToken(letffleUserDetails, null,
+					letffleUserDetails.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			// AccessToken 생성
+			String AccessToken = jwtProvider.createAccessToken(mid, letffleUserDetails.getMember().getMrole());
+
+			// 사용자에게 응답을 생성
+			map.put("result", "로그인 성공");
+			map.put("mid", mid);
+			map.put("AccessToken", AccessToken);
+
+		} else {
+			// 비밀번호가 일치하지 않은 경우 -> 실패 결과를 알려줌
+			map.put("result", "로그인 실패");
+		}
+
+		return map;
 	}
 
 	// 회원가입
@@ -120,7 +156,7 @@ public class MemberController {
 		// passwordEncoder를 생성해서 로그인한 유저의 member(dto)의 암호화된 비밀번호를 세팅
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		userDetails.getMember().setMpassword(passwordEncoder.encode(mpassword));
-		
+
 		// 비밀번호를 변경하고자하는 유저의 아이디와 비밀번호를 서비스에게 변경하도록 서비스를 요청 처리보냄
 		memberService.updateMpassword(userDetails.getMember().getMid(), userDetails.getMember().getMpassword());
 
@@ -145,6 +181,18 @@ public class MemberController {
 		// memberService에 changeMphone이라는 변수명에 가져올 값인 MemberDto에서 불러온다.
 		memberService.updateMphone(userDetails.getMember());
 
+	}
+
+	@PutMapping("/updateMaddress")
+	public void updateMaddress(String mid, String maddress, String mzipcode) {
+		// 로그인한 유저의 정보를 얻기
+		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
+		// 로그인한 유저의 dto를 통해 해당 유저의 주소와 우편번호를 셋팅
+		userDetails.getMember().setMaddress(maddress);
+		userDetails.getMember().setMzipcode(mzipcode);
+		// 로그인한 유저의 주소와 우편번호 변경을 서비스에서 처리하기 위해 서비스를 처리함
+		memberService.updateMaddress(userDetails.getMember().getMid(), userDetails.getMember().getMaddress(),
+				userDetails.getMember().getMzipcode());
 	}
 
 	// 회원 탈퇴
