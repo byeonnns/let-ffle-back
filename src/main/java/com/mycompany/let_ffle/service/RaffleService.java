@@ -31,7 +31,6 @@ public class RaffleService {
 	public RaffleRequest insertRaffle(RaffleRequest raffleRequest){
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
 		Map<String, BigDecimal> resultMap = new HashMap<>();
-		resultMap = raffleDao.selectBySeqRno();
 		int rno = resultMap.get("LAST_NUMBER").intValue()-1;
 		log.info("현재 시퀀스 : " + resultMap.get("LAST_NUMBER"));
 		raffleRequest.getRaffleImage().setRno(rno);
