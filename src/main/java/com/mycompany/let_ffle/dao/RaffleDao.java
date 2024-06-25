@@ -1,5 +1,8 @@
 package com.mycompany.let_ffle.dao;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.let_ffle.dto.Raffle;

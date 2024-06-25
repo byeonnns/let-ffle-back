@@ -2,17 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDao">
-   <select id="selectByRno" parameterType="int" resultType="Raffle">
-      select *
-      from raffle
-      where rno=#{rno}
-   </select>
-   
+
 	<insert id="insertRaffle" parameterType="Raffle">
-	<selectKey keyProperty="rno" resultType="int" order="BEFORE">
-		select seq_rno.nextval from dual
-	</selectKey>
-		insert into raffle(rno, rtitle, rsubtitle, rcontent, rcategory, rwinnercount, rmissiontype, rstartedat, rfinishedat, rgift)
-		values(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},#{rwinnercount}, #{rmissiontype}, #{rstartedat},#{rfinishedat}, #{rgift})
+		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+            SELECT SEQ_RNO.NEXTVAL FROM dual
+        </selectKey>
+		insert into raffle(rno, rtitle, rsubtitle, rcontent, rcategory,
+		rwinnercount, rmissiontype, rstartedat, rfinishedat, rgift)
+		values(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},#{rwinnercount},
+		#{rmissiontype}, #{rstartedat},#{rfinishedat}, #{rgift})
 	</insert>
+	<select id="selectByRno" parameterType="int" resultType="Raffle">
+		select *
+		from raffle
+		where rno=#{rno}
+	</select>
+	
 </mapper>    
