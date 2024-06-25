@@ -1,9 +1,5 @@
 package com.mycompany.let_ffle.service;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +12,6 @@ import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class RaffleService {
 	@Autowired
 	RaffleDao raffleDao;

@@ -35,7 +35,6 @@ public class RaffleController {
 		
 		//(임시) - 나중에 db로 받아올 것 Timestamp가 postman형식으로 넘어가지 못해 객체를 생성해 TimeMission(dto), Raffle(dto)의 Timestamp 를 설정
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
 		TimeMission timeMission = new TimeMission();
 		timeMission.setTstartedat(timestamp);
 		timeMission.setTfinishedat(timestamp);
