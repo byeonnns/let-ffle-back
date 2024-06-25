@@ -3,20 +3,56 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDao">
 
+	<select id="selectByPage" parameterType="pager"
+		resultType="Raffle">
+      <![CDATA[
+      select rnum, rno, rtitle, rstartedat, rfinishedat
+      from (
+          select rownum as rnum, rno, rtitle, rstartedat, rfinishedat
+          from (
+              select rno, rtitle, rstartedat, rfinishedat
+              from raffle
+              order by rno desc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+      ]]>
+	</select>
+
 	<insert id="insertRaffle" parameterType="Raffle">
 		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
-            SELECT SEQ_RNO.NEXTVAL FROM dual
-        </selectKey>
+			SELECT
+			SEQ_RNO.NEXTVAL FROM dual
+		</selectKey>
 		insert into raffle(rno, rtitle, rsubtitle, rcontent, rcategory,
 		rwinnercount, rmissiontype, rstartedat, rfinishedat, rgift)
 		values(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},#{rwinnercount},
 		#{rmissiontype}, #{rstartedat},#{rfinishedat}, #{rgift})
 	</insert>
-	
+
 	<select id="selectByRno" parameterType="int" resultType="Raffle">
 		select *
 		from raffle
 		where rno=#{rno}
 	</select>
-	
+
+	<select id="raffleCount" resultType="int">
+		select count(*) from raffle
+	</select>
+
+	<select id="selectByRaffleListForUser"
+		resultType="RaffleRequest">
+		select r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
+		r.rsubtitle as "raffle.rsubtitle",
+		r.rstartedat as "raffle.rstartedat",
+		r.rfinishedat as "raffle.rfinishedat",
+		r.rcategory as
+		"raffle.rcategory",
+		ri.rthumbnailimg as "raffleImage.rthumbnailimg",
+		ri.rthumbnailimgtype as "raffleImage.rthumbnailimgtype",
+		ri.rthumbnailimgoname as "raffleImage.rthumbnailimgoname"
+		from raffle r
+		INNER JOIN raffleImage ri ON r.rno = ri.rno
+	</select>
 </mapper>    

@@ -27,6 +27,7 @@
 		<typeAlias alias="TimeMission" type="com.mycompany.let_ffle.dto.TimeMission" />
 		<typeAlias alias="Winner" type="com.mycompany.let_ffle.dto.Winner" />
 		<typeAlias alias="Pager" type="com.mycompany.let_ffle.dto.Pager" />
+		<typeAlias alias="RaffleRequest" type="com.mycompany.let_ffle.dto.request.RaffleRequest"/>
 	</typeAliases>
 	
 </configuration>
