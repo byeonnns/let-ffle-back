@@ -1,5 +1,6 @@
 package com.mycompany.let_ffle.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -54,7 +55,7 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		if (raffleRequest.getRaffleImage().getRgiftattach() != null
 				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
@@ -77,13 +78,21 @@ public class RaffleController {
 			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
 			// 파일 종류 설정
 			raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
+
 			try {
 				// 파일 데이터를 설정
 				raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
 			} catch (IOException e) {
+
 			}
 		}
-		raffleRequest = raffleService.insertRaffle(raffleRequest);
+		raffleService.insertRaffle(raffleRequest);
+		raffleRequest.getRaffleImage().setRthumbnailattach(null);
+		raffleRequest.getRaffleImage().setRthumbnailimg(null);
+		raffleRequest.getRaffleImage().setRdetailattach(null);
+		raffleRequest.getRaffleImage().setRdetailimg(null);
+		raffleRequest.getRaffleImage().setRgiftattach(null);
+		raffleRequest.getRaffleImage().setRgiftimg(null);
 		return raffleRequest;
 	}
 

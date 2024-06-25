@@ -26,23 +26,16 @@ public class RaffleService {
 	TimeMissionDao timeMissionDao;
 	@Autowired
 	QuizMissionDao quizMissionDao;
-	
-	
-	public RaffleRequest insertRaffle(RaffleRequest raffleRequest){
+
+	public void insertRaffle(RaffleRequest raffleRequest) {
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
-		Map<String, BigDecimal> resultMap = new HashMap<>();
-		int rno = resultMap.get("LAST_NUMBER").intValue()-1;
-		log.info("현재 시퀀스 : " + resultMap.get("LAST_NUMBER"));
-		raffleRequest.getRaffleImage().setRno(rno);
-		raffleRequest.getTimeMission().setRno(rno);
 		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
-		if(raffleRequest.getTimeMission() != null) {
+
+		if (raffleRequest.getTimeMission() != null) {
 			timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
 		} else {
 			quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
 		}
-		
-		return raffleRequest;
 	}
 
 	public RaffleRequest getRaffle(int rno) {
