@@ -18,8 +18,5 @@
 		rgiftimgtype, rgiftimgoname, rdetailimg,
 		rdetailimgtype, rdetailimgoname)
 		values
-		(#{rno},
-		#{rthumbnailimg},#{rthumbnailimgtype},#{rthumbnailimgoname},#{rgiftimg},
-		#{rgiftimgtype},#{rgiftimgoname},#{rdetailimg},#{rdetailimgtype},#{rdetailimgoname})
 	</insert>
 </mapper>    
