@@ -10,8 +10,13 @@
 	</select>
 
 	<insert id="insertTimeMisson" parameterType="TimeMission">
-		insert into timemission (rno, tstartedat, tfinishedat)
+		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+			select seq_rno.currval from dual
+		</selectKey>
+		insert into timemission (rno,tstartedat, tfinishedat)
 		values (#{rno},
-		#{tstartedat}, #{tfinishedat})
+		#{tstartedat},
+		#{tfinishedat})
 	</insert>
+	
 </mapper>    

@@ -9,6 +9,10 @@
 		where rno=#{rno}
 	</select>
 	<insert id="insertRaffleImage" parameterType="RaffleImage">
+		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+			select
+			seq_rno.currval from dual
+		</selectKey>
 		insert into raffleimage (rno, rthumbnailimg, rthumbnailimgtype,
 		rthumbnailimgoname, rgiftimg,
 		rgiftimgtype, rgiftimgoname, rdetailimg,

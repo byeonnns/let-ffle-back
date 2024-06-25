@@ -3,7 +3,10 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.QuizMissionDao">
 	<insert id="insertQuizMisson" parameterType="QuizMission">
-		insert into (qcontent, qoption1, qoption2, qoption3, qoption4, qanswer)
-		values (#{qcontent},#{qoption1},#{qoption2},#{qoption3},#{qoption4})
+		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+		select seq_rno.currval from dual
+	</selectKey>
+		insert into quizmission (rno, qcontent, qoption1, qoption2, qoption3, qoption4, qanswer)
+		values (#{rno}, #{qcontent},#{qoption1},#{qoption2},#{qoption3},#{qoption4})
 	</insert>
-</mapper>    
+</mapper>

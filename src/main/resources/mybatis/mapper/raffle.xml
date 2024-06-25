@@ -12,17 +12,10 @@
 		values(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},#{rwinnercount},
 		#{rmissiontype}, #{rstartedat},#{rfinishedat}, #{rgift})
 	</insert>
-
 	<select id="selectByRno" parameterType="int" resultType="Raffle">
 		select *
 		from raffle
 		where rno=#{rno}
 	</select>
-
-	<select id="selectBySeqRno" resultType="java.util.HashMap">
-		SELECT LAST_NUMBER
-		FROM USER_SEQUENCES
-		WHERE SEQUENCE_NAME = 'SEQ_RNO'
-	</select>
-
+	
 </mapper>    
