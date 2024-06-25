@@ -2,19 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleImageDao">
-	<select id="selectByRno" parameterType="int" resultType="RaffleImage">
+	<select id="selectByRno" parameterType="int"
+		resultType="RaffleImage">
 		select *
 		from raffleImage
 		where rno=#{rno}
 	</select>
 	<insert id="insertRaffleImage" parameterType="RaffleImage">
+		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+			select seq_rno.currval from dual
+		</selectKey>
 
 		insert into raffleimage (rno, rthumbnailimg, rthumbnailimgtype,
 		rthumbnailimgoname, rgiftimg,
 		rgiftimgtype, rgiftimgoname, rdetailimg,
 		rdetailimgtype, rdetailimgoname)
 		values
-		(18,
+		(#{rno},
 		#{rthumbnailimg},#{rthumbnailimgtype},#{rthumbnailimgoname},#{rgiftimg},
 		#{rgiftimgtype},#{rgiftimgoname},#{rdetailimg},#{rdetailimgtype},#{rdetailimgoname})
 	</insert>
