@@ -28,10 +28,14 @@
 		where mid=#{mid}
 	</select>
 	
+	
 	<update id="changeMphone" parameterType="Member">
 		update member
 		set mphone= #{mphone}
 		where mid = #{mid}
 	</update>
+	
+
+	
 
 </mapper>    

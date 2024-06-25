@@ -108,10 +108,9 @@ public class MemberController {
 
 	// 마이페이지 -> 회원정보수정 메소드 (비밀번호, 휴대폰번호, 회원탈퇴)
 	// 비밀번호 수정
-	@PutMapping("/changePassword")
-	public Member changePassword(String mid, String mpassword) {
+	@PutMapping("/changeMPassword")
+	public void changePassword(String mid, String mpassword) {
 
-		return null;
 	}
 
 	// 휴대폰 번호 수정

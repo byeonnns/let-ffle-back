@@ -17,4 +17,6 @@ public interface MemberDao {
 	void changeMphone(Member member);
 	// changeMphone = 메소드 명 이며 우리는 현재 Mphone의 값을 변경시켜주기 위해 MemberDto에 담겨져 있는 값을
 	// 가져오기위해 선언한다.
+
+
 }
