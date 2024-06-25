@@ -30,13 +30,16 @@ public class RaffleService {
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
 		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
 
+		//raffle(dto)의 미션타입이 time이라면 timeMissionDao를 호출해 timeMission을 생성
 		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
 			timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
-		} else if(raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
+		// raffle(dto)의 미션타입이 quiz이라면 quizMissionDao를 호출해 quizMission을 생성
+		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
 			quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
 		}
 	}
 
+	// raffleRequest 객체를 생성 후 래플의 번호와 해당 래플의 미션타입을 불러와 raffleRequest 객체에 반환 후 리턴
 	public RaffleRequest getRaffle(int rno) {
 		RaffleRequest raffleRequest = new RaffleRequest();
 		raffleRequest.setRaffle(raffleDao.selectByRno(rno));
