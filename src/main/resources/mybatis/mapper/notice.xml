@@ -38,7 +38,6 @@
 
 	<select id="InquiryCount" resultType="int">
 		select count(*)
-		from Inquiry
 	</select>
 
 	<select id="readInquiry" parameterType="int"
@@ -48,4 +47,23 @@
 		where ino=#{ino}
 	</select>
 
+	<update id="updateInquiry" parameterType="Inquiry">
+		update inquiry
+		set ititle =#{ititle }, icontent=#{icontent},
+		iupdatedat=systimestamp, ireply=#{ireply}
+		<if test="iattachoname != null">
+			, iattachoname=#{iattachoname}
+			, iattachtype=#{iattachtype}
+			, iattachdata=#{iattachdata}
+		</if>
+		where ino=#{ino}
+	</update>
+
+	<insert id="insertNotice" parameterType="Notice">
+		<selectKey keyProperty="nno" resultType="int" order="BEFORE">
+			SELECT SEQ_NNO.NEXTVAL FROM dual
+		</selectKey>
+		insert into Notice (nno, ntitle, ncontent, nmaincategory, nsubcategory, nattachoname, nattachtype, nattachdata, ncreatedat, nupdatedat)
+		VALUES (#{nno}, #{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory}, #{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp, systimestamp)
+	</insert>
 </mapper>    
