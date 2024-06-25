@@ -27,15 +27,20 @@
 		from member
 		where mid=#{mid}
 	</select>
-	
-	
-	<update id="changeMphone" parameterType="Member">
+
+	<update id="updateMphone" parameterType="Member">
 		update member
 		set mphone= #{mphone}
 		where mid = #{mid}
 	</update>
-	
 
-	
+	<!-- id = 추상메소드명과 동일하게 작성, parameterType = 매개변수로 갇은 타입
+		 mid에 맞는 password를 password 변경한다. -->
+	<update id="updateMpassword" parameterType="String">
+		update member
+		set mpassword = #{mpassword}
+		where mid = #{mid}
+	</update>
+
 
 </mapper>    

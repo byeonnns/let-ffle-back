@@ -14,9 +14,11 @@ public interface MemberDao {
 
 	void delete(String mid);
 
-	void changeMphone(Member member);
+	void updateMphone(Member member);
 	// changeMphone = 메소드 명 이며 우리는 현재 Mphone의 값을 변경시켜주기 위해 MemberDto에 담겨져 있는 값을
 	// 가져오기위해 선언한다.
 
+	// 유저의 아이디랑 비밀번호 매개변수로 주고 비밀번호를 변경함
+	void updateMpassword(String mid, String mpassword);
 
 }

@@ -1,6 +1,5 @@
 package com.mycompany.let_ffle.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/member")
 public class MemberController {
+
+	@Autowired
+	private LetffleUserDetailsService letffleUserDetailsService;
 
 	// member 서비스 주입
 	@Autowired
@@ -108,24 +110,40 @@ public class MemberController {
 
 	// 마이페이지 -> 회원정보수정 메소드 (비밀번호, 휴대폰번호, 회원탈퇴)
 	// 비밀번호 수정
-	@PutMapping("/changeMPassword")
-	public void changePassword(String mid, String mpassword) {
+	@PutMapping("/updateMpassword")
+	public void updateMpassword(String mid, String mpassword) {
+		// leffleUserDetailsService를 주입받아 leffleUserDetailsService의
+		// loadUserByUsername를 mid를주고 호출 (로그인한 유저와 유저의 권한이 담긴 메소드) 를 userDetails 변수에 반환
+		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
 
+		// 비밀번호 암호화
+		// passwordEncoder를 생성해서 로그인한 유저의 member(dto)의 암호화된 비밀번호를 세팅
+		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		userDetails.getMember().setMpassword(passwordEncoder.encode(mpassword));
+		
+		// 비밀번호를 변경하고자하는 유저의 아이디와 비밀번호를 서비스에게 변경하도록 서비스를 요청 처리보냄
+		memberService.updateMpassword(userDetails.getMember().getMid(), userDetails.getMember().getMpassword());
+
+		/*
+		 * userDetails를 반드시 사용해야 하나? 사용하지 않으면 아래 코드로도 충분히 가능 String password =
+		 * passwordEncoder.encode(mpassword); memberService.updateMpassword(mid,
+		 * password);
+		 */
 	}
 
 	// 휴대폰 번호 수정
-	@PutMapping("/changeMphone")
-	public void changeMphone(String mid, String mphone) {
+	@PutMapping("/updateMphone")
+	public void updateMphone(String mid, String mphone) {
 		// 여기서의 Mid는 로그인한 유저의 mid, 그치만 mphone은 우리가 변경하고싶은 mphone이며 바꿔줄 값인것이다.(그전에 등록되어있던
 		// 전화번호가 아님)
-		// Member에 있는 아이디를 먼저 불러온후
-		Member member = memberService.selectByMid(mid);
+		// 로그인 한 유저의 정보 불러오기
+		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
 
 		// 바꿔줄 mphone의 값을 setter로 지정후
-		member.setMphone(mphone);
+		userDetails.getMember().setMphone(mphone);
 
 		// memberService에 changeMphone이라는 변수명에 가져올 값인 MemberDto에서 불러온다.
-		memberService.changeMphone(member);
+		memberService.updateMphone(userDetails.getMember());
 
 	}
 
