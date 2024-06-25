@@ -20,7 +20,7 @@ public class LetffleUserDetailsService implements UserDetailsService {
 	private MemberDao memberDao;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public LetffleUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Member member = memberDao.selectByMid(username);
 
 		if (member == null) {

@@ -34,13 +34,17 @@ public class MemberService {
 	}
 
 	// mypage에 휴대폰 번호 변경
-	public void changeMphone(Member member) {
+	public void updateMphone(Member member) {
 		// memberDao에서 changeMphone이라는 변수 명을 둔후 MemberDao에 changeMphone이라는 메소드에 있는
 		// Member를 가져오라는 의미
-		memberDao.changeMphone(member);
+		memberDao.updateMphone(member);
 
 	}
 
-
+	public void updateMpassword(String mid, String mpassword) {
+		// 받아온 유저의 아이디와 비밀번호를 가지고 memberDao를 호출햐여 데이터 베이스의 비밀번호를 변경하도록 함
+		// 쉽게말해 유저의 아이디랑 비밀번호 줄테니까 해당 유저의 비밀번호를 바꿔라 ~
+		memberDao.updateMpassword(mid, mpassword);
+	}
 
 }
