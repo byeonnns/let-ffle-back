@@ -24,14 +24,16 @@ public class RaffleService {
 	public void insertRaffle(RaffleRequest raffleRequest){
 		
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
-		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
-		
-		if(raffleRequest.getTimeMission() != null) {
-			timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
-		} else {
-			quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
-		}
+	    raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
+	    
+	    if(raffleRequest.getTimeMission() != null) {
+	       timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
+	    } else {
+	       quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
+	    }
 	}
+	
+	
 
 	public RaffleRequest getRaffle(int rno) {
 		RaffleRequest raffleRequest = new RaffleRequest();
