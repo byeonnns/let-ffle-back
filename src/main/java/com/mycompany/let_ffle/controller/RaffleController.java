@@ -34,7 +34,6 @@ public class RaffleController {
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
 
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
 		TimeMission timeMission = new TimeMission();
 		timeMission.setTstartedat(timestamp);
 		timeMission.setTfinishedat(timestamp);
