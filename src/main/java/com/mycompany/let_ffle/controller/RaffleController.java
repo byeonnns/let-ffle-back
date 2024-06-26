@@ -158,6 +158,7 @@ public class RaffleController {
 
 	@PostMapping("/createRaffleDetail")
 	public RaffleDetail createRaffleDetail(RaffleDetail raffleDetail) {
+		// raffleDetail(dto)를 매개변수로 받아 raffleService 메소드를 호출해 raffleDetail객체를 데이터 베이스에 저장하도록 처리
 		raffleService.insertRaffleDetail(raffleDetail);
 		return null;
 	}
@@ -165,19 +166,16 @@ public class RaffleController {
 	
 	@GetMapping("/readRaffleDetail")
 	public RaffleDetail raffleDetail(RaffleDetail raffleDetail) {
+		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail 객체로 받아 리턴해줌
 		raffleDetail = raffleService.readRaffleDetail(raffleDetail);
 		return raffleDetail;
 	}
-	
+
 	@PostMapping("/createWinner")
 	public Winner createWinner(Winner winner) {
+		// winner(dto)를 매개변수로 받아 raffleService 메소드를 호출해 winner객체를 데이터베이스에 저장하도록 처리
 		raffleService.insertWinner(winner);
 		return null;
 	}
 	
-	@GetMapping("/readWinner") 
-	public Winner readWinner() {
-		
-		return null;
-	}
 }

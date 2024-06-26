@@ -30,13 +30,22 @@ public class CommunityController {
 	@Autowired
 	private CommunityService communityService;
 
+	// getBoardList 컨트롤러가 요청될 시 실행
 	@GetMapping("/getBoardList")
+	// 클라이언트(사용자)로부터 pageNo 요청받아 Map<String, Object> 형식의 데이터로 반환
+	// pageNo 파라미터를 HTTP 요청에서 추출해 pageNo 변수에 할당 사용자가 pageNo를 제공하지 않으면 pageNo을 기본값 1로 지정 
 	public Map<String, Object> getBoardList(@RequestParam(defaultValue = "1") int pageNo) {
+		// communityService 메소드를 호출해 게시판의 총 게시물 수를 가져와 totalRows 변수에 반환
 		int totalRows = communityService.BoardCount();
+		// pager 객체를 생성 후 한 페이지에 보여질 게시물 수(5), 페이지네이션에 표시할 페이지 수(5), 총 게시물 수(totalRows), 현재 페이지 번호(pageNo)를 매개변수로 받음
 		Pager pager = new Pager (5,5, totalRows, pageNo);
+		// communityService메소드를 호출해 pager 객체에 게시물 목록을 가져와 list 변수에 반환
 		List<Board> list = communityService.SelectByBoardList(pager);
+		// Map<String, Object> 객체를 생성 ( 게시판 목록과 페이지 정보를 담을 떄 사용 ) 
 		Map<String, Object> map = new HashMap<>();
+		// 게시판 목록(list)을 map에 추가 
 		map.put("Board", list);
+		// 페이지를 (page) map에 추가
 		map.put("Pager", pager);
 		return map;
 	}
