@@ -13,6 +13,8 @@ public interface BoardDao {
 
 	public void enabledBoard(int bno);
 
+	public Board readBoard(int bno);
+
 	
 
 }

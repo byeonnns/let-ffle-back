@@ -23,5 +23,9 @@ public class CommunityService {
 		boardDao.enabledBoard(bno);
 	}
 
+	public Board readBoard(int bno) {
+		return boardDao.readBoard(bno);
+	}
+
 	
 }

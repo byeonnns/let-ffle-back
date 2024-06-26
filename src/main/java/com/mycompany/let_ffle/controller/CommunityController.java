@@ -61,9 +61,9 @@ public class CommunityController {
 	}
 	
 	@GetMapping("readBoard")
-	public Board readBoard() {
-		
-		return null;
+	public Board readBoard(Board board) {
+		board = communityService.readBoard(board.getBno());
+		return board;
 	}
 	
 	@PutMapping("updateBoard")
