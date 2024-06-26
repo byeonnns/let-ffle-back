@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.let_ffle.dao.InquiryDao">
 
+	<!--중첩 구문 ( 사용이유는 페이징의 기능을 구현하기 위해서 사용, oracle에서는 구현하기위해 rownum을 활용한 중첩 구문을 사용한것이다.) 
+외부 컬럼은 rnum 과 나머지 컬럼은 선택한다.
+rownum as rum = 별칭으로 사용됨
+내부 쿼리는 inquiry  테이블 안에서 테이블을 선택하고 (order by into = 내림차순 )으로 ino기준으로 정렬한다. 최신 inquiry가 먼저나오도록 설정한것이다. 
+여기서의 rownum endrowno 은 행들만 선택하며 상위 몇개의 행을 선택하기 위함이다.
+ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데 startnum 은 6  endnum 은 10 이다.-->
 	<select id="selectByPage" parameterType="pager" resultType="Inquiry">
       <![CDATA[
       select rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
@@ -19,19 +25,16 @@
       ]]>
 	</select>
 
+	<!--시퀀스를 부여한 이유 기본 키 값을 자동으로 생성하기 위해서 생성 (ino)-->
 	<insert id="insertInquiry" parameterType="Inquiry">
 		<selectKey keyProperty="ino" resultType="int" order="BEFORE">
 			SELECT
 			SEQ_INO.NEXTVAL FROM dual
-		</selectKey>
-		insert into
+		</selectKey> insert into
 		Inquiry(ino, mid, ititle , icontent, iattachoname,
-		iattachdata,iattachtype, icreatedat,iupdatedat,ireply)
-		values
+		iattachdata,iattachtype, icreatedat,iupdatedat,ireply) values
 		(#{ino},#{mid}, #{ititle}, #{ icontent}, #{iattachoname},
-		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp,
-		#{ireply})
-	</insert>
+		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp, #{ireply}) </insert>
 
 	<select id="InquiryCount" resultType="int">
 		select count(*)
@@ -44,24 +47,29 @@
 		where ino=#{ino}
 	</select>
 
-	<update id="updateInquiry" parameterType="Inquiry">
-		update inquiry
-		set ititle =#{ititle }, icontent=#{icontent},
-		iupdatedat=systimestamp, ireply=#{ireply}
-		<if test="iattachoname != null">
+	<!--if문을 사용한 이유 조건에 맞게 포함 및 생략할 수 있게 사용하기위해서 사용
+if문에 들어간 내용은 문의하기의 이미지 파일 인데, 특정 값이 null이 아닐때만 해당필드를 업데이트 하고싶을때 사용이된다.
+-->
+	<update id="updateInquiry" parameterType="Inquiry"> update inquiry set
+		ititle =#{ititle }, icontent=#{icontent}, iupdatedat=systimestamp,
+		ireply=#{ireply} <if test="iattachoname != null">
 			, iattachoname=#{iattachoname}
 			, iattachtype=#{iattachtype}
 			, iattachdata=#{iattachdata}
 		</if>
-		where ino=#{ino}
-	</update>
+		where ino=#{ino} </update>
 
+<!--시퀀스를 부여한 이유 기본 키 값을 자동으로 생성하기 위해서 생성 (nno) 
+여기서 systimestamp를 사용한 이유는 DB에서 현재 시간을 자동으로 삽입 시키기 위해서 사용된다.
+-->
 	<insert id="insertNotice" parameterType="Notice">
 		<selectKey keyProperty="nno" resultType="int" order="BEFORE">
 			SELECT SEQ_NNO.NEXTVAL FROM dual
-		</selectKey>
-		insert into Notice (nno, ntitle, ncontent, nmaincategory, nsubcategory, nattachoname, nattachtype, nattachdata, ncreatedat, nupdatedat)
-		VALUES (#{nno}, #{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory}, #{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp, systimestamp)
-	</insert>
+		</selectKey> insert into Notice
+		(nno, ntitle, ncontent, nmaincategory, nsubcategory, nattachoname,
+		nattachtype, nattachdata, ncreatedat, nupdatedat) VALUES (#{nno},
+		#{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory},
+		#{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp,
+		systimestamp) </insert>
 
 </mapper>    

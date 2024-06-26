@@ -259,6 +259,8 @@ public class MemberController {
 
 	// 문의 목록 가져오기 (추후 권한을 매개변수로 받아서 조건에 따라 다른 값을 리턴할 예정)
 	@GetMapping("/getInquiryList")
+	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가 
+	// 1번이라는 것을 지정해주기 위해 1을 기본 값으로 준것이다.
 	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo) {
 		int totalRows = memberService.getCount();
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
@@ -271,10 +273,12 @@ public class MemberController {
 
 	// 문의 상세 보기
 	@GetMapping("/readInquiry/{ino}")
+	//@pathvarialbe을 사용하는 이유 매개변수를 바인딩 시키기 위해서 사용된것이다.
 	public Inquiry readInquiry(@PathVariable int ino) {
 		// 전달받은 ino와 일치하는 Inquiry 객체를 DB에서 가져오기
 		Inquiry inquiry = memberService.getInquiry(ino);
 
+		//파일명을 보내는 클라이언트에게 파일의 값을 안보여주기 위해서 null로 처리를 한것이다.
 		inquiry.setIattachdata(null);
 
 		return inquiry;
@@ -308,7 +312,7 @@ public class MemberController {
 		// 따라서 해당 필드값을 null로 변경 후 응답을 반환
 		inquiry.setIattach(null);
 		inquiry.setIattachdata(null);
-		
+
 		return inquiry;
 	}
 
