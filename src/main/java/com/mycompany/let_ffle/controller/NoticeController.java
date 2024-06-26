@@ -29,61 +29,6 @@ public class NoticeController {
 	@Autowired
 	private NoticeService noticeService;
 
-	/* 1:1 문의 */
-	// 문의 등록하기
-	@PostMapping("/createInquiry")
-	public Inquiry createInquiry(Inquiry inquiry) {
-		if (inquiry.getIattach() != null && !inquiry.getIattach().isEmpty()) {
-			MultipartFile mf = inquiry.getIattach();
-			inquiry.setIattachoname(mf.getOriginalFilename());
-			inquiry.setIattachtype(mf.getContentType());
-			try {
-				inquiry.setIattachdata(mf.getBytes());
-			} catch (IOException e) {
-			}
-		}
-		noticeService.insertInquiry(inquiry);
-		inquiry.setIattach(null);
-		inquiry.setIattachdata(null);
-		return inquiry;
-	}
-	
-	@GetMapping("/getInquiryList")
-	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = noticeService.getCount();
-		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		List<Inquiry> list = noticeService.getInquiryList(pager);
-		Map<String, Object> map = new HashMap<>();
-		map.put("Inquiry", list);
-		map.put("Pager", pager);
-		return map;
-	}
-	
-	@GetMapping("/readInquiry/{ino}")
-	public Inquiry readInquiry(@PathVariable int ino){
-		Inquiry inquiry = noticeService.getInquiry(ino);
-		inquiry.setIattachdata(null);
-		return inquiry ;
-	}
-	
-	@PutMapping("/updateInquiry")
-	public Inquiry updateInquiry(Inquiry inquiry) {
-		if (inquiry.getIattach() != null && !inquiry.getIattach().isEmpty()) {
-			MultipartFile mf = inquiry.getIattach();
-
-			inquiry.setIattachoname(mf.getOriginalFilename());
-			inquiry.setIattachtype(mf.getContentType());
-			try {
-				inquiry.setIattachdata(mf.getBytes());
-			} catch (IOException e) {
-			}
-		}
-		noticeService.updateInquiry(inquiry);
-		inquiry.setIattach(null);
-		inquiry.setIattachdata(null);
-		return inquiry;
-	}
-	
 	/* 공지사항 */
 	@PostMapping("/createNotice")
 	public Notice createNotice(Notice notice) {

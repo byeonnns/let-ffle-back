@@ -1,16 +1,24 @@
 package com.mycompany.let_ffle.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.MemberDao;
+import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
+import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 
 @Service
 public class MemberService {
 	@Autowired
 	private MemberDao memberDao;
+	
+	@Autowired
+	private InquiryDao inquiryDao;
 
 	public void join(Member member) {
 
@@ -20,16 +28,13 @@ public class MemberService {
 	}
 
 	public Member selectByMid(String mid) {
-
 		Member member = memberDao.selectByMid(mid);
-
 		return member;
 	}
 
 	// 회원 탈퇴
 	public void deleteByMid(String mid) {
 		// TODO Auto-generated method stub
-
 		memberDao.delete(mid);
 	}
 
@@ -55,9 +60,25 @@ public class MemberService {
 	// 여기입둥
 	public void login(Member member, String mid, String mpassword) {
 		memberDao.login(member, mid, mpassword);
-		
+	}
+	
+	/* 1:1 문의 */
+	public void insertInquiry(Inquiry inquiry) {
+		inquiryDao.insertInquiry(inquiry);
+	}
+	public int getCount() {
+		return inquiryDao.InquiryCount();
+	}
+	public List<Inquiry> getInquiryList(Pager pager) {
+		return inquiryDao.selectByPage(pager);
 	}
 
+	public Inquiry getInquiry(int ino) {	
+		return inquiryDao.readInquiry(ino);
+	}
+	public int updateInquiry(Inquiry inquiry) {
+		return inquiryDao.updateInquiry(inquiry);
+	}
 
 	
 

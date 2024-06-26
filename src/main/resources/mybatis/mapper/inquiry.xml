@@ -1,8 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.mycompany.let_ffle.dao.InquriyDao">
+<mapper namespace="com.mycompany.let_ffle.dao.InquiryDao">
 
+	<select id="selectByPage" parameterType="pager" resultType="Inquiry">
+      <![CDATA[
+      select rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
+      from (
+          select rownum as rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
+          from (
+              select ino, ititle, mid, icreatedat, iupdatedat, ireply
+              from inquiry
+              order by ino desc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+      ]]>
+	</select>
 
+	<insert id="insertInquiry" parameterType="Inquiry">
+		<selectKey keyProperty="ino" resultType="int" order="BEFORE">
+			SELECT
+			SEQ_INO.NEXTVAL FROM dual
+		</selectKey>
+		insert into
+		Inquiry(ino, mid, ititle , icontent, iattachoname,
+		iattachdata,iattachtype, icreatedat,iupdatedat,ireply)
+		values
+		(#{ino},#{mid}, #{ititle}, #{ icontent}, #{iattachoname},
+		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp,
+		#{ireply})
+	</insert>
+
+	<select id="InquiryCount" resultType="int">
+		select count(*)
+	</select>
+
+	<select id="readInquiry" parameterType="int"
+		resultType="inquiry">
+		select *
+		from inquiry
+		where ino=#{ino}
+	</select>
+
+	<update id="updateInquiry" parameterType="Inquiry">
+		update inquiry
+		set ititle =#{ititle }, icontent=#{icontent},
+		iupdatedat=systimestamp, ireply=#{ireply}
+		<if test="iattachoname != null">
+			, iattachoname=#{iattachoname}
+			, iattachtype=#{iattachtype}
+			, iattachdata=#{iattachdata}
+		</if>
+		where ino=#{ino}
+	</update>
+
+	<insert id="insertNotice" parameterType="Notice">
+		<selectKey keyProperty="nno" resultType="int" order="BEFORE">
+			SELECT SEQ_NNO.NEXTVAL FROM dual
+		</selectKey>
+		insert into Notice (nno, ntitle, ncontent, nmaincategory, nsubcategory, nattachoname, nattachtype, nattachdata, ncreatedat, nupdatedat)
+		VALUES (#{nno}, #{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory}, #{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp, systimestamp)
+	</insert>
 
 </mapper>    
