@@ -80,6 +80,7 @@ public class MemberService {
 		return inquiryDao.updateInquiry(inquiry);
 	}
 
+
 	
 
 }

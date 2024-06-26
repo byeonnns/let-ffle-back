@@ -8,4 +8,17 @@ import com.mycompany.let_ffle.dto.RaffleDetail;
 public interface RaffleDetailDao {
 
 	public RaffleDetail getRaffleEntryList(String mid);
+
+	public void insertRaffleDetail(RaffleDetail raffleDetail);
+
+	public RaffleDetail readRaffleDetail(RaffleDetail raffleDetail);
+
+	
+	
+
+	
+	
+	
+
+	
 }

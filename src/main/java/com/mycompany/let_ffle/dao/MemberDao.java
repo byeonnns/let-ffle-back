@@ -30,4 +30,6 @@ public interface MemberDao {
 
 	// 여기입니둥
 	void login(Member member, String mid, String mpassword);
+
+	
 }

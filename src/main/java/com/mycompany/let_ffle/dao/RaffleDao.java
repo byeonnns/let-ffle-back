@@ -24,4 +24,5 @@ public interface RaffleDao {
 	public List<RaffleRequest> selectByRaffleListForUser();
 
 	public List<Raffle> selectByPage(Pager pager);
+
 }
