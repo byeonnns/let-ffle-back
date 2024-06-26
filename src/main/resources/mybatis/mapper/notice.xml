@@ -3,6 +3,19 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.NoticeDao">
 
+<!--시퀀스를 부여한 이유 기본 키 값을 자동으로 생성하기 위해서 생성 (nno) 
+여기서 systimestamp를 사용한 이유는 DB에서 현재 시간을 자동으로 삽입 시키기 위해서 사용된다.
+-->
+	<insert id="insertNotice" parameterType="Notice">
+		<selectKey keyProperty="nno" resultType="int" order="BEFORE">
+			SELECT SEQ_NNO.NEXTVAL FROM dual
+		</selectKey> insert into Notice
+		(nno, ntitle, ncontent, nmaincategory, nsubcategory, nattachoname,
+		nattachtype, nattachdata, ncreatedat, nupdatedat) VALUES (#{nno},
+		#{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory},
+		#{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp,
+		systimestamp) </insert>
+		
 	<update id="updateNotice" parameterType="Notice">
 		update Notice
 		set ntitle=#{ntitle}, ncontent=#{ncontent},
