@@ -41,45 +41,71 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/member")
 public class MemberController {
 
+	// loadUserByUsername 메소드를 사용하여 유저 정보를 얻고 있으므로 해당 메소드를 가지고 있는
+	// LetffleUserDetailsService를 주입받음
 	@Autowired
 	private LetffleUserDetailsService letffleUserDetailsService;
 
+	// AccessToken을 만드는 메소드가 정의된 클래스가 JwtProvider -> 로그인 시 Access Token을 발급해줘야 하므로
+	// 주입받음
 	@Autowired
 	private JwtProvider jwtProvider;
 
-	// member 서비스 주입
+	// MemberService를 이용해 비즈니스 로직을 수행해야 하므로 주입받음
 	@Autowired
 	private MemberService memberService;
 
-	// 로그인
+	// 로그인 처리
 	@PostMapping("/login")
 	public Map<String, String> login(String mid, String mpassword) {
-		// letffleUserDetailsService 메소드를 통해 mid를 주고 로그인한 회원의 정보들을 letffleUserDetails 에 반환
+		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
+		// 매개변수로 입력받은 mid를 전달
+		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
+		// getMember()로 데이터에 접근이 가능해짐
 		LetffleUserDetails letffleUserDetails = letffleUserDetailsService.loadUserByUsername(mid);
-		
-		// 로그인시 비밀번호를 암호화한 후 db의 암호화된 비밀번호와 같은 비밀번호인지 비교를하여 
-		// true,false 값을 리턴 ( 암호화된 값은 다르지만 같은 값을 암호화한것인지는 spring이 알기에 제공해줌 )
+
+		// 매개변수로 입력받은 mpassword는 암호화되지 않은 날것(raw)의 비밀번호
+		// PasswordEncoder의 matches()를 사용해 DB에 있는 암호화된 비밀번호와 날것의 비밀번호를 비교 요청
+		// 비밀번호가 같다면 true, 다르면 false를 리턴
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		boolean passwordResult = passwordEncoder.matches(mpassword, letffleUserDetails.getMember().getMpassword());
 
+		// JSON 응답을 생성해주기 위한 HashMap을 생성
 		Map<String, String> map = new HashMap<>();
 
 		if (passwordResult) {
-			// 비밀번호가 일치한 경우 -> 로그인 처리
+			// 비밀번호가 일치한 경우 (true를 리턴받은 경우)
+
+			/*
+			 * UsernamePasswordAuthenticationToken은 Authentication 인터페이스를 구현하는 클래스
+			 * UsernamePasswordAuthenticationToken 생성자는 세 가지 매개변수가 필요 - letffleUserDetails:
+			 * 사용자의 세부정보 (일반적으로 UserDetails를 구현하는 클래스의 객체) - null: 자격 증명을 나타냄. 앞으로 발급해줄
+			 * Access Token을 이용해서 자격을 증명할 것이니 현재는 'null'로 설정 -
+			 * letffleUserDetails.getAuthorities(): letffleUserDetails에서 사용자의 권한을 가져옴
+			 */
 			Authentication authentication = new UsernamePasswordAuthenticationToken(letffleUserDetails, null,
 					letffleUserDetails.getAuthorities());
+			/*
+			 * SecurityContextHolder는 현재 인증된(로그인한) 사용자에 대한 세부 정보가 포함된 보안 컨텍스트를 보유하는 Spring
+			 * Security에서 제공하는 유틸리티 클래스 getContext()는 현재 보안 컨텍스트를 검색
+			 * setAuthentication(authentication)은 이전 단계에서 생성된 Authentication 객체를 현재 보안 컨텍스트로
+			 * 설정
+			 */
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			// AccessToken 생성
+			// 로그인 처리를 위해 JWT를 생성
+			// 주입받은 JwtProvider 객체가 가지고 있는 createAccessToken() 호출
+			// 이 때 현재 로그인한 유저의 mid와 mrole을 제공
 			String AccessToken = jwtProvider.createAccessToken(mid, letffleUserDetails.getMember().getMrole());
 
-			// 사용자에게 응답을 생성
+			// 사용자에게 반환해줄 응답을 Map에 추가
 			map.put("result", "로그인 성공");
 			map.put("mid", mid);
 			map.put("AccessToken", AccessToken);
 
 		} else {
-			// 비밀번호가 일치하지 않은 경우 -> 실패 결과를 알려줌
+			// 비밀번호가 일치하지 않은 경우 (false를 리턴받은 경우)
+			// 로그인을 시켜주지 않고, 결과만 JSON 응답에 포함하여 반환
 			map.put("result", "로그인 실패");
 		}
 
@@ -90,40 +116,28 @@ public class MemberController {
 	@PostMapping("/join")
 	public Member join(@RequestBody Member member) {
 
-		// 1. 비밀번호 암호화하기
+		// 1. 비밀번호 암호화 -> PasswordEncoder의 encode() 사용
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		// 2. 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅
 		member.setMpassword(passwordEncoder.encode(member.getMpassword()));
-
-		// 아이디 활성화
+		// 3. Member DTO의 menabled는 회원가입 시 사용자가 입력하는 값이 아님 -> Controller에서 따로 세팅
+		// 회원가입된 직후에는 ID를 활성화시켜둔 상태여야하므로 ture로 세팅
 		member.setMenabled(true);
-		// 권한 설정
+		// 4. 회원가입을 통해 가입한 모든 사용자는 ROLE_USER 권한을 가지도록 Member DTO의 mrole을 ROLE_USER로 세팅
 		member.setMrole("ROLE_USER");
-		// 회원가입 시 베리 1개 제공
+		// 5. 회원가입 시 베리 1개를 제공 -> Member DTO의 mberry를 1로 세팅
 		member.setMberry(1);
 
+		// 값 설정이 모두 끝났으므로 memberService의 join() 호출하여 회원가입 처리
+		// 매개변수로 Member DTO를 제공
 		memberService.join(member);
 
-		// 비밀번호 내역
+		// 사용자에게 JSON 응답을 반환할 때 보안상의 이유로 비밀번호는 직접 노출되면 안됨
+		// 따라서 JSON 응답에서는 비밀번호가 보이지 않도록 null로 값을 바꿔줌
 		member.setMpassword(null);
 
+		// JSON 응답을 반환
 		return member;
-
-		// resquestBody 어노테이션을 사용한이유는 postman에서의 사용할때 body안에 쓰는 값때문에 사용이된것이다. 그게 아닌 하나의
-		// 값을 가져올경우는 @requestParam String mid 이런 형식으로 작성하게 된다.
-		// Member member를 사용한것은 memberDto에 있는 매개변수의 값들을 저장하기위하여 작성한것이다.
-		// 그후 PasswordEncoder에 변수명을 passwordEncoder로 준후
-		// PasswordEncoderFactories.createDelegatingPasswordEncoder(); 암호화를 위하여 사용했으며->
-		// security에 사용되는 암호화 방법이다
-		// member.setMapssword를 암호화 시켜서 DB에서 저장된 (asdfaewfa)암호를 Dto에서 불러 와라 라는 의미이다.
-		// 여기서 setmpassword와 getmpassword의 차이는 set같은 경우는 우리가(보여지지 않겠끔)직접적으로 주어야되는 값들을
-		// 이용할때 사용되고, get같은 경우는 사용자들이 직접입력된 값들(보여지는 것들)을 가져올때 사용한다.
-		// 그렇게 하여 menable의 같은경우는 true를 주어 활성화를 설정 시키고, mrole은 권한으로 유저를 주게 된다.
-		// setMberry같은 경우는 우리가 회원가입시에 1개식 주기로한 지정된 값이기 때문에 1로 주게 된다.
-		// 등록을 할시 memberservice에 있는 join 이라는 변수명에 우리가 가져올 값을 선언해준다.
-		// 그 후 비밀번호의 암호화를 하여 값을 불러오게 되면 보여지게끔 만들면 안되기 때문에 가져올 값을 선언후에 가져오면 비밀번호는 보여지지 않기
-		// 위해 set을
-		// 사용하여 비밀번호의 값을 null로 처리해준다.
-		// 그 후 Member로 리턴을 해준다.
 
 	}
 
@@ -148,87 +162,102 @@ public class MemberController {
 		return null;
 	}
 
-	// 마이페이지 -> 회원정보수정 메소드 (비밀번호, 휴대폰번호, 회원탈퇴)
-	// 비밀번호 수정
-	@PutMapping("/updateMpassword")
+	// 마이페이지 -> 비밀번호 수정
+	@PutMapping("/mypage/updateMpassword")
 	public void updateMpassword(String mid, String mpassword) {
-		// leffleUserDetailsService를 주입받아 leffleUserDetailsService의
-		// loadUserByUsername를 mid를주고 호출 (로그인한 유저와 유저의 권한이 담긴 메소드) 를 userDetails 변수에 반환
+		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
+		// 매개변수로 입력받은 mid를 전달
+		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
+		// getMember()로 데이터에 접근이 가능해짐
 		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
 
-		// 비밀번호 암호화
-		// passwordEncoder를 생성해서 로그인한 유저의 member(dto)의 암호화된 비밀번호를 세팅
+		// 변경할 새 비밀번호를 암호화 -> PasswordEncoder의 encode() 사용
+		// 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		userDetails.getMember().setMpassword(passwordEncoder.encode(mpassword));
 
-		// 비밀번호를 변경하고자하는 유저의 아이디와 비밀번호를 서비스에게 변경하도록 서비스를 요청 처리보냄
+		// 유저의 아이디와 새 비밀번호를 DB에 저장하도록 memberService의 updateMpassword() 호출
+		// 매개변수로 그 값들을 넘겨줌
 		memberService.updateMpassword(userDetails.getMember().getMid(), userDetails.getMember().getMpassword());
-
-		/*
-		 * userDetails를 반드시 사용해야 하나? 사용하지 않으면 아래 코드로도 충분히 가능 String password =
-		 * passwordEncoder.encode(mpassword); memberService.updateMpassword(mid,
-		 * password);
-		 */
 	}
 
 	// 휴대폰 번호 수정
-	@PutMapping("/updateMphone")
+	@PutMapping("/mypage/updateMphone")
 	public void updateMphone(String mid, String mphone) {
-		// 여기서의 Mid는 로그인한 유저의 mid, 그치만 mphone은 우리가 변경하고싶은 mphone이며 바꿔줄 값인것이다.(그전에 등록되어있던
-		// 전화번호가 아님)
-		// 로그인 한 유저의 정보 불러오기
+		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
+		// 매개변수로 입력받은 mid를 전달
+		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
+		// getMember()로 데이터에 접근이 가능해짐
 		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
 
-		// 바꿔줄 mphone의 값을 setter로 지정후
+		// 새 휴대폰 번호를 Member DTO의 mphone 필드 값으로 세팅
 		userDetails.getMember().setMphone(mphone);
 
-		// memberService에 changeMphone이라는 변수명에 가져올 값인 MemberDto에서 불러온다.
+		// 유저의 아이디와 새 휴대폰 번호를 DB에 저장하도록 memberService의 updateMphone() 호출
+		// 매개변수로 그 값들이 필드값으로 저장되어 있는 Member 객체를 넘겨줌
 		memberService.updateMphone(userDetails.getMember());
-
 	}
 
-	@PutMapping("/updateMaddress")
+	// 주소 수정
+	@PutMapping("/mypage/updateMaddress")
 	public void updateMaddress(String mid, String maddress, String mzipcode) {
-		// 로그인한 유저의 정보를 얻기
+		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
+		// 매개변수로 입력받은 mid를 전달
+		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
+		// getMember()로 데이터에 접근이 가능해짐
 		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
-		// 로그인한 유저의 dto를 통해 해당 유저의 주소와 우편번호를 셋팅
+
+		// 새 주소와 우편번호를 각각 Member DTO의 maddress, mzipcode 필드 값으로 세팅
 		userDetails.getMember().setMaddress(maddress);
 		userDetails.getMember().setMzipcode(mzipcode);
-		// 로그인한 유저의 주소와 우편번호 변경을 서비스에서 처리하기 위해 서비스를 처리함
+
+		// 유저의 아이디와 새 주소, 우편번호를 DB에 저장하도록 memberService의 updateMaddress() 호출
+		// 매개변수로 그 값들을 넘겨줌
 		memberService.updateMaddress(userDetails.getMember().getMid(), userDetails.getMember().getMaddress(),
 				userDetails.getMember().getMzipcode());
 	}
 
 	// 회원 탈퇴
+	// DB에서 데이터 삭제가 아닌 menabled를 false로 바꾸는 것으로 탈퇴 처리
+	// 따라서 delete가 아닌 put을 사용
 	@PutMapping("/deleteMember")
 	public void deleteMember(@RequestParam String mid) {
-		// 1. 매개변수로 전달받은 mid가 실제 우리 DB에 있는지 검사
-		Member member = memberService.selectByMid(mid);
-
-		// 1-1. 있으면?
-		// 해당 Member 객체의 menabled 값을 false로 변환하는 코드
-		memberService.deleteByMid(member.getMid());
+		// 해당 mid의 menabled 값을 false로 수정하는 memberService의 deleteByMid() 호출
+		// 매개변수로 mid를 넘겨줌
+		memberService.deleteByMid(mid);
 	}
 
-	/* 1:1 문의 */
-	// 문의 등록하기
-	@PostMapping("/createInquiry")
+	// 문의 등록
+	@PostMapping("/mypage/createInquiry")
 	public Inquiry createInquiry(Inquiry inquiry) {
+		// 첨부파일이 들어있는지 확인
 		if (inquiry.getIattach() != null && !inquiry.getIattach().isEmpty()) {
+			// 첨부파일이 포함된 경우
+			// MultipartFile 객체에 첨부파일 데이터를 저장
 			MultipartFile mf = inquiry.getIattach();
+			// Inquiry 객체의 iattachoname, Iattachtype 필드 값으로 각각 파일명과 확장자명을 저장
 			inquiry.setIattachoname(mf.getOriginalFilename());
 			inquiry.setIattachtype(mf.getContentType());
+			// Inquiry 객체의 iattachdata 필드에 바이너리 데이터를 저장
 			try {
 				inquiry.setIattachdata(mf.getBytes());
 			} catch (IOException e) {
 			}
 		}
+
+		// Inquiry를 저장하도록 memberService의 insertInquiry() 호출
+		// 매개변수로 Inquiry 객체를 넘겨줌
 		memberService.insertInquiry(inquiry);
+
+		// JSON 응답에는 바이너리 데이터가 출력되지 않음
+		// 따라서 해당 필드값을 null로 변경 후 응답을 반환
 		inquiry.setIattach(null);
 		inquiry.setIattachdata(null);
+
 		return inquiry;
 	}
-	
+
+	// 문의 목록 가져오기 (추후 권한을 매개변수로 받아서 조건에 따라 다른 값을 리턴할 예정)
 	@GetMapping("/getInquiryList")
 	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo) {
 		int totalRows = memberService.getCount();
@@ -239,29 +268,47 @@ public class MemberController {
 		map.put("Pager", pager);
 		return map;
 	}
-	
+
+	// 문의 상세 보기
 	@GetMapping("/readInquiry/{ino}")
-	public Inquiry readInquiry(@PathVariable int ino){
+	public Inquiry readInquiry(@PathVariable int ino) {
+		// 전달받은 ino와 일치하는 Inquiry 객체를 DB에서 가져오기
 		Inquiry inquiry = memberService.getInquiry(ino);
+
 		inquiry.setIattachdata(null);
-		return inquiry ;
+
+		return inquiry;
 	}
-	
+
+	// 문의 수정
 	@PutMapping("/updateInquiry")
 	public Inquiry updateInquiry(Inquiry inquiry) {
+		// 첨부파일이 포함되어 있는지 검사
 		if (inquiry.getIattach() != null && !inquiry.getIattach().isEmpty()) {
+			// 첨부파일이 포함된 경우
+			// MultipartFile 객체에 첨부파일 데이터를 저장
 			MultipartFile mf = inquiry.getIattach();
 
+			// Inquiry 객체의 iattachoname, Iattachtype 필드 값으로 각각 파일명과 확장자명을 저장
 			inquiry.setIattachoname(mf.getOriginalFilename());
 			inquiry.setIattachtype(mf.getContentType());
+
+			// Inquiry 객체의 iattachdata 필드에 바이너리 데이터를 저장
 			try {
 				inquiry.setIattachdata(mf.getBytes());
 			} catch (IOException e) {
 			}
 		}
+
+		// 변경된 값으로 Inquiry를 저장하도록 memberService의 updateInquiry() 호출
+		// 매개변수로 Inquiry 객체를 넘겨줌
 		memberService.updateInquiry(inquiry);
+
+		// JSON 응답에는 바이너리 데이터가 출력되지 않음
+		// 따라서 해당 필드값을 null로 변경 후 응답을 반환
 		inquiry.setIattach(null);
 		inquiry.setIattachdata(null);
+		
 		return inquiry;
 	}
 
