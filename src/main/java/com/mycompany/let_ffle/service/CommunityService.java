@@ -1,10 +1,13 @@
 package com.mycompany.let_ffle.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dto.Board;
+import com.mycompany.let_ffle.dto.Pager;
 
 @Service
 public class CommunityService {
@@ -25,6 +28,14 @@ public class CommunityService {
 
 	public Board readBoard(int bno) {
 		return boardDao.readBoard(bno);
+	}
+
+	public int BoardCount() {
+		return boardDao.BoardCount();
+	}
+
+	public List<Board> SelectByBoardList(Pager pager) {
+		return boardDao.SelectByBoardList(pager);
 	}
 
 	

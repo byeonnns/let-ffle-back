@@ -40,5 +40,27 @@
 		from board
 		where bno =#{bno}
 	</select>
+	
+	<select id="BoardCount" resultType="int">
+		select
+		count(*)
+		from board
+	</select>
+	
+	<select id="SelectByBoardList" parameterType="pager" resultType="Board">
+		<![CDATA[
+      select rnum, bno, btitle, bcontent,bcreatedat, bupdatedat
+      from (
+          select rownum as rnum, bno,btitle, bcontent, bcreatedat, bupdatedat
+          from (
+              select bno, btitle, bcontent,bcreatedat, bupdatedat
+              from board
+              order by bno desc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+      ]]>
+	</select>
 
 </mapper>    

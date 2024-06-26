@@ -1,6 +1,8 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Comment;
-import com.mycompany.let_ffle.security.LetffleUserDetails;
-import com.mycompany.let_ffle.security.LetffleUserDetailsService;
+import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.service.CommunityService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +31,14 @@ public class CommunityController {
 	private CommunityService communityService;
 
 	@GetMapping("/getBoardList")
-	public Map<String, Object> getBoardList() {
-		
-		// 페이저 필요
-		
-		// 페이저에 게시글 객체 담기
-		
-		return null;
+	public Map<String, Object> getBoardList(@RequestParam(defaultValue = "1") int pageNo) {
+		int totalRows = communityService.BoardCount();
+		Pager pager = new Pager (5,5, totalRows, pageNo);
+		List<Board> list = communityService.SelectByBoardList(pager);
+		Map<String, Object> map = new HashMap<>();
+		map.put("Board", list);
+		map.put("Pager", pager);
+		return map;
 	}
 	
 	@PostMapping("/createBoard")
