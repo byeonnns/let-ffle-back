@@ -13,5 +13,7 @@ public interface NoticeDao {
 	
 	/* 공지사항 */
 	public int insertNotice(Notice notice);
+
+	public void updateNotice(Notice notice);
 	
 }

@@ -20,4 +20,10 @@ public class NoticeService {
 		noticeDao.insertNotice(notice);		
 	}
 
+	public void updateNotice(Notice notice) {
+		
+		noticeDao.updateNotice(notice);
+		
+	}
+
 }

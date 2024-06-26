@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.let_ffle.dao.NoticeDao">
 
+	<update id="updateNotice" parameterType="Notice">
+		update Notice
+		set ntitle=#{ntitle}, ncontent=#{ncontent},
+		nmaincategory=#{nmaincategory}, nsubcategory=#{nsubcategory},
+		nattachoname=#{nattachoname},
+		nattachtype=#{nattachtype},nattachdata=#{nattachdata},
+		nupdatedat=systimestamp
+		where nno=#{nno}
+	</update>
 
 </mapper>    
