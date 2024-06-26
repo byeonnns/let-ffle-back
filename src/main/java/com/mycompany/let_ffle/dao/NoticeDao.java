@@ -15,5 +15,13 @@ public interface NoticeDao {
 	public int insertNotice(Notice notice);
 
 	public void updateNotice(Notice notice);
+
+	public void deleteNotice(Notice notice);
+
+	public int noticeCount();
+
+	public List<Notice> selectByPage(Pager pager);
+
+	public Notice selectByNno(int nno);
 	
 }

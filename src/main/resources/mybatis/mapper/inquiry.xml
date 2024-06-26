@@ -38,6 +38,7 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
 
 	<select id="InquiryCount" resultType="int">
 		select count(*)
+		from inquiry
 	</select>
 
 	<select id="readInquiry" parameterType="int"

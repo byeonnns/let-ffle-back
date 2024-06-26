@@ -14,16 +14,36 @@ import com.mycompany.let_ffle.dto.Pager;
 public class NoticeService {
 	@Autowired
 	private NoticeDao noticeDao;
-	
+
 	/* 공지사항 */
 	public void insertNotice(Notice notice) {
-		noticeDao.insertNotice(notice);		
+		noticeDao.insertNotice(notice);
 	}
 
 	public void updateNotice(Notice notice) {
-		
+
 		noticeDao.updateNotice(notice);
-		
+
+	}
+
+	public void deleteNotice(Notice notice) {
+
+		noticeDao.deleteNotice(notice);
+	}
+
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return noticeDao.noticeCount();
+	}
+
+	public List<Notice> getNoticeList(Pager pager) {
+		// TODO Auto-generated method stub
+		return noticeDao.selectByPage(pager);
+	}
+
+	public Notice readNotice(int nno) {
+		// TODO Auto-generated method stub
+		return noticeDao.selectByNno(nno);
 	}
 
 }

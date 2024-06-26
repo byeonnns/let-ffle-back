@@ -1,15 +1,23 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.let_ffle.dto.Notice;
+import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.service.NoticeService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +28,19 @@ import lombok.extern.slf4j.Slf4j;
 public class NoticeController {
 	@Autowired
 	private NoticeService noticeService;
+
+	// 페이저
+	@GetMapping("/getNoticeList")
+	public Map<String, Object> getNoticeList(@RequestParam(defaultValue = "1") int pageNo) {
+		int totalRows = noticeService.getCount();
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<Notice> list = noticeService.getNoticeList(pager);
+		Map<String, Object> map = new HashMap<>();
+		map.put("Notice", list);
+		map.put("Pager", pager);
+
+		return map;
+	}
 
 	// 공지사항 등록
 	@PostMapping("/createNotice")
@@ -53,9 +74,17 @@ public class NoticeController {
 		return notice;
 	}
 
+	@GetMapping("/readNotice/{nno}")
+	public Notice readNotice(@PathVariable int nno) {
+		Notice notice = noticeService.readNotice(nno);
+
+		notice.setNattachdata(null);
+		return notice;
+	}
+
 	@PutMapping("/updateNotice")
 	public Notice updateNotice(Notice notice) {
-		if (notice.getNattach() != null && notice.getNattach().isEmpty()) {
+		if (notice.getNattach() != null && !notice.getNattach().isEmpty()) {
 			MultipartFile mf = notice.getNattach();
 			notice.setNattachoname(mf.getOriginalFilename());
 			notice.setNattachtype(mf.getContentType());
@@ -66,12 +95,16 @@ public class NoticeController {
 			}
 		}
 		noticeService.updateNotice(notice);
-		
+
 		notice.setNattach(null);
 		notice.setNattachdata(null);
 
-		
 		return notice;
 	}
 
+	@DeleteMapping("/deleteNotice")
+	public Notice deleteNotice(Notice notice) {
+		noticeService.deleteNotice(notice);
+		return notice;
+	}
 }
