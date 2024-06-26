@@ -3,6 +3,36 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.BoardDao">
 
+	<insert id="insertBoard" parameterType="board">
+		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
+			SELECT
+			SEQ_BNO.NEXTVAL from dual
+		</selectKey>
+		insert into board (bno, mid, btitle, bcontent, bcategory,
+		battachoname, battachtype, battachdata, bhitcount, bcreatedat,
+		benabled)
+		values
+		(#{bno},#{mid},#{btitle},#{bcontent},#{bcategory},#{battachoname},#{battachtype},#{battachdata},#{bhitcount},systimestamp,#{benabled})
+	</insert>
 
+	<update id="updateBoard" parameterType="board">
+		update board
+		set
+		btitle=#{btitle}, bcontent=#{bcontent},
+		bcategory=#{bcategory},
+		bupdatedat=systimestamp
+		<if test="battachdata!=null">
+			, battachoname=#{battachoname}
+			, battachtype=#{battachtype}
+			, battachdata=#{battachdata}
+		</if>
+		where bno=#{bno}
+	</update>
+	
+	<update id="enabledBoard" parameterType="int">
+		update board
+		set benabled=0
+		where bno=#{bno}
+	</update>
 
 </mapper>    
