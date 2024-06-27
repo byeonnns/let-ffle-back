@@ -31,6 +31,7 @@ public class CommunityService {
 	}
 
 	public Board readBoard(int bno) {
+		boardDao.updatehitCount(bno);
 		return boardDao.readBoard(bno);
 	}
 

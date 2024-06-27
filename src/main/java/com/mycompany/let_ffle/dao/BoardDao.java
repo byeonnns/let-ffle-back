@@ -22,6 +22,9 @@ public interface BoardDao {
 
 	public List<Board> SelectByBoardList(Pager pager);
 
+	public void updatehitCount(int bno);
+	
+
 
 
 	

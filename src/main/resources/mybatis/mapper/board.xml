@@ -62,5 +62,11 @@
       where rnum >= #{startRowNo}
       ]]>
 	</select>
+	
+	<update id="updatehitCount" parameterType="int">
+		update board
+		set bhitcount = bhitcount + 1
+		where bno = #{bno}
+	</update>
 
 </mapper>    

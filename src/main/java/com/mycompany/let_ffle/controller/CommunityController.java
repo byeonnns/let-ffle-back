@@ -130,5 +130,6 @@ public class CommunityController {
 		// 댓글 완전 삭제가 아닌 cenabled의 값을 바꿔주기
 		communityService.deleteComment(cno);
 	}
+	
 
 }
