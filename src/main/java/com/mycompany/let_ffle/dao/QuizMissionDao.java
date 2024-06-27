@@ -10,6 +10,6 @@ public interface QuizMissionDao {
 
 	public int insertQuizMisson(QuizMission quizMission);
 
-	public Raffle selectByRno(int rno);
+	public QuizMission selectByRno(int rno);
 
 }

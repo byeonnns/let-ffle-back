@@ -49,15 +49,39 @@
 		set maddress = #{maddress}, mzipcode = #{mzipcode}
 		where mid = #{mid}
 	</update>
-	
-	
+
+
 	<!-- 여기부터 입니둥 -->
 	<select id="login" parameterType="String">
 		select *
 		from member
 		where member.mid = #{mid} , member.mpassword = #{mpassword}
-		
+
 	</select>
-	
+
+	<select id="getMyBoardCount" parameterType="String" resultType="int">
+		select count(*)
+		from board
+		where mid=#{mid} and benabled=1
+	</select>
+
+	<select id="getMyBoardList" parameterType="Map" resultType="Board">
+      <![CDATA[
+      select rnum,bno, btitle, bcreatedat,mid
+      from (
+          select rownum as rnum, bno, btitle, bcreatedat,mid
+          from (
+              select b.bno, b.btitle, b.bcreatedat, b.mid
+              from member m 
+              inner join board b on m.mid = b.mid
+              where m.mid=#{mid} 
+              order by b.bno desc
+          )
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
+      ]]>
+	</select>
+
 
 </mapper>    

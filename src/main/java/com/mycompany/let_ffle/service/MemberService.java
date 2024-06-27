@@ -8,11 +8,10 @@ import org.springframework.stereotype.Service;
 import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
+import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
-import com.mycompany.let_ffle.dto.Raffle;
-import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 @Service
@@ -91,6 +90,15 @@ public class MemberService {
 		
 		inquiryDao.updateInquiryReply(ino, ireply);
 	}
+	public List<Board> getMyBoardList(Pager pager, String mid){
+		
+		return memberDao.getMyBoardList(pager, mid);
+	}
+
+	public int getMyBoardCount(String mid) {
+		
+		return memberDao.getMyBoardCount(mid);
+	}
 
 	public int getLikeListCount(String mid) {
 		return likeListDao.likeListCount(mid);
@@ -100,8 +108,5 @@ public class MemberService {
 		return likeListDao.selectLikeListByMid(pager, mid);
 	}
 
-
-
-	
 
 }

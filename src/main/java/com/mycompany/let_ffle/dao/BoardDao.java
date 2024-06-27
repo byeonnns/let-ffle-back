@@ -22,6 +22,8 @@ public interface BoardDao {
 
 	public List<Board> SelectByBoardList(Pager pager);
 
+
+
 	
 	
 
