@@ -31,23 +31,24 @@ public class CommunityService {
 	}
 
 	public Board readBoard(int bno) {
+		// 게시글 조회 요청이 들어오면 조회수를 1 증가시킴
 		boardDao.updatehitCount(bno);
 		return boardDao.readBoard(bno);
 	}
 
-	public int BoardCount() {
-		return boardDao.BoardCount();
+	public int boardCount() {
+		return boardDao.boardCount();
 	}
 
-	public List<Board> SelectByBoardList(Pager pager) {
-		return boardDao.SelectByBoardList(pager);
+	public List<Board> selectByBoardList(Pager pager) {
+		return boardDao.selectByBoardList(pager);
 	}
 
 	
 	//댓글
-	public int getCommentCount() {
+	public int getCommentCount(int bno) {
 
-		return boardCommentDao.commentCount();
+		return boardCommentDao.commentCount(bno);
 	}
 
 	public List<BoardComment> getCommentList(Pager pager, int bno) {

@@ -18,9 +18,9 @@ public interface BoardDao {
 
 	public Board readBoard(int bno);
 
-	public int BoardCount();
+	public int boardCount();
 
-	public List<Board> SelectByBoardList(Pager pager);
+	public List<Board> selectByBoardList(Pager pager);
 
 	public void updatehitCount(int bno);
 

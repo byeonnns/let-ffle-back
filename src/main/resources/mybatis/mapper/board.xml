@@ -42,7 +42,7 @@
 		where bno =#{bno}
 	</select>
 
-	<select id="BoardCount" resultType="int">
+	<select id="boardCount" resultType="int">
 		select
 		count(*)
 		from board
@@ -52,7 +52,7 @@
 	<!-- 안쪽 select문 board의 bno를 기준으로 내림차순으로 조회
 		 중간쪽 select문 내부 쿼리의 rownum을 사용해 고유 번호를 부여 후 rownum이 #{endRowNo}보다 작은 경우 페이징을 구현하기 위함
 		 바깥쪽 select문 rownum을 사용해 #{startRowNo}보다 큰 경우 페이징을 구현하기 위함  -->
-	<select id="SelectByBoardList" parameterType="pager"
+	<select id="selectByBoardList" parameterType="pager"
 		resultType="Board">
 		<![CDATA[
       select rnum, bno, btitle, bcontent,bcreatedat, bupdatedat

@@ -12,7 +12,7 @@ import com.mycompany.let_ffle.dto.Pager;
 public interface BoardCommentDao {
 	
 	//게시물에 등록된 댓글갯수
-	public int commentCount();
+	public int commentCount(int bno);
 
 	public List<BoardComment> selectByCommentList(Pager pager, int bno);
 

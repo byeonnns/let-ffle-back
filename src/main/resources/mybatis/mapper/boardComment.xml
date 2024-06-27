@@ -38,7 +38,7 @@
 	<select id="commentCount" resultType="int">
 		select count (*)
 		from boardcomment
-		where cenabled = 1
+		where cenabled = 1 AND bno = #{bno}
 	</select>
 
 	<update id="deleteComment" parameterType="int">
