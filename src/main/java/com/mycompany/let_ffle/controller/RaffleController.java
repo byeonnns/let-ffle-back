@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,14 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.QuizMission;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
-import com.mycompany.let_ffle.service.MemberService;
 import com.mycompany.let_ffle.service.RaffleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +36,6 @@ public class RaffleController {
 
 	@Autowired
 	private RaffleService raffleService;
-
-	
 
 	@PostMapping("/createRaffle")
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
@@ -158,17 +156,26 @@ public class RaffleController {
 
 	@PostMapping("/createRaffleDetail")
 	public RaffleDetail createRaffleDetail(RaffleDetail raffleDetail) {
-		// raffleDetail(dto)를 매개변수로 받아 raffleService 메소드를 호출해 raffleDetail객체를 데이터 베이스에 저장하도록 처리
+		// raffleDetail(dto)를 매개변수로 받아 raffleService 메소드를 호출해 raffleDetail객체를 데이터 베이스에
+		// 저장하도록 처리
 		raffleService.insertRaffleDetail(raffleDetail);
 		return null;
 	}
-	
-	
+
 	@GetMapping("/readRaffleDetail")
 	public RaffleDetail raffleDetail(RaffleDetail raffleDetail) {
-		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail 객체로 받아 리턴해줌
+		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail
+		// 객체로 받아 리턴해줌
 		raffleDetail = raffleService.readRaffleDetail(raffleDetail);
 		return raffleDetail;
+	}
+
+	// 마이페이지 -> 응모내역 조회 메소드
+	@GetMapping("/getRaffleDetailList")
+	public List<RaffleDetail> getRaffleDetailList(RaffleDetail raffleDetail, Authentication authentication) {
+		List<RaffleDetail> list = raffleService.getRaffleDetailList(raffleDetail.getMid(),
+				authentication.getAuthorities().iterator().next().toString());
+		return list;
 	}
 
 	@PostMapping("/createWinner")
@@ -177,5 +184,24 @@ public class RaffleController {
 		raffleService.insertWinner(winner);
 		return null;
 	}
-	
+
+	@GetMapping("/readWinnerDetail")
+	public Winner readWinnerDetail(int rno) {
+		Winner winner = raffleService.readWinnerDetail(rno);
+		return winner;
+	}
+
+	// 마이페이지 -> 당첨내역 조회 메소드
+	@GetMapping("/getWinnerDetailList")
+	public List<Winner> getWinnerDetailList(Authentication authentication) {
+		List<Winner> list = raffleService.getWinnerDetailList(authentication.getName(),
+				authentication.getAuthorities().iterator().next().toString());
+		return list;
+	}
+
+	@PutMapping("/updateRdtMissionCleared")
+	public void updateRdtMissionCleared(int rno, Authentication authentication, String manswer) {
+		raffleService.updateRdtMissionCleared(rno,authentication.getName(), manswer);
+		
+	}
 }

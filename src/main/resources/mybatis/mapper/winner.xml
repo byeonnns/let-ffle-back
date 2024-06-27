@@ -8,5 +8,19 @@
 		(rno, mid)
 		values (#{rno} , #{mid})
 	</insert>
+	
+	<select id="selectWinnerDetail" parameterType="int" resultType="Winner">
+		select *
+		from winner
+		where rno = #{rno}
+	</select>
+	
+	<select id="selectWinnerDetailList" parameterType="Map" resultType="Winner">
+		select *
+		from winner
+		<if test="role == 'ROLE_USER'">
+		where mid = #{mid}
+		</if>
+	</select>
 
 </mapper>    

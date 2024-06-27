@@ -9,4 +9,12 @@
 		insert into quizMission (rno, qcontent, qoption1, qoption2, qoption3, qoption4, qanswer)
 		values (#{rno},#{qcontent},#{qoption1},#{qoption2},#{qoption3},#{qoption4}, #{qanswer})
 	</insert>
+	
+	<select id="selectByRno" parameterType="int" resultType="QuizMission">
+		select *
+		from quizMission
+		where rno = #{rno}
+	</select>
+	
+	
 </mapper>
