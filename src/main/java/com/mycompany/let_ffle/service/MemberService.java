@@ -76,8 +76,14 @@ public class MemberService {
 	public Inquiry getInquiry(int ino) {	
 		return inquiryDao.readInquiry(ino);
 	}
+	//문의 수정
 	public int updateInquiry(Inquiry inquiry) {
 		return inquiryDao.updateInquiry(inquiry);
+	}
+	//문의 답변 등록 해주기
+	public void updateInquiryReply(int ino, String ireply) {
+		
+		inquiryDao.updateInquiryReply(ino, ireply);
 	}
 
 
