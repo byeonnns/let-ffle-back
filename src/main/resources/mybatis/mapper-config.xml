@@ -15,7 +15,7 @@
 	<typeAliases>
 		<typeAlias alias="BerryHistory" type="com.mycompany.let_ffle.dto.BerryHistory" />
 		<typeAlias alias="Board" type="com.mycompany.let_ffle.dto.Board" />
-		<typeAlias alias="Comment" type="com.mycompany.let_ffle.dto.Comment" />
+		<typeAlias alias="BoardComment" type="com.mycompany.let_ffle.dto.BoardComment" />
 		<typeAlias alias="Inquiry" type="com.mycompany.let_ffle.dto.Inquiry" />
 		<typeAlias alias="LikeList" type="com.mycompany.let_ffle.dto.LikeList" />
 		<typeAlias alias="Member" type="com.mycompany.let_ffle.dto.Member" />

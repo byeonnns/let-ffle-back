@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycompany.let_ffle.dao.BoardCommentDao">
+<!--중첩구문에서 innerjoin -->
+	<select id="selectByCommentList" parameterType="Map"
+		resultType="boardcomment">
+       <![CDATA[
+      select rnum, mid, ccontent, ccreatedat, mnickname
+      from (
+          select rownum as rnum, mid, ccontent, ccreatedat, mnickname
+          from (
+              select  bc.mid, bc.ccontent, bc.ccreatedat, m.mnickname
+              from boardcomment bc
+              inner join member m on bc.mid = m.mid
+              where bno = #{bno}
+              order by bno desc
+          )
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
+      ]]>
+	</select>
+
+<!--	<select id="selectByCommentList" resultType="Pager">
+		select bc.ccontent, bc.ccreatedat, m.mnickname
+		from boardcomment as bc, member as m
+		where cno=#{cno} and
+		 bc.mid = m.mid
+	</select>-->
+	
+	<insert id="insertComment" parameterType="BoardComment">
+		<selectKey keyProperty="cno" resultType="int" order="BEFORE">
+			SELECT SEQ_CNO.NEXTVAL FROM dual
+		</selectKey> insert into
+		boardcomment (cno,bno,mid,ccontent,ccreatedat,cenabled) VALUES
+		(#{cno},#{bno},#{mid},#{ccontent},systimestamp,1) </insert>
+
+	<select id="commentCount" resultType="int">
+		select count (*)
+		from boardcomment
+	</select>
+
+	<update id="deleteComment" parameterType="int">
+		update boardcomment
+		set cenabled = 0
+		where cno=#{cno}
+	</update>
+
+
+</mapper>    

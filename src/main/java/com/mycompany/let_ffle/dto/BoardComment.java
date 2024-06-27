@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 @Data
-public class Comment {
+public class BoardComment {
 	private int cno;
 	private int bno;
 	private String mid;
