@@ -168,6 +168,18 @@ public class MemberController {
 		map.put("pager", pager);
 		return map;
 	}
+	
+	// 마이페이지 -> 내가 작성한 댓글 목록 조회
+	@GetMapping("/boardCommentList")
+	public Map<String, Object> getBoardCommentList(@RequestParam(defaultValue = "1")int pageNo, Authentication authentication) {
+		int totalRows = memberService.getBoardCommentCount(authentication.getName());
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<Board> list = memberService.getBoardTitleList(pager, authentication.getName());
+		Map<String, Object> map = new HashMap<>();
+		map.put("total", list);
+		map.put("pager", pager);
+		return map;
+	}
 
 	// 마이페이지 -> 비밀번호 수정
 	@PutMapping("/mypage/updateMpassword")

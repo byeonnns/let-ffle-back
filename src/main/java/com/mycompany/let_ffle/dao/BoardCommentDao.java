@@ -13,12 +13,11 @@ public interface BoardCommentDao {
 
 	public int commentCount();
 
-	public List<BoardComment> selectByCommentList( Pager pager , int bno);
+	public List<BoardComment> selectByCommentList(Pager pager, int bno);
 
 	public void deleteComment(int cno);
 
 	public void insertComment(BoardComment boardComment);
 
-
-
+	public int getBoardCommentCount(String mid);
 }

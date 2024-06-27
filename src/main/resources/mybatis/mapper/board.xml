@@ -28,26 +28,28 @@
 		</if>
 		where bno=#{bno}
 	</update>
-	
+
 	<update id="enabledBoard" parameterType="int">
 		update board
-		set benabled=0
+		set
+		benabled=0
 		where bno=#{bno}
 	</update>
-	
+
 	<select id="readBoard" parameterType="int" resultType="Board">
 		select *
 		from board
 		where bno =#{bno}
 	</select>
-	
+
 	<select id="BoardCount" resultType="int">
 		select
 		count(*)
 		from board
 	</select>
-	
-	<select id="SelectByBoardList" parameterType="pager" resultType="Board">
+
+	<select id="SelectByBoardList" parameterType="pager"
+		resultType="Board">
 		<![CDATA[
       select rnum, bno, btitle, bcontent,bcreatedat, bupdatedat
       from (
@@ -62,11 +64,30 @@
       where rnum >= #{startRowNo}
       ]]>
 	</select>
-	
+
 	<update id="updatehitCount" parameterType="int">
 		update board
-		set bhitcount = bhitcount + 1
+		set
+		bhitcount = bhitcount + 1
 		where bno = #{bno}
 	</update>
+
+	<select id="getBoardTitleList" parameterType="Map"
+		resultType="Board">
+		<![CDATA[
+      select rnum, bno, btitle, bcreatedat
+      from (
+          select rownum as rnum, bno, btitle, bcreatedat
+          from (
+				select DISTINCT b.bno, b.btitle, b.bcreatedat
+				from board b INNER JOIN boardComment bc on b.bno = bc.bno
+				where bc.mid = #{mid} AND bc.cenabled = 1   
+				order by b.bno desc 
+          )
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
+      ]]>
+	</select>
 
 </mapper>    

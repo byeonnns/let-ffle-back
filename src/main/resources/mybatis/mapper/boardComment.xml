@@ -38,6 +38,7 @@
 	<select id="commentCount" resultType="int">
 		select count (*)
 		from boardcomment
+		where cenabled = 1
 	</select>
 
 	<update id="deleteComment" parameterType="int">
@@ -45,6 +46,12 @@
 		set cenabled = 0
 		where cno=#{cno}
 	</update>
+	
+	<select id="getBoardCommentCount" parameterType="String" resultType="int">
+		select count(*)
+		from boardComment
+		where mid = #{mid} AND cenabled = 1
+	</select>
 
 
 </mapper>    

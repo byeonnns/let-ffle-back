@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mycompany.let_ffle.dao.BoardCommentDao;
+import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
@@ -24,6 +26,12 @@ public class MemberService {
 	
 	@Autowired
 	private LikeListDao likeListDao;
+	
+	@Autowired
+	private BoardCommentDao boardCommentDao;
+	
+	@Autowired
+	private BoardDao boardDao;
 
 	public void join(Member member) {
 
@@ -106,6 +114,14 @@ public class MemberService {
 	
 	public List<RaffleRequest> getLikeList(Pager pager, String mid) {
 		return likeListDao.selectLikeListByMid(pager, mid);
+	}
+
+	public int getBoardCommentCount(String mid) {
+		return boardCommentDao.getBoardCommentCount(mid);
+	}
+
+	public List<Board> getBoardTitleList(Pager pager, String mid) {
+		return boardDao.getBoardTitleList(pager, mid);
 	}
 
 

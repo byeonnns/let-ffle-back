@@ -23,6 +23,9 @@ public interface BoardDao {
 	public List<Board> SelectByBoardList(Pager pager);
 
 	public void updatehitCount(int bno);
+
+	public List<Board> getBoardTitleList(Pager pager, String mid);
+	
 	
 
 
