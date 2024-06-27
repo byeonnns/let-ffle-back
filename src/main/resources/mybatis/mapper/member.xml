@@ -64,7 +64,14 @@
 		from board
 		where mid=#{mid} and benabled=1
 	</select>
-
+<!--마이페이지에 내 게시물 작성 가져오기
+	페이징처리 조회 때문에 중첩구문에 inner join 사용
+	외부 커리 처음 select 부분 최종 결과를 반환하여 pager.startrownum 행만 필터링한다.
+	중간 쿼리 두번쨰 select 부분 pager.endRownum 이하인 행만 선택하여 필터링한다.
+	내부 커리 inner join 이 있는 부분 
+	먼저 Board 와 Member에서 공통인 나의 mid를 가져와야 하기 때문에 inner join 사용
+	mid가 특정 값과 일치 하고, 삭제되지 않는 행만 가져와서 내림차순으로 정렬하는 방식으로 사용하였다.
+-->
 	<select id="getMyBoardList" parameterType="Map" resultType="Board">
       <![CDATA[
       select rnum,bno, btitle, bcreatedat,mid

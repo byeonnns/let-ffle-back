@@ -143,11 +143,15 @@ public class MemberController {
 		return member;
 
 	}
+	//마이페이지 내가쓴 게시물 
 	@GetMapping("/myBoardList")
 	public Map<String, Object> getMyBoardList(Authentication authentication, @RequestParam(defaultValue="1") int pageNo) {
+		// 아이디에 부합한 값이 나타나도록 그값에 일치하는 것들을 가져오기위해서 authentication.getName 사용하였다. 
 		int totalRows = memberService.getMyBoardCount(authentication.getName());
+		//페이저 사용을 위해서 페이저의 행과 열에 맞춰서 나타냄
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		
+		//board에서 작성한 나의 리스트들을 가져오기 위해서 작성한 것이다.
 		List<Board> list = memberService.getMyBoardList(pager, authentication.getName());
 		
 		Map<String, Object> map = new HashMap<>();

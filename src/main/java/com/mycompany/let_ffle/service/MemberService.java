@@ -98,28 +98,33 @@ public class MemberService {
 		
 		inquiryDao.updateInquiryReply(ino, ireply);
 	}
+	
+	//마이페이지 게시물 가져오기
 	public List<Board> getMyBoardList(Pager pager, String mid){
 		
 		return memberDao.getMyBoardList(pager, mid);
 	}
-
+	
+	//마이페이지 내가 작성한 게시물 갯수
 	public int getMyBoardCount(String mid) {
 		
 		return memberDao.getMyBoardCount(mid);
 	}
-
+	
+	//마이페이지 내가찜한 리스트의 갯수
 	public int getLikeListCount(String mid) {
 		return likeListDao.likeListCount(mid);
 	}
-	
+	//마이페이지 내가찜한 리스트 가져오기
 	public List<RaffleRequest> getLikeList(Pager pager, String mid) {
 		return likeListDao.selectLikeListByMid(pager, mid);
 	}
-
+	
+	//마이페이지 내가 쓴 댓글 갯수
 	public int getBoardCommentCount(String mid) {
 		return boardCommentDao.getBoardCommentCount(mid);
 	}
-
+	//마이페이지 내가 쓴 댓글 가져오기 
 	public List<Board> getBoardTitleList(Pager pager, String mid) {
 		return boardDao.getBoardTitleList(pager, mid);
 	}

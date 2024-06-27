@@ -104,7 +104,7 @@ public class CommunityController {
 		communityService.enabledBoard(board.getBno());
 		return null;
 	}
-
+	// 게시물에 작성된 댓글들을 가져오기
 	@GetMapping("/getCommentList")
 	public Map<String, Object> getCommentList(@RequestParam(defaultValue = "1") int pageNo, int bno) {
 		int totalRows = communityService.getCommentCount();
@@ -116,7 +116,7 @@ public class CommunityController {
 
 		return map;
 	}
-
+	//게시물에 댓글 작성하기
 	@PostMapping("/createComment")
 	public BoardComment createComment(BoardComment boardComment, Authentication authentication) {
 		

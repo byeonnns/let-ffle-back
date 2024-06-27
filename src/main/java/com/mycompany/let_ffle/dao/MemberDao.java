@@ -33,8 +33,9 @@ public interface MemberDao {
 	// 여기입니둥
 	void login(Member member, String mid, String mpassword);
 
+	//마이페이지 내 게시물 사용하는 것들을 페이져하기위함과 나의 아이디에 맞춰서 가져오기 때문에 pager와 mid를 선언.
 	public List<Board> getMyBoardList(Pager pager, String mid);
-
+	//마이페이지 내가 쓴 게시물의 갯수
 	int getMyBoardCount(String mid);
 
 }
