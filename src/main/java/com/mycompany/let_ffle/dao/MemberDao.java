@@ -3,7 +3,9 @@ package com.mycompany.let_ffle.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
@@ -31,5 +33,8 @@ public interface MemberDao {
 	// 여기입니둥
 	void login(Member member, String mid, String mpassword);
 
-	
+	public List<Board> getMyBoardList(Pager pager, String mid);
+
+	int getMyBoardCount(String mid);
+
 }

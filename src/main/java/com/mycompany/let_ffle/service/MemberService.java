@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.MemberDao;
+import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
-import com.mycompany.let_ffle.dto.RaffleDetail;
 
 @Service
 public class MemberService {
@@ -19,6 +20,8 @@ public class MemberService {
 	
 	@Autowired
 	private InquiryDao inquiryDao;
+	@Autowired
+	private BoardDao boardDao;
 
 	public void join(Member member) {
 
@@ -84,6 +87,15 @@ public class MemberService {
 	public void updateInquiryReply(int ino, String ireply) {
 		
 		inquiryDao.updateInquiryReply(ino, ireply);
+	}
+	public List<Board> getMyBoardList(Pager pager, String mid){
+		
+		return memberDao.getMyBoardList(pager, mid);
+	}
+
+	public int getMyBoardCount(String mid) {
+		
+		return memberDao.getMyBoardCount(mid);
 	}
 
 

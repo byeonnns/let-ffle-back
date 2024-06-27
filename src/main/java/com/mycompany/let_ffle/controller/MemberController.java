@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.let_ffle.dto.BerryHistory;
+import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
@@ -139,6 +139,19 @@ public class MemberController {
 		// JSON 응답을 반환
 		return member;
 
+	}
+	@GetMapping("/myBoardList")
+	public Map<String, Object> getMyBoardList(Authentication authentication, @RequestParam(defaultValue="1") int pageNo) {
+		int totalRows = memberService.getMyBoardCount(authentication.getName());
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		
+		List<Board> list = memberService.getMyBoardList(pager, authentication.getName());
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("board", list);
+		map.put("pager", pager);
+		return map;
 	}
 
 	// 마이페이지 -> 좋아요 목록 조회 메소드
