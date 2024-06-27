@@ -48,6 +48,10 @@
 		from board
 	</select>
 
+
+	<!-- 안쪽 select문 board의 bno를 기준으로 내림차순으로 조회
+		 중간쪽 select문 내부 쿼리의 rownum을 사용해 고유 번호를 부여 후 rownum이 #{endRowNo}보다 작은 경우 페이징을 구현하기 위함
+		 바깥쪽 select문 rownum을 사용해 #{startRowNo}보다 큰 경우 페이징을 구현하기 위함  -->
 	<select id="SelectByBoardList" parameterType="pager"
 		resultType="Board">
 		<![CDATA[
@@ -72,13 +76,20 @@
 		where bno = #{bno}
 	</update>
 
+
+	<!-- 
+	마이페이지에 내가 작성한 댓글 가져오기
+	가장 안쪽 select문 board테이블과 boardComment를 INNER JOIN(게시글 번호, 게시글 제목, 게시글 작성일자를 가져오기 위함) 중복을 제거한 후 댓글이 작성된 것만 조회
+	두번째 select문 게시글 번호, 게시글 제목, 게시글 작성일자를 각 행의 고유번호를 순차적으로 할당함
+	가장 바깥쪽 select문 pager.startRowNo을 필터링 후 조회함
+		   -->
 	<select id="getBoardTitleList" parameterType="Map"
 		resultType="Board">
 		<![CDATA[
       select rnum, bno, btitle, bcreatedat
       from (
           select rownum as rnum, bno, btitle, bcreatedat
-          from (
+          from ( 
 				select DISTINCT b.bno, b.btitle, b.bcreatedat
 				from board b INNER JOIN boardComment bc on b.bno = bc.bno
 				where bc.mid = #{mid} AND bc.cenabled = 1   

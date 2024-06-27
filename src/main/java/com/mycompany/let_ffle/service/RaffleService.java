@@ -100,15 +100,21 @@ public class RaffleService {
 		return winnerDao.selectWinnerDetailList(mid, role);
 	}
 
+	// 매개변수로 rno, mid, manswer(회원이 제출할 문제 답안) 받음
 	public void updateRdtMissionCleared(int rno, String mid, String manswer) {
+		// rno를 통해 raffle(dto)의 미션타입을 rMissionType 변수에 반환
 		String rMissionType = raffleDao.selectByRno(rno).getRmissiontype();
+		// 미션타입이 퀴즈미션이면 rno를 통해 quizMission(dto)의 qanswer(퀴즈의 정답)을 가져와 qanswer 변수에 반환
 		if(rMissionType.equals("quiz")) {
 			String qanswer = quizMissionDao.selectByRno(rno).getQanswer();
+			// 퀴즈 정답과 회원이 제출한 정답이 같으면 매개변수로 rno,mid,pass를 넘겨 데이터베이스 정보를 수정하도록함
 			if(qanswer.equals(manswer)) {
 				raffleDetailDao.updateRdtMissionCleard(rno, mid, "PASS");
+				// 정답을 틀릴 시 래플번호, 회원아이디, fail 정보를 넘겨 데이터베이스 정보를 수정하도록 함
 			} else {
 				raffleDetailDao.updateRdtMissionCleard(rno, mid, "FAIL");
 			}
+			// 미션타입이 time미션일 경우 
 		} else if(rMissionType.equals("time")){
 			
 		}

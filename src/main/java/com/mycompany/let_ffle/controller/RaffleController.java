@@ -193,14 +193,22 @@ public class RaffleController {
 
 	// 마이페이지 -> 당첨내역 조회 메소드
 	@GetMapping("/getWinnerDetailList")
+	// 매개변수로 authentication 받음
 	public List<Winner> getWinnerDetailList(Authentication authentication) {
+		// 당첨자들의 대한 목록들을 조회하기 위해(list) , 로그인한 유저의 이름과 유저의 권한을 raffleService로 요청 처리 보냄
 		List<Winner> list = raffleService.getWinnerDetailList(authentication.getName(),
+				// authentication.getAuthorities() 과 authentication.getAuthorities().iterator().next().toString())의 차이
+				// authentication.getAuthorities()은 권한이 ROLE_USER, ROLE_MANAGER, ROLE_ADMIN이 있을경우 3가지 권한 모두를 반환함 - 총 3개
+				// authentication.getAuthorities().iterator().next().toString())은 3가지 권한중에서 가장 첫번째 권한을 반환함 - 총 1개
 				authentication.getAuthorities().iterator().next().toString());
 		return list;
 	}
 
+	// 미션 참여 여부 수정 
 	@PutMapping("/updateRdtMissionCleared")
+	// 매개변수로 rno, authentication을 통해 회원의 이름을 가져오기 위함, manswer(회원이 제출할 퀴즈정답)
 	public void updateRdtMissionCleared(int rno, Authentication authentication, String manswer) {
+		// raffleService로 매개변수로를 넘겨 로직 처리를 요청함
 		raffleService.updateRdtMissionCleared(rno,authentication.getName(), manswer);
 		
 	}

@@ -29,6 +29,8 @@
 		</if> 
 	</select>
 	
+	<!-- id = raffleDetail(dao)의 추상메소드명과 동일 작성 | parameterType = 매개변수와 동일하게 작성 Map으로 받아옴
+		 raffleDetail테이블을 수정함 | 수정할 내용 = rdtMissionCleared(미션참여여부) | 파라미터 값으로 넘어온 rno와 mid를 통해 가져옴 -->
 	<update id="updateRdtMissionCleard" parameterType="Map">
 		update raffleDetail
 		set rdtMissionCleared = #{rdtMissionCleared}
