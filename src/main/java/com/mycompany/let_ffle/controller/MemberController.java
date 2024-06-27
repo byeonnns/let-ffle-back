@@ -311,5 +311,14 @@ public class MemberController {
 
 		return null;
 	}
+	
+	//문의 내용 답변 작성 
+	@PutMapping("/inquiryReply")
+	public void inquiryReply(int ino, String ireply) {
+		//회원에게 작성된 문의 답변해주기 위해서 ino, ireply를 사용
+		memberService.updateInquiryReply(ino, ireply);
+					
+	}
+	
 
 }
