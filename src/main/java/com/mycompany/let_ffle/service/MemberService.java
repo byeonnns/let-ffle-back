@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mycompany.let_ffle.dao.InquiryDao;
+import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
+import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 @Service
 public class MemberService {
@@ -19,6 +22,9 @@ public class MemberService {
 	
 	@Autowired
 	private InquiryDao inquiryDao;
+	
+	@Autowired
+	private LikeListDao likeListDao;
 
 	public void join(Member member) {
 
@@ -85,6 +91,15 @@ public class MemberService {
 		
 		inquiryDao.updateInquiryReply(ino, ireply);
 	}
+
+	public int getLikeListCount(String mid) {
+		return likeListDao.likeListCount(mid);
+	}
+	
+	public List<RaffleRequest> getLikeList(Pager pager, String mid) {
+		return likeListDao.selectLikeListByMid(pager, mid);
+	}
+
 
 
 	

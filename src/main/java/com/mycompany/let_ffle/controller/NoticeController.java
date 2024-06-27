@@ -32,7 +32,7 @@ public class NoticeController {
 	// 페이저
 	@GetMapping("/getNoticeList")
 	public Map<String, Object> getNoticeList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = noticeService.getCount();
+		int totalRows = noticeService.getNoticeCount();
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		List<Notice> list = noticeService.getNoticeList(pager);
 		Map<String, Object> map = new HashMap<>();

@@ -23,14 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component // 관리 객체로 등록해줘야 하지만 이 파일은 Controller도 아니고 Service도 아님 -> Component 어노테이션으로 관리 객체 등록
 public class JwtAuthenticationFilter extends OncePerRequestFilter { // OncePerRequestFilter를 상속받는 이유 : 2번 실행되는 오류를 방지하고자 1번만 실행하게끔 만들어진 필터를 상속받음
-	
 	// JwtProvider 객체를 주입받음 -> JwtProvider가 가지고 있는 메소드를 사용하기 위함
 	@Autowired
 	private JwtProvider jwtProvider;
 	// LetffleUserDetailsService 객체를 주입받음 -> LetffleUserDetailsService가 가지고 있는 메소드를 사용하기 위함
 	@Autowired
 	private LetffleUserDetailsService userDetailsService;
-
 	// 구현한 OncePerRequestFilter 인터페이스의 추상 메소드를 재정의
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

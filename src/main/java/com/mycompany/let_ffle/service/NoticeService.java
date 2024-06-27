@@ -31,7 +31,7 @@ public class NoticeService {
 		noticeDao.deleteNotice(notice);
 	}
 
-	public int getCount() {
+	public int getNoticeCount() {
 		// TODO Auto-generated method stub
 		return noticeDao.noticeCount();
 	}

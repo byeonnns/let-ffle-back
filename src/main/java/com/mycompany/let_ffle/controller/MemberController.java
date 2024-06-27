@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +28,10 @@ import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
 import com.mycompany.let_ffle.security.LetffleUserDetailsService;
@@ -143,9 +146,14 @@ public class MemberController {
 
 	// 마이페이지 -> 좋아요 목록 조회 메소드
 	@GetMapping("/likeList")
-	public LikeList getLikeList(String mid) {
-		
-		return null;
+	public Map<String, Object> getLikeList(@RequestParam(defaultValue = "1")int pageNo, Authentication authentication) {
+		int totalRows = memberService.getLikeListCount(authentication.getName());
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<RaffleRequest> list = memberService.getLikeList(pager, authentication.getName());
+		Map<String, Object> map = new HashMap<>();
+		map.put("RaffleRequest", list);
+		map.put("pager", pager);
+		return map;
 	}
 
 	// 마이페이지 -> 응모내역 조회 메소드
