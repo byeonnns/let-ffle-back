@@ -1,8 +1,10 @@
 package com.mycompany.let_ffle.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.mycompany.let_ffle.dao.QuizMissionDao;
@@ -17,7 +19,11 @@ import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class RaffleService {
 	@Autowired
 	RaffleDao raffleDao;
@@ -82,7 +88,31 @@ public class RaffleService {
 		return raffleDetailDao.readRaffleDetail(raffleDetail);
 	}
 
-	
+	public List<RaffleDetail> getRaffleDetailList(String mid, String role) {
+		return raffleDetailDao.selectRaffleDetailList(mid, role);
+	}
+
+	public Winner readWinnerDetail(int rno) {
+		return winnerDao.selectWinnerDetail(rno);
+	}
+
+	public List<Winner> getWinnerDetailList(String mid, String role) {
+		return winnerDao.selectWinnerDetailList(mid, role);
+	}
+
+	public void updateRdtMissionCleared(int rno, String mid, String manswer) {
+		String rMissionType = raffleDao.selectByRno(rno).getRmissiontype();
+		if(rMissionType.equals("quiz")) {
+			String qanswer = quizMissionDao.selectByRno(rno).getQanswer();
+			if(qanswer.equals(manswer)) {
+				raffleDetailDao.updateRdtMissionCleard(rno, mid, "PASS");
+			} else {
+				raffleDetailDao.updateRdtMissionCleard(rno, mid, "FAIL");
+			}
+		} else if(rMissionType.equals("time")){
+			
+		}
+	}
 
 	
 

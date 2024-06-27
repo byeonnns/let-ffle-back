@@ -161,20 +161,6 @@ public class MemberController {
 		return null;
 	}
 
-	// 마이페이지 -> 응모내역 조회 메소드
-	@GetMapping("/raffleEntryList")
-	public List<RaffleDetail> getRaffleEntryList(String mid) {
-
-		return null;
-	}
-
-	// 마이페이지 -> 당첨내역 조회 메소드
-	@GetMapping("/winList")
-	public List<Winner> getWinList(String mid) {
-
-		return null;
-	}
-
 	// 마이페이지 -> 비밀번호 수정
 	@PutMapping("/mypage/updateMpassword")
 	public void updateMpassword(String mid, String mpassword) {

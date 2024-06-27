@@ -21,4 +21,19 @@
 		where rno = #{rno}
 	</select>
 	
+	<select id="selectRaffleDetailList" parameterType="Map" resultType="RaffleDetail">
+		select *
+		from raffleDetail
+		<if test="role == 'ROLE_USER'">
+		where mid =#{mid}
+		</if> 
+	</select>
+	
+	<update id="updateRdtMissionCleard" parameterType="Map">
+		update raffleDetail
+		set rdtMissionCleared = #{rdtMissionCleared}
+		where rno = #{rno} AND mid = #{mid}
+	</update>
+	
+	
 </mapper>    
