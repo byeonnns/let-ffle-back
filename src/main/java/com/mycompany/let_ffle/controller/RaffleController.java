@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
+import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.TimeMission;
+import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
+import com.mycompany.let_ffle.service.MemberService;
 import com.mycompany.let_ffle.service.RaffleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +37,13 @@ public class RaffleController {
 	@Autowired
 	private RaffleService raffleService;
 
+	
+
 	@PostMapping("/createRaffle")
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
-		
-		//(임시) - 나중에 db로 받아올 것 Timestamp가 postman형식으로 넘어가지 못해 객체를 생성해 TimeMission(dto), Raffle(dto)의 Timestamp 를 설정
+
+		// (임시) - 나중에 db로 받아올 것 Timestamp가 postman형식으로 넘어가지 못해 객체를 생성해 TimeMission(dto),
+		// Raffle(dto)의 Timestamp 를 설정
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 		TimeMission timeMission = new TimeMission();
@@ -45,8 +52,9 @@ public class RaffleController {
 		raffleRequest.setTimeMission(timeMission);
 		raffleRequest.getRaffle().setRstartedat(timestamp);
 		raffleRequest.getRaffle().setRfinishedat(timestamp);
-		
-		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rthumbnailattach 가 null값이 아니고 비어있지 않으면 파일 이름과, 종류, 데이터를 설정
+
+		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rthumbnailattach 가 null값이 아니고 비어있지
+		// 않으면 파일 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
 				&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
@@ -60,8 +68,9 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
-		
-		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rgiftattach가 null 값이 아니고 비어있지 않으면 파일 이름과, 종류, 데이터를 설정
+
+		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rgiftattach가 null 값이 아니고 비어있지 않으면 파일
+		// 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRgiftattach() != null
 				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
@@ -76,8 +85,9 @@ public class RaffleController {
 			}
 
 		}
-		
-		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rdetailattach가 null 값이 아니고 비어있지 않으면 파일 이름과, 종류, 데이터를 설정
+
+		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rdetailattach가 null 값이 아니고 비어있지 않으면
+		// 파일 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRdetailattach() != null
 				&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
@@ -121,12 +131,13 @@ public class RaffleController {
 
 	@GetMapping("/getRaffleList")
 	public List<RaffleRequest> getRaffleList() {
-		 List<RaffleRequest> list =  raffleService.getListForUser();
-		 //포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
-		 for(RaffleRequest rr : list) {
-			 rr.setRaffleImage(null);
-		 }
-		 return list;
+		List<RaffleRequest> list = raffleService.getListForUser();
+		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
+		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
+		for (RaffleRequest rr : list) {
+			rr.setRaffleImage(null);
+		}
+		return list;
 	}
 
 	@GetMapping("/readRaffle/{rno}")
@@ -144,4 +155,27 @@ public class RaffleController {
 	public Raffle deleteRaffle(int rno) {
 		return null;
 	}
+
+	@PostMapping("/createRaffleDetail")
+	public RaffleDetail createRaffleDetail(RaffleDetail raffleDetail) {
+		// raffleDetail(dto)를 매개변수로 받아 raffleService 메소드를 호출해 raffleDetail객체를 데이터 베이스에 저장하도록 처리
+		raffleService.insertRaffleDetail(raffleDetail);
+		return null;
+	}
+	
+	
+	@GetMapping("/readRaffleDetail")
+	public RaffleDetail raffleDetail(RaffleDetail raffleDetail) {
+		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail 객체로 받아 리턴해줌
+		raffleDetail = raffleService.readRaffleDetail(raffleDetail);
+		return raffleDetail;
+	}
+
+	@PostMapping("/createWinner")
+	public Winner createWinner(Winner winner) {
+		// winner(dto)를 매개변수로 받아 raffleService 메소드를 호출해 winner객체를 데이터베이스에 저장하도록 처리
+		raffleService.insertWinner(winner);
+		return null;
+	}
+	
 }

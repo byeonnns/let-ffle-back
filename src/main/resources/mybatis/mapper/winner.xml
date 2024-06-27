@@ -3,4 +3,10 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.WinnerDao">
 
+	<insert id="insertWinner" parameterType="Winner">
+		insert into winner
+		(rno, mid)
+		values (#{rno} , #{mid})
+	</insert>
+
 </mapper>    

@@ -144,7 +144,7 @@ public class MemberController {
 	// 마이페이지 -> 좋아요 목록 조회 메소드
 	@GetMapping("/likeList")
 	public LikeList getLikeList(String mid) {
-
+		
 		return null;
 	}
 

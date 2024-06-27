@@ -9,4 +9,16 @@
 		from RaffleDetail
 		where mid = #mid
 	</select> -->
+	
+	<insert id="insertRaffleDetail" parameterType="RaffleDetail">
+		insert into raffleDetail (rno, mid, rdtcreatedat, rdtmissioncleared, rdtberryspend)
+		values (#{rno}, #{mid}, systimestamp, 'PEND', 0)
+	</insert>
+	
+	<select id="readRaffleDetail" parameterType="RaffleDetail" resultType="RaffleDetail">
+		select * 
+		from raffleDetail
+		where rno = #{rno}
+	</select>
+	
 </mapper>    

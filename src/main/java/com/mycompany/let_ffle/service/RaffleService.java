@@ -7,13 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.mycompany.let_ffle.dao.QuizMissionDao;
 import com.mycompany.let_ffle.dao.RaffleDao;
+import com.mycompany.let_ffle.dao.RaffleDetailDao;
 import com.mycompany.let_ffle.dao.RaffleImageDao;
 import com.mycompany.let_ffle.dao.TimeMissionDao;
+import com.mycompany.let_ffle.dao.WinnerDao;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
+import com.mycompany.let_ffle.dto.RaffleDetail;
+import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 public class RaffleService {
@@ -25,6 +27,10 @@ public class RaffleService {
 	TimeMissionDao timeMissionDao;
 	@Autowired
 	QuizMissionDao quizMissionDao;
+	@Autowired
+	RaffleDetailDao raffleDetailDao;
+	@Autowired
+	WinnerDao winnerDao;
 
 	public void insertRaffle(RaffleRequest raffleRequest) {
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
@@ -63,4 +69,21 @@ public class RaffleService {
 	public List<RaffleRequest> getListForUser() {
 		return raffleDao.selectByRaffleListForUser();
 	}
+
+	public void insertRaffleDetail(RaffleDetail raffleDetail) {
+		raffleDetailDao.insertRaffleDetail(raffleDetail);
+	}
+
+	public void insertWinner(Winner winner) {
+		winnerDao.insertWinner(winner);
+	}
+
+	public RaffleDetail readRaffleDetail(RaffleDetail raffleDetail) {
+		return raffleDetailDao.readRaffleDetail(raffleDetail);
+	}
+
+	
+
+	
+
 }
