@@ -74,7 +74,7 @@
               select b.bno, b.btitle, b.bcreatedat, b.mid
               from member m 
               inner join board b on m.mid = b.mid
-              where m.mid=#{mid} 
+              where m.mid=#{mid} and benabled=1
               order by b.bno desc
           )
           where rownum <= #{pager.endRowNo}
