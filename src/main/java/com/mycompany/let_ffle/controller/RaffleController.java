@@ -177,6 +177,14 @@ public class RaffleController {
 				authentication.getAuthorities().iterator().next().toString());
 		return list;
 	}
+	
+	// 마이페이지 -> 내가 응모한 내역 기간별 조회
+	@GetMapping("/getMyRaffleDetailRequestList")
+	public List<RaffleDetail> getMyRaffleDetailRequestList(Authentication authentication, String startdate, String enddate) {
+		List<RaffleDetail> list = raffleService.getMyRaffleDetailRequestList(authentication.getName(),startdate, enddate);
+		return list;
+		
+	}
 
 	@PostMapping("/createWinner")
 	public Winner createWinner(Winner winner) {

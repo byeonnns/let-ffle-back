@@ -3,39 +3,54 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDetailDao">
 
-<!-- 	<select getRaffleEntryList>
-		
-		select *
-		from RaffleDetail
-		where mid = #mid
-	</select> -->
-	
+	<!-- <select getRaffleEntryList> select * from RaffleDetail where mid = 
+		#mid </select> -->
+
 	<insert id="insertRaffleDetail" parameterType="RaffleDetail">
-		insert into raffleDetail (rno, mid, rdtcreatedat, rdtmissioncleared, rdtberryspend)
+		insert into
+		raffleDetail (rno, mid, rdtcreatedat, rdtmissioncleared,
+		rdtberryspend)
 		values (#{rno}, #{mid}, systimestamp, 'PEND', 0)
 	</insert>
-	
-	<select id="readRaffleDetail" parameterType="RaffleDetail" resultType="RaffleDetail">
-		select * 
+
+	<select id="readRaffleDetail" parameterType="RaffleDetail"
+		resultType="RaffleDetail">
+		select *
 		from raffleDetail
 		where rno = #{rno}
 	</select>
-	
-	<select id="selectRaffleDetailList" parameterType="Map" resultType="RaffleDetail">
+
+	<select id="selectRaffleDetailList" parameterType="Map"
+		resultType="RaffleDetail">
 		select *
 		from raffleDetail
 		<if test="role == 'ROLE_USER'">
-		where mid =#{mid}
-		</if> 
+			where mid =#{mid}
+		</if>
 	</select>
-	
-	<!-- id = raffleDetail(dao)의 추상메소드명과 동일 작성 | parameterType = 매개변수와 동일하게 작성 Map으로 받아옴
-		 raffleDetail테이블을 수정함 | 수정할 내용 = rdtMissionCleared(미션참여여부) | 파라미터 값으로 넘어온 rno와 mid를 통해 가져옴 -->
+
+	<!-- id = raffleDetail(dao)의 추상메소드명과 동일 작성 | parameterType = 매개변수와 동일하게 
+		작성 Map으로 받아옴 raffleDetail테이블을 수정함 | 수정할 내용 = rdtMissionCleared(미션참여여부) | 
+		파라미터 값으로 넘어온 rno와 mid를 통해 가져옴 -->
 	<update id="updateRdtMissionCleard" parameterType="Map">
-		update raffleDetail
+		update
+		raffleDetail
 		set rdtMissionCleared = #{rdtMissionCleared}
-		where rno = #{rno} AND mid = #{mid}
+		where rno =
+		#{rno} AND mid = #{mid}
 	</update>
-	
-	
+
+	<!-- RaffleDetailRequest(dto)를 생성 필드값으로 raffle, raffleDetail, winner을 가짐
+	 	 r.rno as "raffle.rno = raffle에 있는 rno를 r.rno별칭으로 사용하여 select 
+	 	 Raffle(dto)와 RaffleDetail(dto)를 rno를 통해 INNER JOIN하여 rdt.mid가 파라미터로 받은
+	 	 mid이고 rdt.rdtcreatedat(응모한 시간) 파라미터로 들어온 startdate와 enddate 사이인 필터링 된 값을 select -->
+	<select id="getMyRaffleDetailRequestList" parameterType="String" resultType="RaffleDetailRequest">
+		select r.rno as "raffle.rno", r.rtitle as "raffle.rtitle", rdt.rno as "raffleDetail.rno",
+		rdt.mid as "raffleDetail.mid", rdt.rdtcreatedat as "raffleDetail.rdtcreatedat",
+		rdt.rdtmissioncleared as "raffleDetail.rdtmissioncleared", rdt.rdtberryspend as "raffleDetail.rdtberryspend"
+		from raffle r INNER JOIN raffleDetail rdt ON r.rno = rdt.rno
+		where rdt.mid = #{mid} AND rdt.rdtcreatedat between #{startdate} AND #{enddate}
+	</select>
+
+
 </mapper>    

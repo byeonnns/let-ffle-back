@@ -1,5 +1,6 @@
 package com.mycompany.let_ffle.service;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -119,6 +120,20 @@ public class RaffleService {
 			
 		}
 	}
+
+	public List<RaffleDetail> getMyRaffleDetailRequestList(String mid, String startdate, String enddate) {
+		return raffleDetailDao.getMyRaffleDetailRequestList(mid,startdate, enddate);
+	}
+
+	
+
+	
+
+	
+
+	
+
+	
 
 	
 
