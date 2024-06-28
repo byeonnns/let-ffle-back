@@ -57,6 +57,9 @@ public class MemberController {
 	// 로그인 처리
 	@PostMapping("/login")
 	public Map<String, String> login(String mid, String mpassword) {
+		log.info("실행");
+		log.info("mid :" + mid);
+		log.info("mpassword :" + mpassword);
 		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
 		// 매개변수로 입력받은 mid를 전달
 		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
@@ -98,12 +101,11 @@ public class MemberController {
 			String AccessToken = jwtProvider.createAccessToken(mid, letffleUserDetails.getMember().getMrole());
 
 			// 사용자에게 반환해줄 응답을 Map에 추가
-			map.put("result", "로그인 성공");
+			map.put("result", "success");
 			map.put("mid", mid);
-			map.put("AccessToken", AccessToken);
+			map.put("accessToken", AccessToken);
 			
 			Member member = memberService.selectLoginTime(mid);
-			
 
 		} else {
 			// 비밀번호가 일치하지 않은 경우 (false를 리턴받은 경우)
