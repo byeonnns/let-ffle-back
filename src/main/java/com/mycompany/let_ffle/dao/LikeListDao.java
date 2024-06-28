@@ -13,5 +13,10 @@ public interface LikeListDao {
 	public List<RaffleRequest> selectLikeListByMid(Pager pager, String mid);
 
 	public int likeListCount(String mid);
+	
+	public void insertAddLikeList(String mid, int rno);
+
+	public void deleteLikeList(String mid, int rno);
+	
 
 }

@@ -28,4 +28,14 @@
       where rnum >= #{pager.startRowNo}
       ]]>
 	</select>
+	
+	<insert id="insertAddLikeList" parameterType="Map">
+		insert into LikeList (mid, rno)
+		values (#{mid}, #{rno})
+	</insert>
+	
+	<delete id="deleteLikeList" parameterType="Map">
+		delete from LikeList
+		where mid = #{mid} AND rno = #{rno}
+	</delete>
 </mapper>

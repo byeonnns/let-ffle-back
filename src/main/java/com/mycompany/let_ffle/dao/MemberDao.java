@@ -50,4 +50,7 @@ public interface MemberDao {
 	Member selectLoginTime(String mid);
 
 	void updateBerry(String mid, int mberry);
+
+	
+	
 }

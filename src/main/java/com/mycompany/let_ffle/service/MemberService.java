@@ -29,9 +29,6 @@ public class MemberService {
 	private InquiryDao inquiryDao;
 	
 	@Autowired
-	private LikeListDao likeListDao;
-	
-	@Autowired
 	private BoardCommentDao boardCommentDao;
 	
 	@Autowired
@@ -39,6 +36,9 @@ public class MemberService {
 	
 	@Autowired
 	private BerryHistoryDao berryHistoryDao;
+	
+	@Autowired
+	private LikeListDao likeListDao;	
 
 	public void join(Member member) {
 
@@ -160,6 +160,14 @@ public class MemberService {
 	public int findPassword(String mname, String mid) {
 		// TODO Auto-generated method stub
 		return memberDao.findPassword(mname, mid);
+	}
+
+	public void insertAddLikeList(String mid, int rno) {
+		likeListDao.insertAddLikeList(mid,rno);
+	}
+
+	public void deleteLikeList(String mid, int rno) {
+		likeListDao.deleteLikeList(mid,rno);
 	}
 
 }

@@ -1,8 +1,6 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
+import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
@@ -204,6 +204,18 @@ public class MemberController {
 		map.put("RaffleRequest", list);
 		map.put("pager", pager);
 		return map;
+	}
+	
+	// 래플 좋아요 추가 기능 
+	@PostMapping("/addLikeList")
+	public void addLikeList(Authentication authentication, int rno) {
+		memberService.insertAddLikeList(authentication.getName(), rno);
+	}
+	
+	// 래플 좋아료 삭제 기능
+	@DeleteMapping("/deleteLikeList")
+	public void deleteLikeList(Authentication authentication, int rno) {
+		memberService.deleteLikeList(authentication.getName(), rno);
 	}
 	
 	// 마이페이지 -> 내가 작성한 댓글 목록 조회
