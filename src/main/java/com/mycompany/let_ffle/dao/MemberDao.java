@@ -40,6 +40,11 @@ public interface MemberDao {
 	//마이페이지 내가 쓴 게시물의 갯수
 	int getMyBoardCount(String mid);
 	
+	String findId(String mphone);
+
+	int findPassword(String mname, String mid);
+	
+	//로그인 로직 관련
 	public void updateLoginTime(String mid);
 	
 	Member selectLoginTime(String mid);
