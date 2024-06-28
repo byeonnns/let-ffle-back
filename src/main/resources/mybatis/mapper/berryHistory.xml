@@ -8,7 +8,7 @@
 			select seq_bhno.nextval from dual
 		</selectKey>
 		INSERT INTO berryhistory
-		VALUES (#{bhno}, #{mid}, #{bhchangedat}, #{bhchangevalue}, #{bhreason})
+		VALUES (#{bhno}, #{mid}, systimestamp, #{bhchangevalue}, #{bhreason})
 	</insert>
 
 </mapper>    

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
+import com.mycompany.let_ffle.service.MemberService;
 import com.mycompany.let_ffle.service.RaffleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,8 @@ public class RaffleController {
 
 	@Autowired
 	private RaffleService raffleService;
+	@Autowired
+	private MemberService memberService;
 
 	@PostMapping("/createRaffle")
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
@@ -197,19 +201,35 @@ public class RaffleController {
 	public List<Winner> getWinnerDetailList(Authentication authentication) {
 		// 당첨자들의 대한 목록들을 조회하기 위해(list) , 로그인한 유저의 이름과 유저의 권한을 raffleService로 요청 처리 보냄
 		List<Winner> list = raffleService.getWinnerDetailList(authentication.getName(),
-				// authentication.getAuthorities() 과 authentication.getAuthorities().iterator().next().toString())의 차이
-				// authentication.getAuthorities()은 권한이 ROLE_USER, ROLE_MANAGER, ROLE_ADMIN이 있을경우 3가지 권한 모두를 반환함 - 총 3개
-				// authentication.getAuthorities().iterator().next().toString())은 3가지 권한중에서 가장 첫번째 권한을 반환함 - 총 1개
+				// authentication.getAuthorities() 과
+				// authentication.getAuthorities().iterator().next().toString())의 차이
+				// authentication.getAuthorities()은 권한이 ROLE_USER, ROLE_MANAGER, ROLE_ADMIN이
+				// 있을경우 3가지 권한 모두를 반환함 - 총 3개
+				// authentication.getAuthorities().iterator().next().toString())은 3가지 권한중에서 가장
+				// 첫번째 권한을 반환함 - 총 1개
 				authentication.getAuthorities().iterator().next().toString());
 		return list;
 	}
 
-	// 미션 참여 여부 수정 
+	// 미션 참여 여부 수정
 	@PutMapping("/updateRdtMissionCleared")
 	// 매개변수로 rno, authentication을 통해 회원의 이름을 가져오기 위함, manswer(회원이 제출할 퀴즈정답)
 	public void updateRdtMissionCleared(int rno, Authentication authentication, String manswer) {
 		// raffleService로 매개변수로를 넘겨 로직 처리를 요청함
-		raffleService.updateRdtMissionCleared(rno,authentication.getName(), manswer);
+		raffleService.updateRdtMissionCleared(rno, authentication.getName(), manswer);
+
+	}
+
+	// 베리 사용내역
+	@PutMapping("/updateRdtBerrySpend")
+	public String updateRdtBerrySpend(int rno, Authentication authentication, int RdtBerrySpend) {
+		String result;
+		if(RdtBerrySpend>0 && RdtBerrySpend<=10)
+			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), RdtBerrySpend);
+		else{
+			result = "늘어난줄 알았지? 응 아니야.";
+		}
 		
+		return result;
 	}
 }

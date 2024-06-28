@@ -22,10 +22,8 @@ public interface RaffleDetailDao {
 	// 넘겨줄 매개변수가 2개 이상일 경우 Map을 파라미터 값으로 받음
 	public void updateRdtMissionCleard(int rno, String mid, String rdtMissionCleared);
 
+	public void updateRdtBerrySpend(int rno, String mid, int rdtBerrySpend);
 
-	
-	
-	
-
+	public int selectRdtBerrySpend(int rno, String mid);
 	
 }

@@ -123,6 +123,12 @@
 		where mid = #{mid}
 	</update>
 	
+	<select id="selectBerry" parameterType="String" resultType="int">
+		select mberry
+		from member
+		where mid = #{mid}
+	</select>
+	
 	<update id="updateBerry" parameterType="Map">
 		update member
 		set mberry = mberry + #{mberry}

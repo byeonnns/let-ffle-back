@@ -49,5 +49,8 @@ public interface MemberDao {
 	
 	Member selectLoginTime(String mid);
 
+	public int selectBerry(String mid);
+	
 	void updateBerry(String mid, int mberry);
+
 }

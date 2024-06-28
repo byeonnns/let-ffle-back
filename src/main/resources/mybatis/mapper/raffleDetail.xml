@@ -3,39 +3,55 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDetailDao">
 
-<!-- 	<select getRaffleEntryList>
-		
-		select *
-		from RaffleDetail
-		where mid = #mid
-	</select> -->
-	
+	<!-- <select getRaffleEntryList> select * from RaffleDetail where mid = 
+		#mid </select> -->
+
 	<insert id="insertRaffleDetail" parameterType="RaffleDetail">
-		insert into raffleDetail (rno, mid, rdtcreatedat, rdtmissioncleared, rdtberryspend)
+		insert into
+		raffleDetail (rno, mid, rdtcreatedat, rdtmissioncleared,
+		rdtberryspend)
 		values (#{rno}, #{mid}, systimestamp, 'PEND', 0)
 	</insert>
-	
-	<select id="readRaffleDetail" parameterType="RaffleDetail" resultType="RaffleDetail">
-		select * 
+
+	<select id="readRaffleDetail" parameterType="RaffleDetail"
+		resultType="RaffleDetail">
+		select *
 		from raffleDetail
 		where rno = #{rno}
 	</select>
-	
-	<select id="selectRaffleDetailList" parameterType="Map" resultType="RaffleDetail">
+
+	<select id="selectRaffleDetailList" parameterType="Map"
+		resultType="RaffleDetail">
 		select *
 		from raffleDetail
 		<if test="role == 'ROLE_USER'">
-		where mid =#{mid}
-		</if> 
+			where mid =#{mid}
+		</if>
 	</select>
-	
-	<!-- id = raffleDetail(dao)의 추상메소드명과 동일 작성 | parameterType = 매개변수와 동일하게 작성 Map으로 받아옴
-		 raffleDetail테이블을 수정함 | 수정할 내용 = rdtMissionCleared(미션참여여부) | 파라미터 값으로 넘어온 rno와 mid를 통해 가져옴 -->
+
+	<!-- id = raffleDetail(dao)의 추상메소드명과 동일 작성 | parameterType = 매개변수와 동일하게 
+		작성 Map으로 받아옴 raffleDetail테이블을 수정함 | 수정할 내용 = rdtMissionCleared(미션참여여부) | 
+		파라미터 값으로 넘어온 rno와 mid를 통해 가져옴 -->
 	<update id="updateRdtMissionCleard" parameterType="Map">
-		update raffleDetail
+		update
+		raffleDetail
 		set rdtMissionCleared = #{rdtMissionCleared}
-		where rno = #{rno} AND mid = #{mid}
+		where rno =
+		#{rno} AND mid = #{mid}
 	</update>
-	
-	
+
+	<update id="updateRdtBerrySpend" parameterType="RaffleDetail">
+		update
+		raffleDetail
+		set rdtBerrySpend= rdtBerrySpend + #{rdtBerrySpend}
+		where
+		rno = #{rno} AND mid = #{mid}
+	</update>
+
+	<select id="selectRdtBerrySpend" parameterType="Map"
+		resultType="int">
+		select rdtberryspend
+		from raffleDetail
+		where rno=#{rno} AND mid=#{mid}
+	</select>
 </mapper>    
