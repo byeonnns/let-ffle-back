@@ -6,7 +6,7 @@
 		resultType="TimeMission">
 		select *
 		from timemission
-		where rno=#{rno}
+		where rno = #{rno}
 	</select>
 
 	<insert id="insertTimeMisson" parameterType="TimeMission">

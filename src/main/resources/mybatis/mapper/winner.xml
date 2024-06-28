@@ -5,8 +5,7 @@
 
 	<insert id="insertWinner" parameterType="Winner">
 		insert into winner
-		(rno, mid)
-		values (#{rno} , #{mid})
+		values (#{rno}, #{mid})
 	</insert>
 	
 	<select id="selectWinnerDetail" parameterType="int" resultType="Winner">
