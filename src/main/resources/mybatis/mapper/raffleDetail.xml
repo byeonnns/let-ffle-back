@@ -54,4 +54,17 @@
 		from raffleDetail
 		where rno=#{rno} AND mid=#{mid}
 	</select>
+
+	<!-- RaffleDetailRequest(dto)를 생성 필드값으로 raffle, raffleDetail, winner을 가짐
+	 	 r.rno as "raffle.rno = raffle에 있는 rno를 r.rno별칭으로 사용하여 select 
+	 	 Raffle(dto)와 RaffleDetail(dto)를 rno를 통해 INNER JOIN하여 rdt.mid가 파라미터로 받은
+	 	 mid이고 rdt.rdtcreatedat(응모한 시간) 파라미터로 들어온 startdate와 enddate 사이인 필터링 된 값을 select -->
+	<select id="getMyRaffleDetailRequestList" parameterType="String" resultType="RaffleDetailRequest">
+		select r.rno as "raffle.rno", r.rtitle as "raffle.rtitle", rdt.rno as "raffleDetail.rno",
+		rdt.mid as "raffleDetail.mid", rdt.rdtcreatedat as "raffleDetail.rdtcreatedat",
+		rdt.rdtmissioncleared as "raffleDetail.rdtmissioncleared", rdt.rdtberryspend as "raffleDetail.rdtberryspend"
+		from raffle r INNER JOIN raffleDetail rdt ON r.rno = rdt.rno
+		where rdt.mid = #{mid} AND rdt.rdtcreatedat between #{startdate} AND #{enddate}
+	</select>
+
 </mapper>    

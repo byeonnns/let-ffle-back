@@ -124,6 +124,10 @@ public class RaffleService {
 			
 		}
 	}
+	
+	public List<RaffleDetail> getMyRaffleDetailRequestList(String mid, String startdate, String enddate) {
+		return raffleDetailDao.getMyRaffleDetailRequestList(mid,startdate, enddate);
+	}
 
 	public String updateRdtBerrySpend(int rno, String mid, int rdtBerrySpend) {
 		int spentberry = raffleDetailDao.selectRdtBerrySpend(rno, mid);

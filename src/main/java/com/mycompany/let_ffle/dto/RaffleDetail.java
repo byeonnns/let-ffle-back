@@ -11,4 +11,6 @@ public class RaffleDetail {
 	private Timestamp rdtcreatedat; // 래플 참여 시간
 	private String rdtmissioncleared; // 미션 참여 여부
 	private int rdtberryspend; // 사용 베리 수
+	
+	
 }
