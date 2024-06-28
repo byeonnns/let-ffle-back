@@ -138,4 +138,13 @@ public class MemberService {
 		return memberDao.selectLoginTime(mid);
 	}
 
+	public String findId(String mphone) {
+		return memberDao.findId(mphone);
+	}
+
+	public int findPassword(String mname, String mid) {
+		// TODO Auto-generated method stub
+		return memberDao.findPassword(mname, mid);
+	}
+
 }

@@ -151,6 +151,40 @@ public class MemberController {
 		return member;
 
 	}
+	
+	@PostMapping("/findId")
+	public Map<String, Object> findId(String mphone) {
+		// 아이디 찾기 시 입력한 휴대폰 번호가 DB에 있는지 확인
+		String mid = memberService.findId(mphone);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		if (mid != null) {
+			map.put("result", "success");
+			map.put("mid", mid);
+		} else {
+			map.put("result", "fail");
+		}
+		
+		return map;
+	}
+	
+	@PostMapping("/findPassword")
+	public Map<String, Object> findPassword(String mname, String mid) {
+		// 아이디 찾기 시 입력한 휴대폰 번호가 DB에 있는지 확인
+		int count = memberService.findPassword(mname, mid);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		if (count == 1) {
+			map.put("result", "success");
+		} else {
+			map.put("result", "fail");
+		}
+		
+		return map;
+	}
+	
 	//마이페이지 내가쓴 게시물 
 	@GetMapping("/myBoardList")
 	public Map<String, Object> getMyBoardList(Authentication authentication, @RequestParam(defaultValue="1") int pageNo) {

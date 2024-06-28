@@ -109,4 +109,16 @@
 		from member
 		where mid = #{mid}
 	</select>
+	
+	<select id="findId" parameterType="String">
+		select mid
+		from member
+		where mphone = #{mphone}
+	</select>
+	
+	<select id="findPassword" parameterType="String">
+		select count(*)
+		from member
+		where mname = #{mname} AND mid = #{mid}
+	</select>
 </mapper>    

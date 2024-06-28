@@ -43,4 +43,8 @@ public interface MemberDao {
 	
 	Member selectLoginTime(String mid);
 
+	String findId(String mphone);
+
+	int findPassword(String mname, String mid);
+
 }
