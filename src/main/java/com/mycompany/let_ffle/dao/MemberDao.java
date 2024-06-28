@@ -1,5 +1,6 @@
 package com.mycompany.let_ffle.dao;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -37,5 +38,9 @@ public interface MemberDao {
 	public List<Board> getMyBoardList(Pager pager, String mid);
 	//마이페이지 내가 쓴 게시물의 갯수
 	int getMyBoardCount(String mid);
+	
+	public void updateLoginTime(String mid);
+	
+	Member selectLoginTime(String mid);
 
 }

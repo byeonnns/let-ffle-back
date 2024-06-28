@@ -11,5 +11,4 @@ public class BerryHistory {
 	private Timestamp bhchangedat;
 	private int bhchangevalue;
 	private String bhreason;
-
 }

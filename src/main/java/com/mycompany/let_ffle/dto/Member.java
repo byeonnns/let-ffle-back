@@ -1,5 +1,7 @@
 package com.mycompany.let_ffle.dto;
 
+import java.sql.Timestamp;
+
 import lombok.Data;
 
 @Data
@@ -14,4 +16,5 @@ public class Member {
 	private String mrole; // ROLE_USER, ROLE_ADMIN 등
 	private boolean menabled; // 회원 탈퇴 여부 : false=탈퇴
 	private int mberry; // 회원의 보유 베리 개수
+	private Timestamp mlastlogintime;
 }

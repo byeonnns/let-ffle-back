@@ -1,6 +1,7 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,13 @@ public class MemberController {
 			map.put("result", "로그인 성공");
 			map.put("mid", mid);
 			map.put("AccessToken", AccessToken);
+			
+			
+			/* 최종 로그인 시간 로직 */
+			memberService.updateLoginTime(mid);
+			Member member = memberService.selectLoginTime(mid);
+			
+			map.put("LastLoginTime", member.getMlastlogintime().toString());
 
 		} else {
 			// 비밀번호가 일치하지 않은 경우 (false를 리턴받은 경우)
@@ -117,8 +125,8 @@ public class MemberController {
 
 	// 회원가입
 	@PostMapping("/join")
-	public Member join(@RequestBody Member member) {
-
+	public Member join(Member member) {
+		log.info(member.getMid());
 		// 1. 비밀번호 암호화 -> PasswordEncoder의 encode() 사용
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		// 2. 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅

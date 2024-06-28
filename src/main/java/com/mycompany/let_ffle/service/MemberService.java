@@ -1,5 +1,6 @@
 package com.mycompany.let_ffle.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,13 @@ public class MemberService {
 	public List<Board> getBoardTitleList(Pager pager, String mid) {
 		return boardDao.getBoardTitleList(pager, mid);
 	}
-
+	
+	public void updateLoginTime(String mid) {
+		memberDao.updateLoginTime(mid);
+	}
+	
+	public Member selectLoginTime(String mid) {
+		return memberDao.selectLoginTime(mid);
+	}
 
 }
