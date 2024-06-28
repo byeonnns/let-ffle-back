@@ -1,26 +1,25 @@
 package com.mycompany.let_ffle.service;
 
-import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import com.mycompany.let_ffle.dao.BerryHistoryDao;
+import com.mycompany.let_ffle.dao.MemberDao;
 import com.mycompany.let_ffle.dao.QuizMissionDao;
 import com.mycompany.let_ffle.dao.RaffleDao;
 import com.mycompany.let_ffle.dao.RaffleDetailDao;
 import com.mycompany.let_ffle.dao.RaffleImageDao;
 import com.mycompany.let_ffle.dao.TimeMissionDao;
 import com.mycompany.let_ffle.dao.WinnerDao;
+import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -38,6 +37,11 @@ public class RaffleService {
 	RaffleDetailDao raffleDetailDao;
 	@Autowired
 	WinnerDao winnerDao;
+	@Autowired
+	BerryHistoryDao berryHistoryDao;
+	@Autowired
+	MemberDao memberDao;
+	
 
 	public void insertRaffle(RaffleRequest raffleRequest) {
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
@@ -120,21 +124,24 @@ public class RaffleService {
 			
 		}
 	}
-
+	
 	public List<RaffleDetail> getMyRaffleDetailRequestList(String mid, String startdate, String enddate) {
 		return raffleDetailDao.getMyRaffleDetailRequestList(mid,startdate, enddate);
 	}
 
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
+	public String updateRdtBerrySpend(int rno, String mid, int rdtBerrySpend) {
+		int spentberry = raffleDetailDao.selectRdtBerrySpend(rno, mid);
+		int mberry = memberDao.selectBerry(mid);
+		//spentberry+rdtBerrySpend -한레플에 사용할수있는 베리는 최대 10개 && 내가 가지고 있는 베리 만큼만 사용 가능 
+		if(spentberry+rdtBerrySpend <= 10 && rdtBerrySpend <= mberry) {
+			//유효
+			raffleDetailDao.updateRdtBerrySpend(rno, mid, rdtBerrySpend);
+			memberDao.updateBerry(mid, -rdtBerrySpend);
+			BerryHistory berryHistory = new BerryHistory(0, mid, null, -rdtBerrySpend, rno + "번 래플에 사용");
+			berryHistoryDao.insertBerryHistory(berryHistory);
+			return "성공";
+		} else {
+			return "실패";
+		}
+	}
 }

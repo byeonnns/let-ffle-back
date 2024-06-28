@@ -24,16 +24,16 @@ import com.mycompany.let_ffle.dto.request.RaffleRequest;
 public class MemberService {
 	@Autowired
 	private MemberDao memberDao;
-	
+
 	@Autowired
 	private InquiryDao inquiryDao;
-	
+
 	@Autowired
 	private BoardCommentDao boardCommentDao;
-	
+
 	@Autowired
 	private BoardDao boardDao;
-	
+
 	@Autowired
 	private BerryHistoryDao berryHistoryDao;
 	
@@ -81,73 +81,80 @@ public class MemberService {
 	public void login(Member member, String mid, String mpassword) {
 		memberDao.login(member, mid, mpassword);
 	}
-	
+
 	/* 1:1 문의 */
 	public void insertInquiry(Inquiry inquiry) {
 		inquiryDao.insertInquiry(inquiry);
 	}
+
 	public int getCount() {
 		return inquiryDao.InquiryCount();
 	}
+
 	public List<Inquiry> getInquiryList(Pager pager) {
 		return inquiryDao.selectByPage(pager);
 	}
 
-	public Inquiry getInquiry(int ino) {	
+	public Inquiry getInquiry(int ino) {
 		return inquiryDao.readInquiry(ino);
 	}
-	//문의 수정
+
+	// 문의 수정
 	public int updateInquiry(Inquiry inquiry) {
 		return inquiryDao.updateInquiry(inquiry);
 	}
-	//문의 답변 등록 해주기
+
+	// 문의 답변 등록 해주기
 	public void updateInquiryReply(int ino, String ireply) {
-		
+
 		inquiryDao.updateInquiryReply(ino, ireply);
 	}
-	
-	//마이페이지 게시물 가져오기
-	public List<Board> getMyBoardList(Pager pager, String mid){
-		
+
+	// 마이페이지 게시물 가져오기
+	public List<Board> getMyBoardList(Pager pager, String mid) {
+
 		return memberDao.getMyBoardList(pager, mid);
 	}
-	
-	//마이페이지 내가 작성한 게시물 갯수
+
+	// 마이페이지 내가 작성한 게시물 갯수
 	public int getMyBoardCount(String mid) {
-		
+
 		return memberDao.getMyBoardCount(mid);
 	}
-	
-	//마이페이지 내가찜한 리스트의 갯수
+
+	// 마이페이지 내가찜한 리스트의 갯수
 	public int getLikeListCount(String mid) {
 		return likeListDao.likeListCount(mid);
 	}
-	//마이페이지 내가찜한 리스트 가져오기
+
+	// 마이페이지 내가찜한 리스트 가져오기
 	public List<RaffleRequest> getLikeList(Pager pager, String mid) {
 		return likeListDao.selectLikeListByMid(pager, mid);
 	}
-	
-	//마이페이지 내가 쓴 댓글 갯수
+
+	// 마이페이지 내가 쓴 댓글 갯수
 	public int getBoardCommentCount(String mid) {
 		return boardCommentDao.getBoardCommentCount(mid);
 	}
-	//마이페이지 내가 쓴 댓글 가져오기 
+
+	// 마이페이지 내가 쓴 댓글 가져오기
 	public List<Board> getBoardTitleList(Pager pager, String mid) {
 		return boardDao.getBoardTitleList(pager, mid);
-	}	
+	}
 
 	public Member selectLoginTime(String mid) {
 		Member member = memberDao.selectLoginTime(mid);
-		
+
 		Timestamp nowLoginDate = new Timestamp(System.currentTimeMillis());
-		
-		//주석 달자
-		if(nowLoginDate.toLocalDateTime().toLocalDate().isAfter(member.getMlastlogintime().toLocalDateTime().toLocalDate())) {
+
+		// 주석 달자
+		if (nowLoginDate.toLocalDateTime().toLocalDate()
+				.isAfter(member.getMlastlogintime().toLocalDateTime().toLocalDate())) {
 			BerryHistory berryHistory = new BerryHistory(0, mid, nowLoginDate, 1, "매일 최초 로그인");
 			memberDao.updateBerry(mid, 1);
 			berryHistoryDao.insertBerryHistory(berryHistory);
 		}
-		
+
 		/* 최종 로그인 시간 갱신 */
 		memberDao.updateLoginTime(mid);
 		return member;
