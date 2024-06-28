@@ -57,15 +57,14 @@ public class RaffleService {
 	}
 
 	// raffleRequest 객체를 생성 후 래플의 번호와 해당 래플의 미션타입을 불러와 raffleRequest 객체에 반환 후 리턴
-	public RaffleRequest getRaffle(int rno) {
+	public RaffleRequest readRaffle(int rno) {
 		RaffleRequest raffleRequest = new RaffleRequest();
 		raffleRequest.setRaffle(raffleDao.selectByRno(rno));
 		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
-			timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
+			raffleRequest.setTimeMission(timeMissionDao.selectByRno(rno));
 		} else if(raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
-			quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
+			raffleRequest.setQuizMission(quizMissionDao.selectByRno(rno));
 		}
-		raffleRequest.setTimeMission(timeMissionDao.selectByRno(rno));
 		return raffleRequest;
 	}
 	

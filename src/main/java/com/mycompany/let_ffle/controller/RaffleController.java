@@ -144,7 +144,7 @@ public class RaffleController {
 
 	@GetMapping("/readRaffle/{rno}")
 	public RaffleRequest readRaffle(@PathVariable int rno) {
-		RaffleRequest raffleRequest = raffleService.getRaffle(rno);
+		RaffleRequest raffleRequest = raffleService.readRaffle(rno);
 		return raffleRequest;
 	}
 
