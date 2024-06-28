@@ -3,4 +3,12 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.BerryHistoryDao">
 
+	<insert id="insertBerryHistory" parameterType="BerryHistory">
+		<selectKey keyProperty="bhno" resultType="int" order="BEFORE">
+			select seq_bhno.nextval from dual
+		</selectKey>
+		INSERT INTO berryhistory
+		VALUES (#{bhno}, #{mid}, #{bhchangedat}, #{bhchangevalue}, #{bhreason})
+	</insert>
+
 </mapper>    

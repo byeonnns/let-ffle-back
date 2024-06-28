@@ -1,16 +1,19 @@
 package com.mycompany.let_ffle.service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mycompany.let_ffle.dao.BerryHistoryDao;
 import com.mycompany.let_ffle.dao.BoardCommentDao;
 import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
+import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
@@ -33,6 +36,9 @@ public class MemberService {
 	
 	@Autowired
 	private BoardDao boardDao;
+	
+	@Autowired
+	private BerryHistoryDao berryHistoryDao;
 
 	public void join(Member member) {
 
@@ -128,14 +134,23 @@ public class MemberService {
 	//마이페이지 내가 쓴 댓글 가져오기 
 	public List<Board> getBoardTitleList(Pager pager, String mid) {
 		return boardDao.getBoardTitleList(pager, mid);
-	}
-	
-	public void updateLoginTime(String mid) {
-		memberDao.updateLoginTime(mid);
-	}
-	
+	}	
+
 	public Member selectLoginTime(String mid) {
-		return memberDao.selectLoginTime(mid);
+		Member member = memberDao.selectLoginTime(mid);
+		
+		Timestamp nowLoginDate = new Timestamp(System.currentTimeMillis());
+		
+		//주석 달자
+		if(nowLoginDate.toLocalDateTime().toLocalDate().isAfter(member.getMlastlogintime().toLocalDateTime().toLocalDate())) {
+			BerryHistory berryHistory = new BerryHistory(0, mid, nowLoginDate, 1, "매일 최초 로그인");
+			memberDao.updateBerry(mid, 1);
+			berryHistoryDao.insertBerryHistory(berryHistory);
+		}
+		
+		/* 최종 로그인 시간 갱신 */
+		memberDao.updateLoginTime(mid);
+		return member;
 	}
 
 }

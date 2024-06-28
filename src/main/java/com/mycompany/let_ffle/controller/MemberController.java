@@ -1,13 +1,13 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,12 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
-import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
-import com.mycompany.let_ffle.dto.Raffle;
-import com.mycompany.let_ffle.dto.RaffleDetail;
-import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
@@ -107,12 +102,8 @@ public class MemberController {
 			map.put("mid", mid);
 			map.put("AccessToken", AccessToken);
 			
-			
-			/* 최종 로그인 시간 로직 */
-			memberService.updateLoginTime(mid);
 			Member member = memberService.selectLoginTime(mid);
 			
-			map.put("LastLoginTime", member.getMlastlogintime().toString());
 
 		} else {
 			// 비밀번호가 일치하지 않은 경우 (false를 리턴받은 경우)

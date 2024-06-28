@@ -96,6 +96,13 @@
       ]]>
 	</select>
 
+	<select id="selectLoginTime" parameterType="String"
+		resultType="Member">
+		select mlastlogintime
+		from member
+		where mid = #{mid}
+	</select>
+	
 	<update id="updateLoginTime" parameterType="String">
 		update
 		member
@@ -103,10 +110,9 @@
 		where mid = #{mid}
 	</update>
 	
-	<select id="selectLoginTime" parameterType="String"
-		resultType="Member">
-		select mlastlogintime
-		from member
+	<update id="updateBerry" parameterType="Map">
+		update member
+		set mberry = mberry + #{mberry}
 		where mid = #{mid}
-	</select>
+	</update>
 </mapper>    
