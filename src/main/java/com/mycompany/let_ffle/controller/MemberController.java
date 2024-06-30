@@ -115,11 +115,22 @@ public class MemberController {
 
 		return map;
 	}
+	
+	@GetMapping("/mypage/main")
+	public Map<String, String> getMypage(Authentication authentication) {
+		
+		Member member = memberService.selectByMid(authentication.getName());
+		
+		Map<String, String> map = new HashMap<>();
+		
+		map.put("mnickname", member.getMnickname());
+		
+		return map;
+	}
 
 	// 회원가입
 	@PostMapping("/join")
 	public Member join(Member member) {
-		log.info(member.getMid());
 		// 1. 비밀번호 암호화 -> PasswordEncoder의 encode() 사용
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		// 2. 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅
