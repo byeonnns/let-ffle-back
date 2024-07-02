@@ -14,7 +14,7 @@ public interface BoardCommentDao {
 	//게시물에 등록된 댓글갯수
 	public int commentCount(int bno);
 
-	public List<BoardComment> selectByCommentList(Pager pager, int bno);
+	public List<BoardComment> selectByCommentList(int bno);
 
 	public void deleteComment(int cno);
 

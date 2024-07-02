@@ -14,7 +14,7 @@ public interface BoardDao {
 
 	public void updateBoard(Board board);
 
-	public void enabledBoard(int bno);
+	public void deleteBoard(int bno);
 
 	public Board readBoard(int bno);
 
@@ -25,6 +25,8 @@ public interface BoardDao {
 	public void updatehitCount(int bno);
 
 	public List<Board> getBoardTitleList(Pager pager, String mid);
+
+	public Board selectBoardByBno(int bno);
 	
 	
 

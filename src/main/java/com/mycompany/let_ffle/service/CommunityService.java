@@ -26,8 +26,8 @@ public class CommunityService {
 		boardDao.updateBoard(board);
 	}
 
-	public void enabledBoard(int bno) {
-		boardDao.enabledBoard(bno);
+	public void deleteBoard(int bno) {
+		boardDao.deleteBoard(bno);
 	}
 
 	public Board readBoard(int bno) {
@@ -51,9 +51,9 @@ public class CommunityService {
 		return boardCommentDao.commentCount(bno);
 	}
 
-	public List<BoardComment> getCommentList(Pager pager, int bno) {
+	public List<BoardComment> getCommentList(int bno) {
 		
-		return boardCommentDao.selectByCommentList(pager, bno);
+		return boardCommentDao.selectByCommentList(bno);
 	}
 
 	public void deleteComment(int cno) {
@@ -64,6 +64,11 @@ public class CommunityService {
 	public void insertComment(BoardComment boardComment) {
 		
 		boardCommentDao.insertComment(boardComment);
+	}
+
+	public Board selectBoardByBno(int bno) {
+		// TODO Auto-generated method stub
+		return boardDao.selectBoardByBno(bno);
 	}
 
 
