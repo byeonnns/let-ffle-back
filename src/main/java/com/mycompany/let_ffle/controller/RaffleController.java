@@ -1,6 +1,7 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -176,10 +177,10 @@ public class RaffleController {
 
 	// 마이페이지 -> 응모내역 조회 메소드
 	@GetMapping("/getRaffleDetailList")
-	public List<RaffleDetail> getRaffleDetailList(RaffleDetail raffleDetail, Authentication authentication) {
-		List<RaffleDetail> list = raffleService.getRaffleDetailList(raffleDetail.getMid(),
-				authentication.getAuthorities().iterator().next().toString());
-		return list;
+	public Map<String, Object> getRaffleDetailList(Authentication authentication) {
+		Map<String, Object> map = new HashMap<>();
+		map = raffleService.getRaffleDetailList(authentication.getName(), authentication.getAuthorities().iterator().next().toString());
+		return map;
 	}
 	
 	// 마이페이지 -> 내가 응모한 내역 기간별 조회

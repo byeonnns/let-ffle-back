@@ -3,9 +3,6 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDetailDao">
 
-	<!-- <select getRaffleEntryList> select * from RaffleDetail where mid = 
-		#mid </select> -->
-
 	<insert id="insertRaffleDetail" parameterType="RaffleDetail">
 		insert into
 		raffleDetail (rno, mid, rdtcreatedat, rdtmissioncleared,
@@ -65,6 +62,71 @@
 		rdt.rdtmissioncleared as "raffleDetail.rdtmissioncleared", rdt.rdtberryspend as "raffleDetail.rdtberryspend"
 		from raffle r INNER JOIN raffleDetail rdt ON r.rno = rdt.rno
 		where rdt.mid = #{mid} AND rdt.rdtcreatedat between #{startdate} AND #{enddate}
+	</select>
+
+	
+	<select id="selectTotalRaffle" parameterType="Map" resultType="int">
+		SELECT COUNT(*)
+		FROM raffleDetail
+		<if test="role == 'ROLE_USER'">
+			WHERE mid = #{mid}
+		</if>
+	</select>
+	<select id="selectOngoingRaffle" parameterType="Map" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM raffleDetail rd
+		INNER JOIN raffle r ON rd.rno = r.rno
+		WHERE r.rstartedat <= systimestamp
+		AND systimestamp <= r.rfinishedat
+	]]>
+		<if test="role == 'ROLE_USER'">
+			AND rd.mid = #{mid}
+		</if>
+	</select>
+	<select id="selectClosedRaffle" parameterType="Map" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM raffleDetail rd
+		INNER JOIN raffle r ON rd.rno = r.rno
+		WHERE r.rfinishedat < systimestamp
+	]]>
+		<if test="role == 'ROLE_USER'">
+			AND rd.mid = #{mid}
+		</if>
+	</select>
+	
+	<select id="selectRaffleDetailRequest" parameterType="String" resultType="RaffleDetailRequest">
+		select r.rno "raffle.rno", r.rtitle "raffle.rtitle", r.rstartedat "raffle.rstartedat", r.rfinishedat "raffle.rfinishedat", rd.rdtcreatedat
+		"raffleDetail.rdtcreatedat", rd.rdtmissioncleared
+		"raffleDetail.rdtmissioncleared", rd.rdtberryspend
+		"raffleDetail.rdtberryspend"
+		from raffleDetail rd INNER JOIN raffle r ON rd.rno = r.rno
+		where mid = #{mid}
+	</select>
+	
+	<select id="readpp" parameterType="int" resultType="Map">
+		SELECT
+		(
+			SELECT COUNT(*)
+			FROM raffleDetail
+			WHERE rno = #{rno}) AS totalEntry,
+		(
+			SELECT COUNT(*)
+			FROM raffleDetail
+			WHERE rno = #{rno}
+			AND rdtmissioncleared = 'PASS') AS missionCleared,
+		(
+			SELECT SUM(rdtberryspend)
+			FROM raffleDetail
+			WHERE rno = #{rno}) AS berrySpend
+		FROM dual
+	</select>
+	
+	<select id="selectRaffleDetail" parameterType="Map" resultType="RaffleDetail">
+		SELECT *
+		FROM RaffleDetail
+		WHERE mid = #{mid} AND rno = #{rno}
 	</select>
 
 </mapper>    
