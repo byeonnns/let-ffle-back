@@ -21,6 +21,7 @@ import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
+import com.mycompany.let_ffle.dto.RaffleImage;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
@@ -181,5 +182,9 @@ public class RaffleService {
 		int missionCleared = (myProbability.getRdtmissioncleared().equals("PASS") ? 2 : 0);
 		double myScore = 10 + missionCleared + myProbability.getRdtberryspend();
 		return String.format("%.2f", myScore/ppScore*100);
+	}
+
+	public RaffleImage readRaffleImage(int rno) {
+		return raffleImageDao.selectByRno(rno);
 	}
 }

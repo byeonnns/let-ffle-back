@@ -128,5 +128,17 @@
 		FROM RaffleDetail
 		WHERE mid = #{mid} AND rno = #{rno}
 	</select>
+	
+	<select id="selectTodayEntryRaffle" parameterType="String" resultType="int">
+		select count(*)
+		from raffleDetail
+		where mid = #{mid} AND TRUNC(rdtcreatedat) = TRUNC(sysdate)
+	</select>
+	
+	<select id="selectTodayClearedMission" parameterType="String" resultType="int">
+		select count(*)
+		from raffleDetail
+		where mid = #{mid} AND TRUNC(rdtcreatedat) = TRUNC(sysdate) AND rdtmissioncleared = 'PASS'
+	</select>
 
 </mapper>    

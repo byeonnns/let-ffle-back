@@ -9,4 +9,6 @@ public interface RaffleImageDao {
 
 	public int insertRaffleImage(RaffleImage raffleImage);
 
+	public RaffleImage selectByRno(int rno);
+
 }

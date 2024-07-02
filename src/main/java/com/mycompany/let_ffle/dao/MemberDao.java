@@ -52,5 +52,4 @@ public interface MemberDao {
 	public int selectBerry(String mid);
 	
 	void updateBerry(String mid, int mberry);
-
 }
