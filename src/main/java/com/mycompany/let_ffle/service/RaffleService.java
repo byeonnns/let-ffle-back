@@ -1,6 +1,10 @@
 package com.mycompany.let_ffle.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,7 @@ import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 import lombok.extern.slf4j.Slf4j;
@@ -92,8 +97,32 @@ public class RaffleService {
 		return raffleDetailDao.readRaffleDetail(raffleDetail);
 	}
 
-	public List<RaffleDetail> getRaffleDetailList(String mid, String role) {
-		return raffleDetailDao.selectRaffleDetailList(mid, role);
+	public Map<String, Object> getRaffleDetailList(String mid, String role) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("myTotalRaffle", raffleDetailDao.selectTotalRaffle(mid, role));
+		map.put("myOngoingRaffle", raffleDetailDao.selectOngoingRaffle(mid, role));
+		map.put("myClosedRaffle", raffleDetailDao.selectClosedRaffle(mid, role));
+		
+		List<RaffleDetailRequest> list = raffleDetailDao.selectRaffleDetailRequest(mid);
+		for(RaffleDetailRequest rdr : list) {
+			
+			if(rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
+				rdr.getRaffleDetail().setRdtmissioncleared("완료");
+			else if(rdr.getRaffleDetail().getRdtmissioncleared().equals("FAIL"))
+				rdr.getRaffleDetail().setRdtmissioncleared("실패");
+			else if(rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
+				rdr.getRaffleDetail().setRdtmissioncleared("대기 중");
+			
+			if(rdr.getRaffle().getRfinishedat().toLocalDateTime().toLocalDate().isAfter(LocalDate.now()))
+				rdr.setNowStatus("진행 중");
+			else
+				rdr.setNowStatus("종료");
+			
+			rdr.setProbability(computeProbability(mid, rdr.getRaffle().getRno()));
+		}
+		map.put("RaffleDetailRequest", list);
+		
+		return map;
 	}
 
 	public Winner readWinnerDetail(int rno) {
@@ -142,5 +171,15 @@ public class RaffleService {
 		} else {
 			return "실패";
 		}
+	}
+	
+	// 확률 계산용
+	private String computeProbability(String mid, int rno) {
+		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
+		RaffleDetail myProbability = raffleDetailDao.selectRaffleDetail(mid, rno);
+		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2 + pp.get("BERRYSPEND").intValue();
+		int missionCleared = (myProbability.getRdtmissioncleared().equals("PASS") ? 2 : 0);
+		double myScore = 10 + missionCleared + myProbability.getRdtberryspend();
+		return String.format("%.2f", myScore/ppScore*100);
 	}
 }

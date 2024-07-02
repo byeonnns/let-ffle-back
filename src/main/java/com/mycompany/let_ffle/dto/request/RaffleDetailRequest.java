@@ -10,6 +10,7 @@ import lombok.Data;
 public class RaffleDetailRequest {
 	public Raffle raffle;
 	public RaffleDetail raffleDetail;
+	public String probability; // 당첨 확률 저장용
+	public String nowStatus; // 현재 상태 출력용
 	public Winner winner;
-	
 }

@@ -103,7 +103,6 @@ public class MemberController {
 			// 사용자에게 반환해줄 응답을 Map에 추가
 			map.put("result", "success");
 			map.put("mid", mid);
-			
 			map.put("accessToken", accessToken);
 			
 			Member member = memberService.selectLoginTime(mid);
