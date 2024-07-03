@@ -1,8 +1,9 @@
 package com.mycompany.let_ffle.service;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
+import com.mycompany.let_ffle.dao.RaffleDetailDao;
 import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
@@ -38,7 +40,10 @@ public class MemberService {
 	private BerryHistoryDao berryHistoryDao;
 	
 	@Autowired
-	private LikeListDao likeListDao;	
+	private LikeListDao likeListDao;
+	
+	@Autowired
+	RaffleDetailDao raffleDetailDao;
 
 	public void join(Member member) {
 
@@ -48,8 +53,7 @@ public class MemberService {
 	}
 
 	public Member selectByMid(String mid) {
-		Member member = memberDao.selectByMid(mid);
-		return member;
+		return memberDao.selectByMid(mid);
 	}
 
 	// 회원 탈퇴
@@ -189,4 +193,18 @@ public class MemberService {
 		// TODO Auto-generated method stub
 		return memberDao.countByMphone(mphone);
 	}
+
+	public Map<String, Object> getMyPageDashboard(String mid) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("mNickname", memberDao.selectByMid(mid).getMnickname());
+		map.put("todayEntryRaffle", raffleDetailDao.selectTodayEntryRaffle(mid));
+		map.put("todayClearedMission", raffleDetailDao.selectTodayClearedMission(mid));
+		return map;
+	}
+
+	public List<BerryHistory> getBerryHistoryList(String mid) {
+		return berryHistoryDao.selectByMid(mid);
+	}
+
+
 }

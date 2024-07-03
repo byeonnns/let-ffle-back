@@ -454,15 +454,20 @@ public class MemberController {
 
 		return inquiry;
 	}
+	
+	@GetMapping("/getMyPageDashboard")
+	public Map<String, Object> getMyPageDashboard(Authentication authentication){
+		return memberService.getMyPageDashboard(authentication.getName());
+	}
 
 	// BerryHistory 관련 메소드
 	// 베리 사용내역 생성 메소드
 
 	// 베리 사용내역 조회 메소드
 	@GetMapping("/getBerryHistoryList")
-	public List<BerryHistory> getBerryHistoryList(String mid) {
-
-		return null;
+	public List<BerryHistory> getBerryHistoryList(Authentication authentication) {
+		List<BerryHistory> list = memberService.getBerryHistoryList(authentication.getName());
+		return list;
 	}
 
 	// 문의 내용 답변 작성

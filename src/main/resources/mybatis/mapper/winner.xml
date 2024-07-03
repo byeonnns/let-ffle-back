@@ -14,12 +14,10 @@
 		where rno = #{rno}
 	</select>
 	
-	<select id="selectWinnerDetailList" parameterType="Map" resultType="Winner">
-		select *
-		from winner
-		<if test="role == 'ROLE_USER'">
-		where mid = #{mid}
-		</if>
+	<select id="selectWinnerDetailList" parameterType="String" resultType="Raffle">
+		select r.rno "rno", r.rtitle "rtitle", r.rgift "rgift", r.rfinishedat "rfinishedat", w.wreceiveraddress "rcontent"
+		from raffle r INNER JOIN winner w ON r.rno = w.rno
+		where w.mid = #{mid}
 	</select>
 
 </mapper>    

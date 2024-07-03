@@ -53,6 +53,7 @@ public interface MemberDao {
 	
 	void updateBerry(String mid, int mberry);
 
+
 	int countByMid(String mid);
 	
 	int countByMnickname(String mnickname);
