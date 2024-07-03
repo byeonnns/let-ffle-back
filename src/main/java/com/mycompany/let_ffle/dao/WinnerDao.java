@@ -5,7 +5,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 
 @Mapper
 public interface WinnerDao {
@@ -14,7 +16,8 @@ public interface WinnerDao {
 
 	public Winner selectWinnerDetail(int rno);
 
-	public List<Winner> selectWinnerDetailList(String mid, String role);
+	public List<Raffle> selectWinnerDetailList(String mid);
+
 	
 	
 

@@ -129,9 +129,7 @@ public class RaffleService {
 		return winnerDao.selectWinnerDetail(rno);
 	}
 
-	public List<Winner> getWinnerDetailList(String mid, String role) {
-		return winnerDao.selectWinnerDetailList(mid, role);
-	}
+	
 
 	// 매개변수로 rno, mid, manswer(회원이 제출할 문제 답안) 받음
 	public void updateRdtMissionCleared(int rno, String mid, String manswer) {
@@ -181,5 +179,9 @@ public class RaffleService {
 		int missionCleared = (myProbability.getRdtmissioncleared().equals("PASS") ? 2 : 0);
 		double myScore = 10 + missionCleared + myProbability.getRdtberryspend();
 		return String.format("%.2f", myScore/ppScore*100);
+	}
+
+	public List<Raffle> getWinnerDetailList(String mid) {
+		return winnerDao.selectWinnerDetailList(mid);
 	}
 }

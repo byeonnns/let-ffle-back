@@ -1,14 +1,12 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mycompany.let_ffle.dto.Pager;
-import com.mycompany.let_ffle.dto.QuizMission;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.service.MemberService;
 import com.mycompany.let_ffle.service.RaffleService;
@@ -207,18 +205,11 @@ public class RaffleController {
 	// 마이페이지 -> 당첨내역 조회 메소드
 	@GetMapping("/getWinnerDetailList")
 	// 매개변수로 authentication 받음
-	public List<Winner> getWinnerDetailList(Authentication authentication) {
-		// 당첨자들의 대한 목록들을 조회하기 위해(list) , 로그인한 유저의 이름과 유저의 권한을 raffleService로 요청 처리 보냄
-		List<Winner> list = raffleService.getWinnerDetailList(authentication.getName(),
-				// authentication.getAuthorities() 과
-				// authentication.getAuthorities().iterator().next().toString())의 차이
-				// authentication.getAuthorities()은 권한이 ROLE_USER, ROLE_MANAGER, ROLE_ADMIN이
-				// 있을경우 3가지 권한 모두를 반환함 - 총 3개
-				// authentication.getAuthorities().iterator().next().toString())은 3가지 권한중에서 가장
-				// 첫번째 권한을 반환함 - 총 1개
-				authentication.getAuthorities().iterator().next().toString());
+	public List<Raffle> getWinnerDetailList(Authentication authentication) {
+		List<Raffle> list = raffleService.getWinnerDetailList(authentication.getName());
 		return list;
 	}
+		
 
 	// 미션 참여 여부 수정
 	@PutMapping("/updateRdtMissionCleared")
