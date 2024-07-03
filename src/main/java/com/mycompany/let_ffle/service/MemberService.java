@@ -177,4 +177,16 @@ public class MemberService {
 		likeListDao.deleteLikeList(mid,rno);
 	}
 
+	public int countByMid(String mid) {
+		return memberDao.countByMid(mid);
+	}
+
+	public int countByMnickname(String mnickname) {
+		return memberDao.countByMnickname(mnickname);
+	}
+	
+	public int countByMphone(String mphone) {
+		// TODO Auto-generated method stub
+		return memberDao.countByMphone(mphone);
+	}
 }

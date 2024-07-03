@@ -135,4 +135,25 @@
 		where mid = #{mid}
 	</update>
 	
+	<select id="countByMid" parameterType="String" resultType="int">
+		select count(*)
+		from member
+		where
+		mid = #{mid}
+	</select>
+	
+	<select id="countByMnickname" parameterType="String">
+		select count(*)
+		from member
+		where
+		mnickname = #{mnickname}
+	</select>
+	
+	<select id="countByMphone" parameterType="String">
+		select count(*)
+		from member
+		where
+		mphone = #{mphone}
+	</select>
+	
 </mapper>    

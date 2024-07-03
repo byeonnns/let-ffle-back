@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -104,7 +105,7 @@ public class MemberController {
 			map.put("result", "success");
 			map.put("mid", mid);
 			map.put("accessToken", accessToken);
-			
+
 			Member member = memberService.selectLoginTime(mid);
 
 		} else {
@@ -115,22 +116,23 @@ public class MemberController {
 
 		return map;
 	}
-	
+
 	@GetMapping("/mypage/main")
 	public Map<String, String> getMypage(Authentication authentication) {
-		
+
 		Member member = memberService.selectByMid(authentication.getName());
-		
+
 		Map<String, String> map = new HashMap<>();
-		
+
 		map.put("mnickname", member.getMnickname());
-		
+
 		return map;
 	}
 
 	// 회원가입
 	@PostMapping("/join")
-	public Member join(Member member) {
+	public Member join(@RequestBody Member member) {
+		log.info("member : " + member.toString());
 		// 1. 비밀번호 암호화 -> PasswordEncoder의 encode() 사용
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		// 2. 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅
@@ -155,53 +157,107 @@ public class MemberController {
 		return member;
 
 	}
-	
+
+	@PostMapping("/idDuplicationCheck/{mid}")
+	public Map<String, String> idDuplicationCheck(@PathVariable String mid) {
+
+		log.info("mid : " + mid);
+		
+		int count = memberService.countByMid(mid);
+
+		Map<String, String> map = new HashMap<>();
+
+		log.info("count : " + count);
+		
+		if (count == 1) {
+			map.put("result", "fail");
+		} else {
+			map.put("result", "success");
+		}
+
+		return map;
+	}
+
+	@PostMapping("/nicknameDuplicationCheck/{mnickname}")
+	public Map<String, String> nicknameDuplicationCheck(@PathVariable String mnickname) {
+
+		log.info("mnickname : " + mnickname);
+		int count = memberService.countByMnickname(mnickname);
+		log.info("count : " + count);
+		Map<String, String> map = new HashMap<>();
+
+		if (count == 1) {
+			map.put("result", "fail");
+		} else {
+			map.put("result", "success");
+		}
+
+		return map;
+	}
+
+	@PostMapping("/phoneDuplicationCheck/{mphone}")
+	public Map<String, String> phoneDuplicationCheck(@PathVariable String mphone) {
+		log.info("mphone : " + mphone);
+		int count = memberService.countByMphone(mphone);
+		log.info("count : " + count);
+		Map<String, String> map = new HashMap<>();
+
+		if (count == 1) {
+			map.put("result", "fail");
+		} else {
+			map.put("result", "success");
+		}
+
+		return map;
+	}
+
 	@PostMapping("/findId")
 	public Map<String, Object> findId(String mphone) {
 		// 아이디 찾기 시 입력한 휴대폰 번호가 DB에 있는지 확인
 		String mid = memberService.findId(mphone);
-		
+
 		Map<String, Object> map = new HashMap<>();
-		
+
 		if (mid != null) {
 			map.put("result", "success");
 			map.put("mid", mid);
 		} else {
 			map.put("result", "fail");
 		}
-		
+
 		return map;
 	}
-	
+
 	@PostMapping("/findPassword")
 	public Map<String, Object> findPassword(String mname, String mid) {
 		// 아이디 찾기 시 입력한 휴대폰 번호가 DB에 있는지 확인
 		int count = memberService.findPassword(mname, mid);
-		
+
 		Map<String, Object> map = new HashMap<>();
-		
+
 		if (count == 1) {
 			map.put("result", "success");
 		} else {
 			map.put("result", "fail");
 		}
-		
+
 		return map;
 	}
-	
-	//마이페이지 내가쓴 게시물 
+
+	// 마이페이지 내가쓴 게시물
 	@GetMapping("/myBoardList")
-	public Map<String, Object> getMyBoardList(Authentication authentication, @RequestParam(defaultValue="1") int pageNo) {
-		// 아이디에 부합한 값이 나타나도록 그값에 일치하는 것들을 가져오기위해서 authentication.getName 사용하였다. 
+	public Map<String, Object> getMyBoardList(Authentication authentication,
+			@RequestParam(defaultValue = "1") int pageNo) {
+		// 아이디에 부합한 값이 나타나도록 그값에 일치하는 것들을 가져오기위해서 authentication.getName 사용하였다.
 		int totalRows = memberService.getMyBoardCount(authentication.getName());
-		//페이저 사용을 위해서 페이저의 행과 열에 맞춰서 나타냄
+		// 페이저 사용을 위해서 페이저의 행과 열에 맞춰서 나타냄
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		
-		//board에서 작성한 나의 리스트들을 가져오기 위해서 작성한 것이다.
+
+		// board에서 작성한 나의 리스트들을 가져오기 위해서 작성한 것이다.
 		List<Board> list = memberService.getMyBoardList(pager, authentication.getName());
-		
+
 		Map<String, Object> map = new HashMap<>();
-		
+
 		map.put("board", list);
 		map.put("pager", pager);
 		return map;
@@ -209,7 +265,8 @@ public class MemberController {
 
 	// 마이페이지 -> 좋아요 목록 조회 메소드
 	@GetMapping("/likeList")
-	public Map<String, Object> getLikeList(@RequestParam(defaultValue = "1")int pageNo, Authentication authentication) {
+	public Map<String, Object> getLikeList(@RequestParam(defaultValue = "1") int pageNo,
+			Authentication authentication) {
 		int totalRows = memberService.getLikeListCount(authentication.getName());
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		List<RaffleRequest> list = memberService.getLikeList(pager, authentication.getName());
@@ -218,22 +275,23 @@ public class MemberController {
 		map.put("pager", pager);
 		return map;
 	}
-	
-	// 래플 좋아요 추가 기능 
+
+	// 래플 좋아요 추가 기능
 	@PostMapping("/addLikeList")
 	public void addLikeList(Authentication authentication, int rno) {
 		memberService.insertAddLikeList(authentication.getName(), rno);
 	}
-	
+
 	// 래플 좋아료 삭제 기능
 	@DeleteMapping("/deleteLikeList")
 	public void deleteLikeList(Authentication authentication, int rno) {
 		memberService.deleteLikeList(authentication.getName(), rno);
 	}
-	
+
 	// 마이페이지 -> 내가 작성한 댓글 목록 조회
 	@GetMapping("/boardCommentList")
-	public Map<String, Object> getBoardCommentList(@RequestParam(defaultValue = "1")int pageNo, Authentication authentication) {
+	public Map<String, Object> getBoardCommentList(@RequestParam(defaultValue = "1") int pageNo,
+			Authentication authentication) {
 		int totalRows = memberService.getBoardCommentCount(authentication.getName());
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		List<Board> list = memberService.getBoardTitleList(pager, authentication.getName());
@@ -340,7 +398,7 @@ public class MemberController {
 
 	// 문의 목록 가져오기 (추후 권한을 매개변수로 받아서 조건에 따라 다른 값을 리턴할 예정)
 	@GetMapping("/getInquiryList")
-	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가 
+	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가
 	// 1번이라는 것을 지정해주기 위해 1을 기본 값으로 준것이다.
 	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo) {
 		int totalRows = memberService.getCount();
@@ -354,12 +412,12 @@ public class MemberController {
 
 	// 문의 상세 보기
 	@GetMapping("/readInquiry/{ino}")
-	//@pathvarialbe을 사용하는 이유 매개변수를 바인딩 시키기 위해서 사용된것이다.
+	// @pathvarialbe을 사용하는 이유 매개변수를 바인딩 시키기 위해서 사용된것이다.
 	public Inquiry readInquiry(@PathVariable int ino) {
 		// 전달받은 ino와 일치하는 Inquiry 객체를 DB에서 가져오기
 		Inquiry inquiry = memberService.getInquiry(ino);
 
-		//파일명을 보내는 클라이언트에게 파일의 값을 안보여주기 위해서 null로 처리를 한것이다.
+		// 파일명을 보내는 클라이언트에게 파일의 값을 안보여주기 위해서 null로 처리를 한것이다.
 		inquiry.setIattachdata(null);
 
 		return inquiry;
@@ -406,14 +464,13 @@ public class MemberController {
 
 		return null;
 	}
-	
-	//문의 내용 답변 작성 
+
+	// 문의 내용 답변 작성
 	@PutMapping("/inquiryReply")
 	public void inquiryReply(int ino, String ireply) {
-		//회원에게 작성된 문의 답변해주기 위해서 ino, ireply를 사용
+		// 회원에게 작성된 문의 답변해주기 위해서 ino, ireply를 사용
 		memberService.updateInquiryReply(ino, ireply);
-					
+
 	}
-	
 
 }
