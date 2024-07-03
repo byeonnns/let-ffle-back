@@ -42,5 +42,9 @@ public interface RaffleDetailDao {
 
 	// mid, rno와 일치하는 래플 응모내역 1개 가져오기
 	public RaffleDetail selectRaffleDetail(String mid, int rno);
+
+	public int selectTodayEntryRaffle(String mid);
+
+	public int selectTodayClearedMission(String mid);
 	
 }

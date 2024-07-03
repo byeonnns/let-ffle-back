@@ -1,10 +1,16 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+
+import java.io.OutputStream;
+import java.math.BigDecimal;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
+import com.mycompany.let_ffle.dto.RaffleImage;
 import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
@@ -231,5 +238,25 @@ public class RaffleController {
 		}
 		
 		return result;
+	}
+	
+	@GetMapping("/raffleAttach/{rno}")
+	public void download(@PathVariable int rno, HttpServletResponse response) {
+		// 해당 게시물 가져오기
+		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
+		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
+		try {
+			String fileName = new String(raffleImage.getRthumbnailimgoname().getBytes("UTF-8"), "ISO-8859-1");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			// 파일 타입을 헤더에 추가
+			response.setContentType(raffleImage.getRthumbnailimgtype());
+			// 응답 바디에 파일 데이터를 출력
+			OutputStream os = response.getOutputStream();
+			os.write(raffleImage.getRthumbnailimg());
+			os.flush();
+			os.close();
+		} catch (IOException e) {
+			log.error(e.toString());
+		}
 	}
 }

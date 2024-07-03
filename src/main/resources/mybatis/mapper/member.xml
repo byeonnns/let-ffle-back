@@ -27,8 +27,7 @@
 	<select id="selectByMid" parameterType="String">
 		select *
 		from member
-		where
-		mid=#{mid}
+		where mid=#{mid}
 	</select>
 
 	<update id="updateMphone" parameterType="Member">

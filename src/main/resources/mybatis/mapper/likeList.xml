@@ -12,12 +12,11 @@
 	<select id="selectLikeListByMid" parameterType="Map" resultType="RaffleRequest">	
 	<![CDATA[      
       SELECT rnum, rno as "raffle.rno", rno as "raffleImage.rno", rtitle as "raffle.rtitle", rsubtitle as "raffle.rsubtitle",
-      rthumbnailimg as "raffleImage.rthumbnailimg",
       rthumbnailimgoname as "raffleImage.rthumbnailimgoname", rthumbnailimgtype as "raffleImage.rthumbnailimgtype"
       from (
-          select rownum as rnum, rno, rtitle, rsubtitle, rthumbnailimg, rthumbnailimgoname, rthumbnailimgtype
+          select rownum as rnum, rno, rtitle, rsubtitle, rthumbnailimgoname, rthumbnailimgtype
           from (
-              select r.rno, r.rtitle, r.rsubtitle, ri.rthumbnailimg, ri.rthumbnailimgoname, ri.rthumbnailimgtype
+              select r.rno, r.rtitle, r.rsubtitle, ri.rthumbnailimgoname, ri.rthumbnailimgtype
               from likelist l INNER JOIN raffle r ON r.rno = l.rno
 			INNER JOIN raffleImage ri ON r.rno = ri.rno
 			where mid = #{mid}

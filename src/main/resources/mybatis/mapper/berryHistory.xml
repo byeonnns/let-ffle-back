@@ -10,5 +10,11 @@
 		INSERT INTO berryhistory
 		VALUES (#{bhno}, #{mid}, systimestamp, #{bhchangevalue}, #{bhreason})
 	</insert>
+	
+	<select id="selectByMid" parameterType="String" resultType="BerryHistory">
+		SELECT *
+		FROM berryhistory
+		WHERE mid = #{mid}
+	</select>
 
 </mapper>    
