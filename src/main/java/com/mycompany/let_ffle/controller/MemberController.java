@@ -227,8 +227,9 @@ public class MemberController {
 	
 	// 래플 좋아료 삭제 기능
 	@DeleteMapping("/deleteLikeList")
-	public void deleteLikeList(Authentication authentication, int rno) {
+	public String deleteLikeList(Authentication authentication, int rno) {
 		memberService.deleteLikeList(authentication.getName(), rno);
+		return "관심 래플 삭제";
 	}
 	
 	// 마이페이지 -> 내가 작성한 댓글 목록 조회
