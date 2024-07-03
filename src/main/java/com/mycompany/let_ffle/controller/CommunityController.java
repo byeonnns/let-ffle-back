@@ -188,14 +188,14 @@ public class CommunityController {
 		// 사용자가 요청한 pageNo에 해당하는 댓글을 List로 가져오기
 		List<BoardComment> list = communityService.getCommentList(bno);
 
-		
 		return list;
 	}
 
 	// 댓글 작성
 	@PostMapping("/createComment")
 	public BoardComment createComment(BoardComment boardComment, Authentication authentication) {
-
+	
+		log.info("BoardComment : " + boardComment.toString());
 		// 댓글 작성을 요청한 사용자의 mid를 댓글 작성자로 세팅
 		boardComment.setMid(authentication.getName());
 
@@ -212,5 +212,7 @@ public class CommunityController {
 		// communityService에게 해당 댓글의 cenabled 값을 false로 변경 요청
 		communityService.deleteComment(cno);
 	}
+	
+	
 
 }

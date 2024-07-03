@@ -181,6 +181,19 @@ public class MemberService {
 		likeListDao.deleteLikeList(mid,rno);
 	}
 
+	public int countByMid(String mid) {
+		return memberDao.countByMid(mid);
+	}
+
+	public int countByMnickname(String mnickname) {
+		return memberDao.countByMnickname(mnickname);
+	}
+	
+	public int countByMphone(String mphone) {
+		// TODO Auto-generated method stub
+		return memberDao.countByMphone(mphone);
+	}
+
 	public Map<String, Object> getMyPageDashboard(String mid) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("mNickname", memberDao.selectByMid(mid).getMnickname());
@@ -192,5 +205,6 @@ public class MemberService {
 	public List<BerryHistory> getBerryHistoryList(String mid) {
 		return berryHistoryDao.selectByMid(mid);
 	}
+
 
 }

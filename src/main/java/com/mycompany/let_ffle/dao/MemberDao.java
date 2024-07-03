@@ -52,4 +52,12 @@ public interface MemberDao {
 	public int selectBerry(String mid);
 	
 	void updateBerry(String mid, int mberry);
+
+
+	int countByMid(String mid);
+	
+	int countByMnickname(String mnickname);
+	
+	int countByMphone(String mphone);
+
 }
