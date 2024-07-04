@@ -1,14 +1,10 @@
 package com.mycompany.let_ffle.dao;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
-import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
 
@@ -59,5 +55,11 @@ public interface MemberDao {
 	int countByMnickname(String mnickname);
 	
 	int countByMphone(String mphone);
+
+	List<Member> selectByMember(Pager pager);
+
+	public int memberCount();
+	
+	
 
 }

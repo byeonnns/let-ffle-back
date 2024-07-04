@@ -155,5 +155,26 @@
 		mphone = #{mphone}
 	</select>
 	
+	<select id="selectByMember" parameterType="int" resultType="Member">
+		<![CDATA[
+      select rnum, mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole, menabled, mberry, mlastlogintime
+      from (
+          select rownum as rnum, mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole, menabled, mberry, mlastlogintime
+          from (
+              select mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole, menabled, mberry, mlastlogintime
+              from member
+              order by mid desc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+      ]]>
+	</select>
+	
+	<select id="memberCount" resultType="int">
+		select count(*)
+		from member
+	</select>
+	
 
 </mapper>    

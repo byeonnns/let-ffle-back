@@ -19,5 +19,25 @@
 		from raffle r INNER JOIN winner w ON r.rno = w.rno
 		where w.mid = #{mid}
 	</select>
+	
+	<select id="winnerCount" resultType="int">
+		select count(*) from winner
+	</select>
+	
+	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
+    <![CDATA[
+    	select rnum, mid, rtitle, rno , wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+      from (
+          select rownum as rnum, mid, rtitle, rno, wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+          from (
+              select w.mid, r.rtitle, r.rno, w.wreceivername, w.wreceiverzipcode, w.wreceiveraddress, w.wreceiverphone
+              from winner w INNER JOIN raffle r ON w.rno = r.rno
+              order by rno asc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+    ]]>
+</select>
 
 </mapper>    

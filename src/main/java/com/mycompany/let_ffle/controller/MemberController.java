@@ -25,9 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
-import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
@@ -156,6 +157,21 @@ public class MemberController {
 		// JSON 응답을 반환
 		return member;
 
+	}
+	
+	// 관리자 페이지 - 전체 회원 조회 및 페이지네숀
+	@GetMapping("/getAdminMemberList")
+	public Map<String, Object> getAdminMemberList(@RequestParam(defaultValue = "1") int pageNo) {
+		int totalRows = memberService.getMemberCount();
+
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		log.info("pageNo" + pageNo);
+		List<Member> list = memberService.getAdminMemberList(pager);
+		Map<String, Object> map = new HashMap<>();
+		map.put("member", list);
+		map.put("pager", pager);
+
+		return map;
 	}
 
 	@PostMapping("/idDuplicationCheck/{mid}")
@@ -483,6 +499,24 @@ public class MemberController {
 		// 회원에게 작성된 문의 답변해주기 위해서 ino, ireply를 사용
 		memberService.updateInquiryReply(ino, ireply);
 
+	}
+	
+	// 관리자 페이지 당첨자 조회
+	@GetMapping("/getAdminWinnerList")
+	public Map<String, Object> getWinnerList(@RequestParam(defaultValue = "1") int pageNo) {
+		// 당첨자의 수를 얻어옴 
+		int totalRows = memberService.getWinnerCount();
+		
+		log.info("totalRows : " + totalRows);
+
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		log.info("pageNo" + pageNo);
+		List<Winner> list = memberService.getAdminWinnerList(pager);
+		Map<String, Object> map = new HashMap<>();
+		map.put("winner", list);
+		map.put("pager", pager);
+
+		return map;
 	}
 
 }
