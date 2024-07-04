@@ -68,9 +68,14 @@
 	<select id="selectTotalRaffle" parameterType="Map" resultType="int">
 		SELECT COUNT(*)
 		FROM raffleDetail
-		<if test="role == 'ROLE_USER'">
-			WHERE mid = #{mid}
-		</if>
+		<where>
+			<if test="role == 'ROLE_USER'">
+				AND mid = #{mid}
+			</if>
+			<if test="startDate!='null'">
+				AND rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+			</if>
+		</where>
 	</select>
 	<select id="selectOngoingRaffle" parameterType="Map" resultType="int">
 	<![CDATA[
@@ -83,6 +88,9 @@
 		<if test="role == 'ROLE_USER'">
 			AND rd.mid = #{mid}
 		</if>
+		<if test="startDate!='null'">
+			AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+		</if>
 	</select>
 	<select id="selectClosedRaffle" parameterType="Map" resultType="int">
 	<![CDATA[
@@ -94,15 +102,37 @@
 		<if test="role == 'ROLE_USER'">
 			AND rd.mid = #{mid}
 		</if>
+		<if test="startDate!='null'">
+			AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+		</if>
 	</select>
 	
-	<select id="selectRaffleDetailRequest" parameterType="String" resultType="RaffleDetailRequest">
-		select r.rno "raffle.rno", r.rtitle "raffle.rtitle", r.rstartedat "raffle.rstartedat", r.rfinishedat "raffle.rfinishedat", rd.rdtcreatedat
-		"raffleDetail.rdtcreatedat", rd.rdtmissioncleared
-		"raffleDetail.rdtmissioncleared", rd.rdtberryspend
-		"raffleDetail.rdtberryspend"
-		from raffleDetail rd INNER JOIN raffle r ON rd.rno = r.rno
-		where mid = #{mid}
+	<select id="selectRaffleDetailRequest" parameterType="Map" resultType="RaffleDetailRequest">
+      select rnum, rno "raffle.rno", rtitle "raffle.rtitle", rstartedat "raffle.rstartedat", rfinishedat "raffle.rfinishedat",
+       rdtcreatedat "raffleDetail.rdtcreatedat", rdtmissioncleared "raffleDetail.rdtmissioncleared", rdtberryspend "raffleDetail.rdtberryspend"
+      from (
+          select rownum as rnum, rno, rtitle, rstartedat, rfinishedat, rdtcreatedat, rdtmissioncleared, rdtberryspend
+          from (
+              SELECT r.rno, r.rtitle, r.rstartedat, r.rfinishedat, rd.rdtcreatedat, rd.rdtmissioncleared, rd.rdtberryspend
+				FROM raffleDetail rd 
+				INNER JOIN raffle r ON rd.rno = r.rno
+				WHERE mid = #{mid}
+				<if test="status.equals('Ongoing')">
+					AND r.rstartedat &lt;= systimestamp
+					AND systimestamp &lt;= r.rfinishedat
+				</if>
+				<if test="status.equals('Closed')">
+					AND r.rfinishedat &lt; systimestamp
+				</if>
+				<if test="startDate!='null'">
+					AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+				</if>
+              order by r.rfinishedat desc
+          )
+          where rownum &lt;= #{pager.endRowNo}
+      )
+      where rnum &gt;= #{pager.startRowNo}
+		
 	</select>
 	
 	<select id="readpp" parameterType="int" resultType="Map">

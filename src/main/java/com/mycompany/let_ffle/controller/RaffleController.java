@@ -182,18 +182,13 @@ public class RaffleController {
 
 	// 마이페이지 -> 응모내역 조회 메소드
 	@GetMapping("/getRaffleDetailList")
-	public Map<String, Object> getRaffleDetailList(Authentication authentication) {
+	public Map<String, Object> getRaffleDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "Total") String status, @RequestParam(defaultValue = "null")String start, @RequestParam(defaultValue = "null")String end) {
+		log.info("" + start + "/" + end);
 		Map<String, Object> map = new HashMap<>();
-		map = raffleService.getRaffleDetailList(authentication.getName(), authentication.getAuthorities().iterator().next().toString());
+		map = raffleService.getRaffleDetailList(authentication.getName(),
+				authentication.getAuthorities().iterator().next().toString(), pageNo, status, start, end);
 		return map;
-	}
-	
-	// 마이페이지 -> 내가 응모한 내역 기간별 조회
-	@GetMapping("/getMyRaffleDetailRequestList")
-	public List<RaffleDetail> getMyRaffleDetailRequestList(Authentication authentication, String startdate, String enddate) {
-		List<RaffleDetail> list = raffleService.getMyRaffleDetailRequestList(authentication.getName(),startdate, enddate);
-		return list;
-		
 	}
 
 	@PostMapping("/createWinner")

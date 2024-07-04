@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 
@@ -30,13 +31,13 @@ public interface RaffleDetailDao {
 	public int selectRdtBerrySpend(int rno, String mid);
 
 	//전체 래플 가져오기
-	public int selectTotalRaffle(String mid, String role);
+	public int selectTotalRaffle(String mid, String role, String startDate, String endDate);
 	//현재 진행 중인 래플 가져오기
-	public int selectOngoingRaffle(String mid, String role);
+	public int selectOngoingRaffle(String mid, String role, String startDate, String endDate);
 	//종료된 래플 가져오기
-	public int selectClosedRaffle(String mid, String role);
+	public int selectClosedRaffle(String mid, String role, String startDate, String endDate);
 	
-	public List<RaffleDetailRequest> selectRaffleDetailRequest(String mid);
+	public List<RaffleDetailRequest> selectRaffleDetailRequest(String mid, Pager pager, String status, String startDate, String endDate);
 
 	public Map<String, BigDecimal> readpp(int rno);
 
@@ -45,6 +46,5 @@ public interface RaffleDetailDao {
 
 	public int selectTodayEntryRaffle(String mid);
 
-	public int selectTodayClearedMission(String mid);
-	
+	public int selectTodayClearedMission(String mid);	
 }

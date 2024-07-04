@@ -77,7 +77,7 @@ public class RaffleService {
 	public int getCount() {
 		return raffleDao.raffleCount();
 	}
-
+	
 	public List<Raffle> getListForAdmin(Pager pager) {
 		return raffleDao.selectByPage(pager);
 	}
@@ -98,13 +98,27 @@ public class RaffleService {
 		return raffleDetailDao.readRaffleDetail(raffleDetail);
 	}
 
-	public Map<String, Object> getRaffleDetailList(String mid, String role) {
+	public Map<String, Object> getRaffleDetailList(String mid, String role, int pageNo, String status, String startDate, String endDate) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("myTotalRaffle", raffleDetailDao.selectTotalRaffle(mid, role));
-		map.put("myOngoingRaffle", raffleDetailDao.selectOngoingRaffle(mid, role));
-		map.put("myClosedRaffle", raffleDetailDao.selectClosedRaffle(mid, role));
+		int myTotalRaffle = raffleDetailDao.selectTotalRaffle(mid, role, startDate, endDate);
+		int myOngoingRaffle = raffleDetailDao.selectOngoingRaffle(mid, role, startDate, endDate);
+		int myClosedRaffle = raffleDetailDao.selectClosedRaffle(mid, role, startDate, endDate);
+		map.put("myTotalRaffle", myTotalRaffle);
+		map.put("myOngoingRaffle", myOngoingRaffle);
+		map.put("myClosedRaffle", myClosedRaffle);
+		Pager pager = new Pager(1, 1, 1, 1);
 		
-		List<RaffleDetailRequest> list = raffleDetailDao.selectRaffleDetailRequest(mid);
+		if(status.equals("Ongoing")) {
+			pager = new Pager(5, 5, myOngoingRaffle, pageNo);
+		}
+		else if(status.equals("Closed")) {
+			pager = new Pager(5, 5, myClosedRaffle, pageNo);
+		}
+		else {
+			pager = new Pager(5, 5, myTotalRaffle, pageNo);
+		}
+		
+		List<RaffleDetailRequest> list = raffleDetailDao.selectRaffleDetailRequest(mid, pager, status, startDate, endDate);
 		for(RaffleDetailRequest rdr : list) {
 			
 			if(rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
@@ -122,6 +136,7 @@ public class RaffleService {
 			rdr.setProbability(computeProbability(mid, rdr.getRaffle().getRno()));
 		}
 		map.put("RaffleDetailRequest", list);
+		map.put("pager", pager);
 		
 		return map;
 	}
@@ -189,6 +204,5 @@ public class RaffleService {
 	
 	public RaffleImage readRaffleImage(int rno) {
 		return raffleImageDao.selectByRno(rno);
-
 	}
 }
