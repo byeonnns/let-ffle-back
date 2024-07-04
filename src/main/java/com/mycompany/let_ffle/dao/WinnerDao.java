@@ -23,14 +23,6 @@ public interface WinnerDao {
 	public int winnerCount();
 
 	public List<Winner> selectByWinnerList(Pager pager);
-	
-
-	
-	
-
-	
-	
->>>>>>> branch 'master' of https://github.com/byeonnns/let-ffle-back
 
 	public void updateWinner(Winner winner);
 
