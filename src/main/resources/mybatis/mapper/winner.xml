@@ -14,10 +14,62 @@
 		where rno = #{rno}
 	</select>
 	
-	<select id="selectWinnerDetailList" parameterType="String" resultType="Raffle">
-		select r.rno "rno", r.rtitle "rtitle", r.rgift "rgift", r.rfinishedat "rfinishedat", w.wreceiveraddress "rcontent"
-		from raffle r INNER JOIN winner w ON r.rno = w.rno
-		where w.mid = #{mid}
+	<select id="selectWinnerDetailList" parameterType="Map" resultType="Raffle">
+     
+      select rnum, rno "rno", rtitle "rtitle", rgift "rgift", rfinishedat "rfinishedat", wreceiveraddress "rcontent"
+      from (
+          select rownum as rnum, rno, rtitle, rgift, rfinishedat, wreceiveraddress
+          from (
+				select r.rno, r.rtitle, r.rgift, r.rfinishedat, w.wreceiveraddress
+				from raffle r INNER JOIN winner w ON r.rno = w.rno
+				where w.mid = #{mid}
+				<if test="startDate!='null'">
+					AND r.rfinishedat BETWEEN #{startDate} AND #{endDate}
+				</if>
+				order by r.rfinishedat desc
+          )
+    <![CDATA[ 
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
+    ]]>
 	</select>
+	
+	<select id="countWinRaffle" parameterType="Map" resultType="int">
+		SELECT count(*)
+		FROM winner w INNER JOIN raffle r ON r.rno = w.rno
+		WHERE w.mid = #{mid}
+		<if test="startDate!='null'">
+			AND r.rfinishedat BETWEEN #{startDate} AND #{endDate}
+		</if>
+	</select>
+	
+	<update id="updateWinner" parameterType="Winner">
+		UPDATE winner SET
+		wreceivername = #{wreceivername},
+		wreceiveraddress = #{wreceiveraddress},
+		wreceiverphone = #{wreceiverphone}
+		WHERE rno = #{rno}
+	</update>
+
+	<select id="winnerCount" resultType="int">
+		select count(*) from winner
+	</select>
+	
+	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
+    <![CDATA[
+    	select rnum, mid, rtitle, rno , wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+      from (
+          select rownum as rnum, mid, rtitle, rno, wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+          from (
+              select w.mid, r.rtitle, r.rno, w.wreceivername, w.wreceiverzipcode, w.wreceiveraddress, w.wreceiverphone
+              from winner w INNER JOIN raffle r ON w.rno = r.rno
+              order by rno asc
+          )
+          where rownum <= #{endRowNo}
+      )
+      where rnum >= #{startRowNo}
+    ]]>
+</select>
 
 </mapper>    
