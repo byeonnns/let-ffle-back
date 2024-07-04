@@ -198,8 +198,8 @@ public class RaffleService {
 	}
 
 
-	public List<Raffle> getWinnerDetailList(String mid) {
-		return winnerDao.selectWinnerDetailList(mid);
+	public List<Raffle> getWinnerDetailList(String mid, Pager pager, String startDate, String endDate) {
+		return winnerDao.selectWinnerDetailList(mid, pager, startDate, endDate);
 	}
 	
 	public RaffleImage readRaffleImage(int rno) {
@@ -208,6 +208,10 @@ public class RaffleService {
 
 	public Raffle deleteRaffle(int rno) {
 		return raffleDao.deleteRaffle(rno);
+	}
+
+	public int getWinRaffleCount(String mid, String startDate, String endDate) {
+		return winnerDao.countWinRaffle(mid, startDate, endDate);
 	}
 
 }

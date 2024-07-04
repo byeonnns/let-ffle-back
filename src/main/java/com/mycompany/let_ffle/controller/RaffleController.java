@@ -184,7 +184,6 @@ public class RaffleController {
 	@GetMapping("/getRaffleDetailList")
 	public Map<String, Object> getRaffleDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
 			@RequestParam(defaultValue = "Total") String status, @RequestParam(defaultValue = "null")String start, @RequestParam(defaultValue = "null")String end) {
-		log.info("" + start + "/" + end);
 		Map<String, Object> map = new HashMap<>();
 		map = raffleService.getRaffleDetailList(authentication.getName(),
 				authentication.getAuthorities().iterator().next().toString(), pageNo, status, start, end);
@@ -207,9 +206,15 @@ public class RaffleController {
 	// 마이페이지 -> 당첨내역 조회 메소드
 	@GetMapping("/getWinnerDetailList")
 	// 매개변수로 authentication 받음
-	public List<Raffle> getWinnerDetailList(Authentication authentication) {
-		List<Raffle> list = raffleService.getWinnerDetailList(authentication.getName());
-		return list;
+	public Map<String, Object>getWinnerDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "null")String start, @RequestParam(defaultValue = "null")String end) {
+		Map<String, Object> map = new HashMap<>();
+		int totalRows = raffleService.getWinRaffleCount(authentication.getName(), start, end);
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<Raffle> list = raffleService.getWinnerDetailList(authentication.getName(), pager, start, end);
+		map.put("list", list);
+		map.put("pager", pager);
+		return map;
 	}
 		
 

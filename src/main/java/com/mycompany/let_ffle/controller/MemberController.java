@@ -28,6 +28,8 @@ import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.LikeList;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
@@ -482,7 +484,16 @@ public class MemberController {
 	public void inquiryReply(int ino, String ireply) {
 		// 회원에게 작성된 문의 답변해주기 위해서 ino, ireply를 사용
 		memberService.updateInquiryReply(ino, ireply);
-
 	}
-
+	
+	@PutMapping("/updateWinner")
+	public void updateWinner(Winner winner) {
+		log.info("" + winner);
+		memberService.updateWinner(winner);
+	}
+	
+	@GetMapping("/getMyAddress")
+	public Member getMyAddress(Authentication authentication) {
+		return memberService.selectByMid(authentication.getName());
+	}
 }

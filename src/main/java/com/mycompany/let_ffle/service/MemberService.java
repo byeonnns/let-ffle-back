@@ -15,11 +15,13 @@ import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
 import com.mycompany.let_ffle.dao.RaffleDetailDao;
+import com.mycompany.let_ffle.dao.WinnerDao;
 import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 @Service
@@ -44,6 +46,9 @@ public class MemberService {
 	
 	@Autowired
 	RaffleDetailDao raffleDetailDao;
+	
+	@Autowired
+	WinnerDao winnerDao;
 
 	public void join(Member member) {
 
@@ -203,6 +208,10 @@ public class MemberService {
 
 	public List<BerryHistory> getBerryHistoryList(String mid) {
 		return berryHistoryDao.selectByMid(mid);
+	}
+
+	public void updateWinner(Winner winner) {
+		winnerDao.updateWinner(winner);
 	}
 
 }

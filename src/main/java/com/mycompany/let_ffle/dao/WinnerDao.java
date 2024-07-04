@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
@@ -16,14 +17,10 @@ public interface WinnerDao {
 
 	public Winner selectWinnerDetail(int rno);
 
-	public List<Raffle> selectWinnerDetailList(String mid);
+	public List<Raffle> selectWinnerDetailList(String mid, Pager pager, String startDate, String endDate);
 
-	
-	
+	public int countWinRaffle(String mid, String startDate, String endDate);
 
-	
-
-	
-	
+	public void updateWinner(Winner winner);
 
 }
