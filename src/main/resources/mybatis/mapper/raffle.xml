@@ -63,5 +63,6 @@
 		from raffle r
 		INNER JOIN raffleImage ri ON r.rno = ri.rno
 	</select>
+	
 
 </mapper>    

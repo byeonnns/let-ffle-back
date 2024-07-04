@@ -46,6 +46,7 @@ public class NoticeController {
 	@PostMapping("/createNotice")
 	public Notice createNotice(Notice notice) {
 		// 첨부파일이 포함되어 있는지 검사
+		log.info(notice.toString());
 		if (notice.getNattach() != null && !notice.getNattach().isEmpty()) {
 			// 첨부파일이 포함된 경우
 			// MultipartFile 객체에 첨부파일 데이터를 저장

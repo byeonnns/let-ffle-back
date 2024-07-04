@@ -205,4 +205,9 @@ public class RaffleService {
 	public RaffleImage readRaffleImage(int rno) {
 		return raffleImageDao.selectByRno(rno);
 	}
+
+	public Raffle deleteRaffle(int rno) {
+		return raffleDao.deleteRaffle(rno);
+	}
+
 }

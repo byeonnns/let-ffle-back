@@ -25,4 +25,6 @@ public interface RaffleDao {
 
 	public List<Raffle> selectByPage(Pager pager);
 
+	public Raffle deleteRaffle(int rno);
+
 }

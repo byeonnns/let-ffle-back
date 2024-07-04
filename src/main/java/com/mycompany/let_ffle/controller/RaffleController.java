@@ -130,7 +130,6 @@ public class RaffleController {
 
 		List<Raffle> list = raffleService.getListForAdmin(pager);
 		Map<String, Object> map = new HashMap<>();
-
 		map.put("Raffle", list);
 		map.put("pager", pager);
 
@@ -161,6 +160,7 @@ public class RaffleController {
 
 	@PutMapping("/deleteRaffle")
 	public Raffle deleteRaffle(int rno) {
+		raffleService.deleteRaffle(rno);
 		return null;
 	}
 
@@ -254,4 +254,5 @@ public class RaffleController {
 			log.error(e.toString());
 		}
 	}
+	
 }
