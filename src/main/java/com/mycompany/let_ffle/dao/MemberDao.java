@@ -42,7 +42,7 @@ public interface MemberDao {
 	
 	String findId(String mphone);
 
-	int findPassword(String mname, String mid);
+	int findPassword(String mphone, String mid);
 	
 	//로그인 로직 관련
 	public void updateLoginTime(String mid);

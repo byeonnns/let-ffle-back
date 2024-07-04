@@ -168,9 +168,8 @@ public class MemberService {
 		return memberDao.findId(mphone);
 	}
 
-	public int findPassword(String mname, String mid) {
-		// TODO Auto-generated method stub
-		return memberDao.findPassword(mname, mid);
+	public int findPassword(String mphone, String mid) {
+		return memberDao.findPassword(mphone, mid);
 	}
 
 	public void insertAddLikeList(String mid, int rno) {
@@ -205,6 +204,5 @@ public class MemberService {
 	public List<BerryHistory> getBerryHistoryList(String mid) {
 		return berryHistoryDao.selectByMid(mid);
 	}
-
 
 }

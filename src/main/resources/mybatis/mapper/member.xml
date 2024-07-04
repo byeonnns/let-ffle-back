@@ -104,7 +104,7 @@
 	<select id="findPassword" parameterType="String">
 		select count(*)
 		from member
-		where mname = #{mname} AND mid = #{mid}
+		where mphone = #{mphone} AND mid = #{mid}
 	</select>
 	
 
@@ -155,4 +155,5 @@
 		mphone = #{mphone}
 	</select>
 	
+
 </mapper>    

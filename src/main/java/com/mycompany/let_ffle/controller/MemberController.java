@@ -229,10 +229,13 @@ public class MemberController {
 		return map;
 	}
 
-	@PostMapping("/findPassword")
-	public Map<String, Object> findPassword(String mname, String mid) {
+	@PostMapping("/findPassword/{mphone}/{mid}")
+	public Map<String, Object> findPassword(@PathVariable String mphone, @PathVariable String mid) {
+		log.info("mphone : " + mphone);
+		log.info("mid : " + mid);
+		
 		// 아이디 찾기 시 입력한 휴대폰 번호가 DB에 있는지 확인
-		int count = memberService.findPassword(mname, mid);
+		int count = memberService.findPassword(mphone, mid);
 
 		Map<String, Object> map = new HashMap<>();
 
@@ -244,7 +247,7 @@ public class MemberController {
 
 		return map;
 	}
-
+	
 	// 마이페이지 내가쓴 게시물
 	@GetMapping("/myBoardList")
 	public Map<String, Object> getMyBoardList(Authentication authentication,
@@ -304,8 +307,10 @@ public class MemberController {
 	}
 
 	// 마이페이지 -> 비밀번호 수정
-	@PutMapping("/mypage/updateMpassword")
-	public void updateMpassword(String mid, String mpassword) {
+	@PutMapping("/mypage/updateMpassword/{mid}/{mpassword}")
+	public void updateMpassword(@PathVariable String mid, @PathVariable String mpassword) {
+		log.info("mid : " + mid);
+		log.info("mpassword : " + mpassword);
 		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
 		// 매개변수로 입력받은 mid를 전달
 		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
