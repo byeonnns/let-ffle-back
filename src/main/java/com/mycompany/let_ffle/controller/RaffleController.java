@@ -160,6 +160,7 @@ public class RaffleController {
 
 	@PutMapping("/deleteRaffle")
 	public Raffle deleteRaffle(int rno) {
+		raffleService.deleteRaffle(rno);
 		return null;
 	}
 

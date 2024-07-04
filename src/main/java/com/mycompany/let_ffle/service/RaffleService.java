@@ -192,4 +192,8 @@ public class RaffleService {
 
 	}
 
+	public Raffle deleteRaffle(int rno) {
+		return raffleDao.deleteRaffle(rno);
+	}
+
 }
