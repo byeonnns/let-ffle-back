@@ -3,7 +3,6 @@ package com.mycompany.let_ffle.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
@@ -20,6 +19,18 @@ public interface WinnerDao {
 	public List<Raffle> selectWinnerDetailList(String mid, Pager pager, String startDate, String endDate);
 
 	public int countWinRaffle(String mid, String startDate, String endDate);
+	
+	public int winnerCount();
+
+	public List<Winner> selectByWinnerList(Pager pager);
+	
+
+	
+	
+
+	
+	
+>>>>>>> branch 'master' of https://github.com/byeonnns/let-ffle-back
 
 	public void updateWinner(Winner winner);
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Notice;
 import com.mycompany.let_ffle.dto.Pager;
 

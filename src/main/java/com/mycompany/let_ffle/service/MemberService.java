@@ -22,6 +22,10 @@ import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Winner;
+<<<<<<< HEAD
+=======
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
+>>>>>>> branch 'master' of https://github.com/byeonnns/let-ffle-back
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 @Service
@@ -45,10 +49,17 @@ public class MemberService {
 	private LikeListDao likeListDao;
 	
 	@Autowired
+<<<<<<< HEAD
 	RaffleDetailDao raffleDetailDao;
 	
 	@Autowired
 	WinnerDao winnerDao;
+=======
+	private RaffleDetailDao raffleDetailDao;
+	
+	@Autowired
+	private WinnerDao winnerDao;
+>>>>>>> branch 'master' of https://github.com/byeonnns/let-ffle-back
 
 	public void join(Member member) {
 
@@ -212,6 +223,21 @@ public class MemberService {
 
 	public void updateWinner(Winner winner) {
 		winnerDao.updateWinner(winner);
+
+	public List<Member> getAdminMemberList(Pager pager) {
+		return memberDao.selectByMember(pager);
+	}
+
+	public int getMemberCount() {
+		return memberDao.memberCount();
+	}
+
+	public int getWinnerCount() {
+		return winnerDao.winnerCount();
+	}
+
+	public List<Winner> getAdminWinnerList(Pager pager) {
+		return winnerDao.selectByWinnerList(pager);
 	}
 
 }
