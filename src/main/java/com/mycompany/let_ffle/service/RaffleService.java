@@ -47,19 +47,32 @@ public class RaffleService {
 	BerryHistoryDao berryHistoryDao;
 	@Autowired
 	MemberDao memberDao;
-	
-
+	//래플 등록
 	public void insertRaffle(RaffleRequest raffleRequest) {
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
 		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
 
-		//raffle(dto)의 미션타입이 time이라면 timeMissionDao를 호출해 timeMission을 생성
+		// raffle(dto)의 미션타입이 time이라면 timeMissionDao를 호출해 timeMission을 생성
 		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
 			timeMissionDao.insertTimeMisson(raffleRequest.getTimeMission());
-		// raffle(dto)의 미션타입이 quiz이라면 quizMissionDao를 호출해 quizMission을 생성
+			// raffle(dto)의 미션타입이 quiz이라면 quizMissionDao를 호출해 quizMission을 생성
 		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
 			quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
 		}
+	}
+	//래플 수정
+	public void updateRaffle(RaffleRequest raffleRequest) {
+		raffleDao.updateRaffle(raffleRequest.getRaffle());
+		raffleImageDao.updateRaffleImage(raffleRequest.getRaffleImage());
+		
+		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
+			timeMissionDao.updateTimeMisson(raffleRequest.getTimeMission());
+			// raffle(dto)의 미션타입이 quiz이라면 quizMissionDao를 호출해 quizMission을 생성
+		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
+			quizMissionDao.updateQuizMisson(raffleRequest.getQuizMission());
+		}
+		
+
 	}
 
 	// raffleRequest 객체를 생성 후 래플의 번호와 해당 래플의 미션타입을 불러와 raffleRequest 객체에 반환 후 리턴
@@ -68,12 +81,12 @@ public class RaffleService {
 		raffleRequest.setRaffle(raffleDao.selectByRno(rno));
 		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
 			raffleRequest.setTimeMission(timeMissionDao.selectByRno(rno));
-		} else if(raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
+		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
 			raffleRequest.setQuizMission(quizMissionDao.selectByRno(rno));
 		}
 		return raffleRequest;
 	}
-	
+
 	public int getCount() {
 		return raffleDao.raffleCount();
 	}
@@ -103,26 +116,26 @@ public class RaffleService {
 		map.put("myTotalRaffle", raffleDetailDao.selectTotalRaffle(mid, role));
 		map.put("myOngoingRaffle", raffleDetailDao.selectOngoingRaffle(mid, role));
 		map.put("myClosedRaffle", raffleDetailDao.selectClosedRaffle(mid, role));
-		
+
 		List<RaffleDetailRequest> list = raffleDetailDao.selectRaffleDetailRequest(mid);
-		for(RaffleDetailRequest rdr : list) {
-			
-			if(rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
+		for (RaffleDetailRequest rdr : list) {
+
+			if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
 				rdr.getRaffleDetail().setRdtmissioncleared("완료");
-			else if(rdr.getRaffleDetail().getRdtmissioncleared().equals("FAIL"))
+			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("FAIL"))
 				rdr.getRaffleDetail().setRdtmissioncleared("실패");
-			else if(rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
+			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
 				rdr.getRaffleDetail().setRdtmissioncleared("대기 중");
-			
-			if(rdr.getRaffle().getRfinishedat().toLocalDateTime().toLocalDate().isAfter(LocalDate.now()))
+
+			if (rdr.getRaffle().getRfinishedat().toLocalDate().isAfter(LocalDate.now()))
 				rdr.setNowStatus("진행 중");
 			else
 				rdr.setNowStatus("종료");
-			
+
 			rdr.setProbability(computeProbability(mid, rdr.getRaffle().getRno()));
 		}
 		map.put("RaffleDetailRequest", list);
-		
+
 		return map;
 	}
 
@@ -130,38 +143,36 @@ public class RaffleService {
 		return winnerDao.selectWinnerDetail(rno);
 	}
 
-	
-
 	// 매개변수로 rno, mid, manswer(회원이 제출할 문제 답안) 받음
 	public void updateRdtMissionCleared(int rno, String mid, String manswer) {
 		// rno를 통해 raffle(dto)의 미션타입을 rMissionType 변수에 반환
 		String rMissionType = raffleDao.selectByRno(rno).getRmissiontype();
 		// 미션타입이 퀴즈미션이면 rno를 통해 quizMission(dto)의 qanswer(퀴즈의 정답)을 가져와 qanswer 변수에 반환
-		if(rMissionType.equals("quiz")) {
+		if (rMissionType.equals("quiz")) {
 			String qanswer = quizMissionDao.selectByRno(rno).getQanswer();
 			// 퀴즈 정답과 회원이 제출한 정답이 같으면 매개변수로 rno,mid,pass를 넘겨 데이터베이스 정보를 수정하도록함
-			if(qanswer.equals(manswer)) {
+			if (qanswer.equals(manswer)) {
 				raffleDetailDao.updateRdtMissionCleard(rno, mid, "PASS");
 				// 정답을 틀릴 시 래플번호, 회원아이디, fail 정보를 넘겨 데이터베이스 정보를 수정하도록 함
 			} else {
 				raffleDetailDao.updateRdtMissionCleard(rno, mid, "FAIL");
 			}
-			// 미션타입이 time미션일 경우 
-		} else if(rMissionType.equals("time")){
-			
+			// 미션타입이 time미션일 경우
+		} else if (rMissionType.equals("time")) {
+
 		}
 	}
-	
+
 	public List<RaffleDetail> getMyRaffleDetailRequestList(String mid, String startdate, String enddate) {
-		return raffleDetailDao.getMyRaffleDetailRequestList(mid,startdate, enddate);
+		return raffleDetailDao.getMyRaffleDetailRequestList(mid, startdate, enddate);
 	}
 
 	public String updateRdtBerrySpend(int rno, String mid, int rdtBerrySpend) {
 		int spentberry = raffleDetailDao.selectRdtBerrySpend(rno, mid);
 		int mberry = memberDao.selectBerry(mid);
-		//spentberry+rdtBerrySpend -한레플에 사용할수있는 베리는 최대 10개 && 내가 가지고 있는 베리 만큼만 사용 가능 
-		if(spentberry+rdtBerrySpend <= 10 && rdtBerrySpend <= mberry) {
-			//유효
+		// spentberry+rdtBerrySpend -한레플에 사용할수있는 베리는 최대 10개 && 내가 가지고 있는 베리 만큼만 사용 가능
+		if (spentberry + rdtBerrySpend <= 10 && rdtBerrySpend <= mberry) {
+			// 유효
 			raffleDetailDao.updateRdtBerrySpend(rno, mid, rdtBerrySpend);
 			memberDao.updateBerry(mid, -rdtBerrySpend);
 			BerryHistory berryHistory = new BerryHistory(0, mid, null, -rdtBerrySpend, rno + "번 래플에 사용");
@@ -171,25 +182,25 @@ public class RaffleService {
 			return "실패";
 		}
 	}
-	
+
 	// 확률 계산용
 	private String computeProbability(String mid, int rno) {
 		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
 		RaffleDetail myProbability = raffleDetailDao.selectRaffleDetail(mid, rno);
-		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2 + pp.get("BERRYSPEND").intValue();
+		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2
+				+ pp.get("BERRYSPEND").intValue();
 		int missionCleared = (myProbability.getRdtmissioncleared().equals("PASS") ? 2 : 0);
 		double myScore = 10 + missionCleared + myProbability.getRdtberryspend();
-		return String.format("%.2f", myScore/ppScore*100);
+		return String.format("%.2f", myScore / ppScore * 100);
 	}
-
 
 	public List<Raffle> getWinnerDetailList(String mid) {
 		return winnerDao.selectWinnerDetailList(mid);
 	}
-	
+
 	public RaffleImage readRaffleImage(int rno) {
 		return raffleImageDao.selectByRno(rno);
 
 	}
-
+	
 }

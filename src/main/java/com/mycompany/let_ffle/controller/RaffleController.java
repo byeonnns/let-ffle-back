@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,17 +51,8 @@ public class RaffleController {
 
 	@PostMapping("/createRaffle")
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
-
-		// (임시) - 나중에 db로 받아올 것 Timestamp가 postman형식으로 넘어가지 못해 객체를 생성해 TimeMission(dto),
-		// Raffle(dto)의 Timestamp 를 설정
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-		TimeMission timeMission = new TimeMission();
-		timeMission.setTstartedat(timestamp);
-		timeMission.setTfinishedat(timestamp);
-		raffleRequest.setTimeMission(timeMission);
-		raffleRequest.getRaffle().setRstartedat(timestamp);
-		raffleRequest.getRaffle().setRfinishedat(timestamp);
+		log.info("실행");
+		log.info("raffleRequest : " + raffleRequest);
 
 		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rthumbnailattach 가 null값이 아니고 비어있지
 		// 않으면 파일 이름과, 종류, 데이터를 설정
@@ -155,7 +148,54 @@ public class RaffleController {
 
 	@PutMapping("/updateRaffle")
 	public RaffleRequest updateRaffle(RaffleRequest raffleRequest) {
-		return null;
+
+		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
+				&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
+			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
+			// 파일 이름을 설정
+			raffleRequest.getRaffleImage().setRthumbnailimgoname(mf.getOriginalFilename());
+			// 파일 종류를 설정
+			raffleRequest.getRaffleImage().setRthumbnailimgtype(mf.getContentType());
+			try {
+				// 파일 데이터를 설정0
+				raffleRequest.getRaffleImage().setRthumbnailimg(mf.getBytes());
+			} catch (IOException e) {
+			}
+		}
+
+		if (raffleRequest.getRaffleImage().getRgiftattach() != null
+				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
+			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
+			// 파일 이름 설정
+			raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
+			// 파일 종류 설정
+			raffleRequest.getRaffleImage().setRgiftimgtype(mf.getContentType());
+			try {
+				// 파일 데이터를 설정
+				raffleRequest.getRaffleImage().setRgiftimg(mf.getBytes());
+			} catch (IOException e) {
+			}
+
+		}
+
+		if (raffleRequest.getRaffleImage().getRdetailattach() != null
+				&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
+			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
+			// 파일 이름 설정
+			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
+			// 파일 종류 설정
+			raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
+
+			try {
+				// 파일 데이터를 설정
+				raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
+			} catch (IOException e) {
+
+			}
+		}
+		raffleService.updateRaffle(raffleRequest);
+
+		return raffleRequest;
 	}
 
 	@PutMapping("/deleteRaffle")
@@ -183,16 +223,19 @@ public class RaffleController {
 	@GetMapping("/getRaffleDetailList")
 	public Map<String, Object> getRaffleDetailList(Authentication authentication) {
 		Map<String, Object> map = new HashMap<>();
-		map = raffleService.getRaffleDetailList(authentication.getName(), authentication.getAuthorities().iterator().next().toString());
+		map = raffleService.getRaffleDetailList(authentication.getName(),
+				authentication.getAuthorities().iterator().next().toString());
 		return map;
 	}
-	
+
 	// 마이페이지 -> 내가 응모한 내역 기간별 조회
 	@GetMapping("/getMyRaffleDetailRequestList")
-	public List<RaffleDetail> getMyRaffleDetailRequestList(Authentication authentication, String startdate, String enddate) {
-		List<RaffleDetail> list = raffleService.getMyRaffleDetailRequestList(authentication.getName(),startdate, enddate);
+	public List<RaffleDetail> getMyRaffleDetailRequestList(Authentication authentication, String startdate,
+			String enddate) {
+		List<RaffleDetail> list = raffleService.getMyRaffleDetailRequestList(authentication.getName(), startdate,
+				enddate);
 		return list;
-		
+
 	}
 
 	@PostMapping("/createWinner")
@@ -215,7 +258,6 @@ public class RaffleController {
 		List<Raffle> list = raffleService.getWinnerDetailList(authentication.getName());
 		return list;
 	}
-		
 
 	// 미션 참여 여부 수정
 	@PutMapping("/updateRdtMissionCleared")
@@ -230,16 +272,17 @@ public class RaffleController {
 	@PutMapping("/updateRdtBerrySpend")
 	public String updateRdtBerrySpend(int rno, Authentication authentication, int RdtBerrySpend) {
 		String result;
-		if(RdtBerrySpend>0 && RdtBerrySpend<=10)
+		if (RdtBerrySpend > 0 && RdtBerrySpend <= 10)
 			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), RdtBerrySpend);
-		else{
+		else {
 			result = "늘어난줄 알았지? 응 아니야.";
 		}
-		
+
 		return result;
 	}
-	
-	@GetMapping("/raffleAttach/{rno}")
+
+	// 썸네일 이미지
+	@GetMapping("/raffleThumbnailAttach/{rno}")
 	public void download(@PathVariable int rno, HttpServletResponse response) {
 		// 해당 게시물 가져오기
 		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
@@ -258,5 +301,47 @@ public class RaffleController {
 			log.error(e.toString());
 		}
 	}
-	
+
+	// 경품 이미지
+	@GetMapping("/raffleGiftAttach/{rno}")
+	public void downloadGift(@PathVariable int rno, HttpServletResponse response) {
+		// 해당 게시물 가져오기
+		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
+		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
+		try {
+			String fileName = new String(raffleImage.getRgiftimgoname().getBytes("UTF-8"), "ISO-8859-1");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			// 파일 타입을 헤더에 추가
+			response.setContentType(raffleImage.getRgiftimgtype());
+			// 응답 바디에 파일 데이터를 출력
+			OutputStream os = response.getOutputStream();
+			os.write(raffleImage.getRgiftimg());
+			os.flush();
+			os.close();
+		} catch (IOException e) {
+			log.error(e.toString());
+		}
+	}
+
+	// 레플 디테일 이미지
+	@GetMapping("/raffleDetailAttach/{rno}")
+	public void downloadDetail(@PathVariable int rno, HttpServletResponse response) {
+		// 해당 게시물 가져오기
+		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
+		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
+		try {
+			String fileName = new String(raffleImage.getRdetailimgoname().getBytes("UTF-8"), "ISO-8859-1");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			// 파일 타입을 헤더에 추가
+			response.setContentType(raffleImage.getRdetailimgtype());
+			// 응답 바디에 파일 데이터를 출력
+			OutputStream os = response.getOutputStream();
+			os.write(raffleImage.getRdetailimg());
+			os.flush();
+			os.close();
+		} catch (IOException e) {
+			log.error(e.toString());
+		}
+	}
+
 }

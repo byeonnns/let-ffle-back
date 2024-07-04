@@ -16,5 +16,12 @@
 		where rno = #{rno}
 	</select>
 	
+	<update id="updateQuizMisson" parameterType="QuizMission">
+		update quizmission
+		set
+		qcontent = #{qcontent}, qoption1 = #{qoption1}, qoption2 = #{qoption2}, 
+		qoption3 = #{qoption3}, qoption4 = #{qoption4}, qanswer = #{qanswer}		
+		where rno =#{rno}
+	</update>
 	
 </mapper>
