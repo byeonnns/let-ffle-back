@@ -22,13 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Winner;
-import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
@@ -159,7 +157,7 @@ public class MemberController {
 
 	}
 	
-	// 관리자 페이지 - 전체 회원 조회 및 페이지네숀
+	// 관리자 페이지 - 전체 회원 조회 및 페이지네이션
 	@GetMapping("/getAdminMemberList")
 	public Map<String, Object> getAdminMemberList(@RequestParam(defaultValue = "1") int pageNo) {
 		int totalRows = memberService.getMemberCount();
@@ -226,6 +224,26 @@ public class MemberController {
 
 		return map;
 	}
+	
+	@PostMapping("/mypage/passwordMatchCheck/{mpassword}")
+	public Map<String, String> passwordMatchCheck(@PathVariable String mpassword, Authentication authentication) {
+		log.info("mpassword : " + mpassword);
+		
+		Member member = memberService.selectByMid(authentication.getName());
+		
+		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		boolean result = passwordEncoder.matches(mpassword, member.getMpassword());
+		
+		Map<String, String> map = new HashMap<>();
+
+		if (result) {
+			map.put("result", "success");
+		} else {
+			map.put("result", "fail");
+		}
+
+		return map;
+	}
 
 	@PostMapping("/findId/{mphone}")
 	public Map<String, Object> findId(@PathVariable String mphone) {
@@ -262,6 +280,26 @@ public class MemberController {
 		}
 
 		return map;
+	}
+	
+	@PutMapping("/resetMpassword/{mid}/{mpassword}")
+	public void resetMpassword(@PathVariable String mid, @PathVariable String mpassword) {
+		log.info("mid : " + mid);
+		log.info("mpassword : " + mpassword);
+		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
+		// 매개변수로 입력받은 mid를 전달
+		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
+		// getMember()로 데이터에 접근이 가능해짐
+		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
+
+		// 변경할 새 비밀번호를 암호화 -> PasswordEncoder의 encode() 사용
+		// 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅
+		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		userDetails.getMember().setMpassword(passwordEncoder.encode(mpassword));
+
+		// 유저의 아이디와 새 비밀번호를 DB에 저장하도록 memberService의 updateMpassword() 호출
+		// 매개변수로 그 값들을 넘겨줌
+		memberService.updateMpassword(userDetails.getMember().getMid(), userDetails.getMember().getMpassword());
 	}
 	
 	// 마이페이지 내가쓴 게시물
@@ -323,70 +361,43 @@ public class MemberController {
 	}
 
 	// 마이페이지 -> 비밀번호 수정
-	@PutMapping("/mypage/updateMpassword/{mid}/{mpassword}")
-	public void updateMpassword(@PathVariable String mid, @PathVariable String mpassword) {
-		log.info("mid : " + mid);
-		log.info("mpassword : " + mpassword);
-		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
-		// 매개변수로 입력받은 mid를 전달
-		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
-		// getMember()로 데이터에 접근이 가능해짐
-		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
-
-		// 변경할 새 비밀번호를 암호화 -> PasswordEncoder의 encode() 사용
-		// 암호화한 비밀번호를 Member DTO의 mpassword 필드값으로 세팅
+	@PutMapping("/mypage/updateMpassword/{mpassword}")
+	public void updateMpassword(Authentication authentication, @PathVariable String mpassword) {
 		PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		userDetails.getMember().setMpassword(passwordEncoder.encode(mpassword));
 
-		// 유저의 아이디와 새 비밀번호를 DB에 저장하도록 memberService의 updateMpassword() 호출
-		// 매개변수로 그 값들을 넘겨줌
-		memberService.updateMpassword(userDetails.getMember().getMid(), userDetails.getMember().getMpassword());
+		log.info("mpassword : " + mpassword);
+		
+		memberService.updateMpassword(authentication.getName(), passwordEncoder.encode(mpassword));
+	}
+	
+	@PutMapping("/mypage/updateMnickname/{mnickname}")
+	public void updateMnickname(@PathVariable String mnickname, Authentication authentication) {
+		log.info("mnickname" + mnickname);
+		
+		memberService.updateMnickname(authentication.getName(), mnickname);
+		
 	}
 
 	// 휴대폰 번호 수정
-	@PutMapping("/mypage/updateMphone")
-	public void updateMphone(String mid, String mphone) {
-		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
-		// 매개변수로 입력받은 mid를 전달
-		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
-		// getMember()로 데이터에 접근이 가능해짐
-		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
-
-		// 새 휴대폰 번호를 Member DTO의 mphone 필드 값으로 세팅
-		userDetails.getMember().setMphone(mphone);
-
-		// 유저의 아이디와 새 휴대폰 번호를 DB에 저장하도록 memberService의 updateMphone() 호출
-		// 매개변수로 그 값들이 필드값으로 저장되어 있는 Member 객체를 넘겨줌
-		memberService.updateMphone(userDetails.getMember());
+	@PutMapping("/mypage/updateMphone/{mphone}")
+	public void updateMphone(@PathVariable String mphone, Authentication authentication) {
+		memberService.updateMphone(authentication.getName(), mphone);
 	}
 
 	// 주소 수정
-	@PutMapping("/mypage/updateMaddress")
-	public void updateMaddress(String mid, String maddress, String mzipcode) {
-		// 주입받은 letffleUserDetailsService를 이용해 loadUserByUsername를 호출
-		// 매개변수로 입력받은 mid를 전달
-		// DB에 해당 mid를 가진 유저의 데이터를 LetffleUserDetails 객체의 Member 필드에 저장
-		// getMember()로 데이터에 접근이 가능해짐
-		LetffleUserDetails userDetails = letffleUserDetailsService.loadUserByUsername(mid);
-
-		// 새 주소와 우편번호를 각각 Member DTO의 maddress, mzipcode 필드 값으로 세팅
-		userDetails.getMember().setMaddress(maddress);
-		userDetails.getMember().setMzipcode(mzipcode);
-
-		// 유저의 아이디와 새 주소, 우편번호를 DB에 저장하도록 memberService의 updateMaddress() 호출
-		// 매개변수로 그 값들을 넘겨줌
-		memberService.updateMaddress(userDetails.getMember().getMid(), userDetails.getMember().getMaddress(),
-				userDetails.getMember().getMzipcode());
+	@PutMapping("/mypage/updateMaddress/{mzipcode}/{maddress}")
+	public void updateMaddress(@PathVariable String mzipcode, @PathVariable String maddress, Authentication authentication) {
+		memberService.updateMaddress(authentication.getName(), mzipcode, maddress);
 	}
 
 	// 회원 탈퇴
 	// DB에서 데이터 삭제가 아닌 menabled를 false로 바꾸는 것으로 탈퇴 처리
 	// 따라서 delete가 아닌 put을 사용
 	@PutMapping("/deleteMember")
-	public void deleteMember(@RequestParam String mid) {
+	public void deleteMember(Authentication authentication) {
 		// 해당 mid의 menabled 값을 false로 수정하는 memberService의 deleteByMid() 호출
 		// 매개변수로 mid를 넘겨줌
-		memberService.deleteByMid(mid);
+		memberService.deleteByMid(authentication.getName());
 	}
 
 	// 문의 등록
@@ -527,4 +538,16 @@ public class MemberController {
 
 		return map;
 	}
+	
+	@GetMapping("/getMember")
+	public Member getMember(Authentication authentication) {
+		Member member = memberService.selectByMid(authentication.getName());
+		
+		if (member != null) {
+			member.setMlastlogintime(null);
+			member.setMpassword(null);
+		}
+		return member;
+	}
+	
 }
