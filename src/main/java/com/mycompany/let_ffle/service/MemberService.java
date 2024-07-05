@@ -211,13 +211,32 @@ public class MemberService {
 		return map;
 	}
 
-	public List<BerryHistory> getBerryHistoryList(String mid) {
-		List<BerryHistory> list = berryHistoryDao.selectByMid(mid);
+	public Map<String, Object> getBerryHistoryList(String mid, int pageNo, String option) {
+		Map<String, Object> map = new HashMap<>();
+		int totalBerryHistory = berryHistoryDao.countTotalBH(mid);
+		int saveBerryHistory = berryHistoryDao.countSaveBH(mid);
+		int useBerryHistory = berryHistoryDao.countUseBH(mid);
+		map.put("totalBerryHistory", totalBerryHistory);
+		map.put("saveBerryHistory", saveBerryHistory);
+		map.put("useBerryHistory", useBerryHistory);
+		
+		Pager pager = new Pager();
+		if(option.equals("Total")) {
+			pager = new Pager(5, 5, totalBerryHistory, pageNo);
+		} else if (option.equals("Save")) {
+			pager = new Pager(5, 5, saveBerryHistory, pageNo);
+		} else if (option.equals("Use")) {
+			pager = new Pager(5, 5, useBerryHistory, pageNo);
+		}
+		map.put("pager", pager);
+		
+		List<BerryHistory> list = berryHistoryDao.selectByMid(mid, pager, option);
 		for(BerryHistory item : list) {
 			if(item.getBhchangevalue() < 0)
 				item.setBhreason(raffleDao.selectByRno(Integer.parseInt(item.getBhreason())).getRtitle());
 		}
-		return list;
+		map.put("list", list);
+		return map;
 	}
 
 	public void updateWinner(Winner winner) {

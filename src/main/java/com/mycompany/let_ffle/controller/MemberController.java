@@ -491,9 +491,8 @@ public class MemberController {
 
 	// 베리 사용내역 조회 메소드
 	@GetMapping("/getBerryHistoryList")
-	public List<BerryHistory> getBerryHistoryList(Authentication authentication) {
-		List<BerryHistory> list = memberService.getBerryHistoryList(authentication.getName());
-		return list;
+	public Map<String, Object> getBerryHistoryList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "Total")String option) {
+		return memberService.getBerryHistoryList(authentication.getName(), pageNo, option);
 	}
 
 	// 문의 내용 답변 작성
