@@ -11,10 +11,49 @@
 		VALUES (#{bhno}, #{mid}, systimestamp, #{bhchangevalue}, #{bhreason})
 	</insert>
 	
-	<select id="selectByMid" parameterType="String" resultType="BerryHistory">
-		SELECT *
+	<select id="selectByMid" parameterType="Map" resultType="BerryHistory">
+		select rnum, bhno, bhchangedat, bhchangevalue, bhreason
+		from (
+		    select rownum as rnum, bhno, bhchangedat, bhchangevalue, bhreason
+		    from (
+		        select bhno, bhchangedat, bhchangevalue, bhreason
+		        from berryhistory
+		        WHERE mid = #{mid}
+		        <if test="option.equals('Save')">
+					AND bhchangevalue &gt; 0
+				</if>
+				<if test="option.equals('Use')">
+					AND bhchangevalue &lt; 0
+				</if>
+		        order by bhchangedat desc
+		    )
+	    <![CDATA[
+		    where rownum <= #{pager.endRowNo}
+		)
+		where rnum >= #{pager.startRowNo}
+		]]>
+	</select>
+	
+	<select id="countTotalBH" parameterType="String" resultType="int">
+		SELECT COUNT(*)
 		FROM berryhistory
 		WHERE mid = #{mid}
+	</select>
+	
+	<select id="countSaveBH" parameterType="String" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM berryhistory
+		WHERE mid = #{mid} AND bhchangevalue > 0
+	 ]]>
+	</select>
+	
+	<select id="countUseBH" parameterType="String" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM berryhistory
+		WHERE mid = #{mid} AND bhchangevalue < 0
+	]]>
 	</select>
 
 </mapper>    
