@@ -13,16 +13,16 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
       <![CDATA[
       select rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
       from (
-          select rownum as rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
+          select DISTINCT rownum as rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
           from (
               select ino, ititle, mid, icreatedat, iupdatedat, ireply
               from inquiry
               where mid = #{mid}
               order by ino desc
           )
-          where rownum <= #{endRowNo}
+          where rownum <= #{pager.endRowNo}
       )
-      where rnum >= #{startRowNo}
+      where rnum >= #{pager.startRowNo}
       ]]>
 	</select>
 

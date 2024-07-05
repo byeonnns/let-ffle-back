@@ -101,10 +101,6 @@ public class MemberService {
 		inquiryDao.insertInquiry(inquiry);
 	}
 
-	public Inquiry getInquiry(int ino) {
-		return inquiryDao.readInquiry(ino);
-	}
-
 	// 문의 수정
 	public int updateInquiry(Inquiry inquiry) {
 		return inquiryDao.updateInquiry(inquiry);
@@ -257,6 +253,10 @@ public class MemberService {
 
 	public List<Inquiry> getInquiryList(Pager pager, String mid) {
 		return inquiryDao.selectByPage(pager,mid);
+	}
+
+	public Inquiry readInquiry(int ino) {
+		return inquiryDao.readInquiry(ino);
 	}
 
 }

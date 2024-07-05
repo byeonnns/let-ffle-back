@@ -431,17 +431,18 @@ public class MemberController {
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName());
 		Map<String, Object> map = new HashMap<>();
-		map.put("Inquiry", list);
-		map.put("Pager", pager);
+		map.put("inquiry", list);
+		map.put("pager", pager);
 		return map;
 	}
 	
 	// 문의 상세 보기
-	@GetMapping("/readInquiry/{ino}")
+	@GetMapping("/inquiryDetail/{ino}")
 	// @pathvarialbe을 사용하는 이유 매개변수를 바인딩 시키기 위해서 사용된것이다.
-	public Inquiry readInquiry(@PathVariable int ino) {
+	public Inquiry inquiryDetail(@PathVariable int ino) {
+		log.info("ino:" + ino);
 		// 전달받은 ino와 일치하는 Inquiry 객체를 DB에서 가져오기
-		Inquiry inquiry = memberService.getInquiry(ino);
+		Inquiry inquiry = memberService.readInquiry(ino);
 
 		// 파일명을 보내는 클라이언트에게 파일의 값을 안보여주기 위해서 null로 처리를 한것이다.
 		inquiry.setIattachdata(null);
