@@ -426,16 +426,16 @@ public class MemberController {
 	@GetMapping("/getInquiryList")
 	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가
 	// 1번이라는 것을 지정해주기 위해 1을 기본 값으로 준것이다.
-	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = memberService.getCount();
+	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo, Authentication authentication) {
+		int totalRows = memberService.getInquiryCount(authentication.getName());
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		List<Inquiry> list = memberService.getInquiryList(pager);
+		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName());
 		Map<String, Object> map = new HashMap<>();
 		map.put("Inquiry", list);
 		map.put("Pager", pager);
 		return map;
 	}
-
+	
 	// 문의 상세 보기
 	@GetMapping("/readInquiry/{ino}")
 	// @pathvarialbe을 사용하는 이유 매개변수를 바인딩 시키기 위해서 사용된것이다.

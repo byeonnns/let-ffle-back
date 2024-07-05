@@ -9,7 +9,7 @@ rownum as rum = 별칭으로 사용됨
 내부 쿼리는 inquiry  테이블 안에서 테이블을 선택하고 (order by into = 내림차순 )으로 ino기준으로 정렬한다. 최신 inquiry가 먼저나오도록 설정한것이다. 
 여기서의 rownum endrowno 은 행들만 선택하며 상위 몇개의 행을 선택하기 위함이다.
 ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데 startnum 은 6  endnum 은 10 이다.-->
-	<select id="selectByPage" parameterType="pager" resultType="Inquiry">
+	<select id="selectByPage" parameterType="Map" resultType="Inquiry">
       <![CDATA[
       select rnum, ino, ititle,mid, icreatedat, iupdatedat, ireply
       from (
@@ -17,6 +17,7 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
           from (
               select ino, ititle, mid, icreatedat, iupdatedat, ireply
               from inquiry
+              where mid = #{mid}
               order by ino desc
           )
           where rownum <= #{endRowNo}
@@ -36,9 +37,10 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
 		(#{ino}, #{mid}, #{ititle}, #{icontent}, #{iattachoname},
 		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp, #{ireply}) </insert>
 
-	<select id="InquiryCount" resultType="int">
+	<select id="getInquiryCount" resultType="int">
 		select count(*)
 		from inquiry
+		where mid = #{mid}
 	</select>
 
 	<select id="readInquiry" parameterType="int"

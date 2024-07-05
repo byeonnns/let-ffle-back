@@ -101,14 +101,6 @@ public class MemberService {
 		inquiryDao.insertInquiry(inquiry);
 	}
 
-	public int getCount() {
-		return inquiryDao.InquiryCount();
-	}
-
-	public List<Inquiry> getInquiryList(Pager pager) {
-		return inquiryDao.selectByPage(pager);
-	}
-
 	public Inquiry getInquiry(int ino) {
 		return inquiryDao.readInquiry(ino);
 	}
@@ -257,6 +249,14 @@ public class MemberService {
 
 	public List<Winner> getAdminWinnerList(Pager pager) {
 		return winnerDao.selectByWinnerList(pager);
+	}
+
+	public int getInquiryCount(String mid) {
+		return inquiryDao.getInquiryCount(mid);
+	}
+
+	public List<Inquiry> getInquiryList(Pager pager, String mid) {
+		return inquiryDao.selectByPage(pager,mid);
 	}
 
 }
