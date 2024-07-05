@@ -391,8 +391,11 @@ public class MemberController {
 
 	// 문의 등록
 	@PostMapping("/mypage/createInquiry")
-	public Inquiry createInquiry(Inquiry inquiry) {
+	public Inquiry createInquiry(Inquiry inquiry, Authentication authentication) {
 		// 첨부파일이 들어있는지 확인
+		
+		inquiry.setMid(authentication.getName());
+		
 		if (inquiry.getIattach() != null && !inquiry.getIattach().isEmpty()) {
 			// 첨부파일이 포함된 경우
 			// MultipartFile 객체에 첨부파일 데이터를 저장

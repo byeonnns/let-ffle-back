@@ -31,9 +31,9 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
 			SELECT
 			SEQ_INO.NEXTVAL FROM dual
 		</selectKey> insert into
-		Inquiry(ino, mid, ititle , icontent, iattachoname,
+		inquiry(ino, mid, ititle , icontent, iattachoname,
 		iattachdata,iattachtype, icreatedat,iupdatedat,ireply) values
-		(#{ino},#{mid}, #{ititle}, #{ icontent}, #{iattachoname},
+		(#{ino}, #{mid}, #{ititle}, #{icontent}, #{iattachoname},
 		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp, #{ireply}) </insert>
 
 	<select id="InquiryCount" resultType="int">
