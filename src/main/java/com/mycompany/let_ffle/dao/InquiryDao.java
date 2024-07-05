@@ -11,9 +11,10 @@ import com.mycompany.let_ffle.dto.Pager;
 public interface InquiryDao {
 	/* 1:1 문의 */
 	public int insertInquiry(Inquiry inquiry);
-	public int InquiryCount();
-	public List<Inquiry> selectByPage(Pager pager);
 	public Inquiry readInquiry(int ino);
 	public int updateInquiry(Inquiry inquiry);
 	public void updateInquiryReply(int ino, String ireply);
+	public int getInquiryCount(String mid);
+	public List<Inquiry> selectByPage(Pager pager, String mid);
+	
 }

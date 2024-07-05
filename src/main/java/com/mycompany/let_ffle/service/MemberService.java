@@ -101,18 +101,6 @@ public class MemberService {
 		inquiryDao.insertInquiry(inquiry);
 	}
 
-	public int getCount() {
-		return inquiryDao.InquiryCount();
-	}
-
-	public List<Inquiry> getInquiryList(Pager pager) {
-		return inquiryDao.selectByPage(pager);
-	}
-
-	public Inquiry getInquiry(int ino) {
-		return inquiryDao.readInquiry(ino);
-	}
-
 	// 문의 수정
 	public int updateInquiry(Inquiry inquiry) {
 		return inquiryDao.updateInquiry(inquiry);
@@ -261,6 +249,18 @@ public class MemberService {
 
 	public void updateMnickname(String mid, String mnickname) {
 		memberDao.updateMnickname(mid, mnickname);
+	}
+	
+	public int getInquiryCount(String mid) {
+		return inquiryDao.getInquiryCount(mid);
+	}
+
+	public List<Inquiry> getInquiryList(Pager pager, String mid) {
+		return inquiryDao.selectByPage(pager,mid);
+	}
+
+	public Inquiry readInquiry(int ino) {
+		return inquiryDao.readInquiry(ino);
 	}
 
 }

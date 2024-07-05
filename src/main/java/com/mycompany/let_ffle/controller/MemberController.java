@@ -335,14 +335,14 @@ public class MemberController {
 	}
 
 	// 래플 좋아요 추가 기능
-	@PostMapping("/addLikeList")
-	public void addLikeList(Authentication authentication, int rno) {
+	@PostMapping("/addLikeList/{rno}")
+	public void addLikeList(Authentication authentication, @PathVariable  int rno) {
 		memberService.insertAddLikeList(authentication.getName(), rno);
 	}
 
 	// 래플 좋아료 삭제 기능
-	@DeleteMapping("/deleteLikeList")
-	public String deleteLikeList(Authentication authentication, int rno) {
+	@DeleteMapping("/deleteLikeList/{rno}")
+	public String deleteLikeList(Authentication authentication,@PathVariable int rno) {
 		memberService.deleteLikeList(authentication.getName(), rno);
 		return "관심 래플 삭제";
 	}
@@ -402,8 +402,11 @@ public class MemberController {
 
 	// 문의 등록
 	@PostMapping("/mypage/createInquiry")
-	public Inquiry createInquiry(Inquiry inquiry) {
+	public Inquiry createInquiry(Inquiry inquiry, Authentication authentication) {
 		// 첨부파일이 들어있는지 확인
+		
+		inquiry.setMid(authentication.getName());
+		
 		if (inquiry.getIattach() != null && !inquiry.getIattach().isEmpty()) {
 			// 첨부파일이 포함된 경우
 			// MultipartFile 객체에 첨부파일 데이터를 저장
@@ -434,22 +437,23 @@ public class MemberController {
 	@GetMapping("/getInquiryList")
 	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가
 	// 1번이라는 것을 지정해주기 위해 1을 기본 값으로 준것이다.
-	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = memberService.getCount();
+	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo, Authentication authentication) {
+		int totalRows = memberService.getInquiryCount(authentication.getName());
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		List<Inquiry> list = memberService.getInquiryList(pager);
+		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName());
 		Map<String, Object> map = new HashMap<>();
-		map.put("Inquiry", list);
-		map.put("Pager", pager);
+		map.put("inquiry", list);
+		map.put("pager", pager);
 		return map;
 	}
-
+	
 	// 문의 상세 보기
-	@GetMapping("/readInquiry/{ino}")
+	@GetMapping("/inquiryDetail/{ino}")
 	// @pathvarialbe을 사용하는 이유 매개변수를 바인딩 시키기 위해서 사용된것이다.
-	public Inquiry readInquiry(@PathVariable int ino) {
+	public Inquiry inquiryDetail(@PathVariable int ino) {
+		log.info("ino:" + ino);
 		// 전달받은 ino와 일치하는 Inquiry 객체를 DB에서 가져오기
-		Inquiry inquiry = memberService.getInquiry(ino);
+		Inquiry inquiry = memberService.readInquiry(ino);
 
 		// 파일명을 보내는 클라이언트에게 파일의 값을 안보여주기 위해서 null로 처리를 한것이다.
 		inquiry.setIattachdata(null);
