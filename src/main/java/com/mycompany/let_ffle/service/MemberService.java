@@ -14,6 +14,7 @@ import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dao.InquiryDao;
 import com.mycompany.let_ffle.dao.LikeListDao;
 import com.mycompany.let_ffle.dao.MemberDao;
+import com.mycompany.let_ffle.dao.RaffleDao;
 import com.mycompany.let_ffle.dao.RaffleDetailDao;
 import com.mycompany.let_ffle.dao.WinnerDao;
 import com.mycompany.let_ffle.dto.BerryHistory;
@@ -27,6 +28,9 @@ import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 @Service
 public class MemberService {
+	@Autowired
+	private RaffleDao raffleDao;
+	
 	@Autowired
 	private MemberDao memberDao;
 
@@ -208,7 +212,12 @@ public class MemberService {
 	}
 
 	public List<BerryHistory> getBerryHistoryList(String mid) {
-		return berryHistoryDao.selectByMid(mid);
+		List<BerryHistory> list = berryHistoryDao.selectByMid(mid);
+		for(BerryHistory item : list) {
+			if(item.getBhchangevalue() < 0)
+				item.setBhreason(raffleDao.selectByRno(Integer.parseInt(item.getBhreason())).getRtitle());
+		}
+		return list;
 	}
 
 	public void updateWinner(Winner winner) {

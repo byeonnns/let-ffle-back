@@ -179,7 +179,7 @@ public class RaffleService {
 			//유효
 			raffleDetailDao.updateRdtBerrySpend(rno, mid, rdtBerrySpend);
 			memberDao.updateBerry(mid, -rdtBerrySpend);
-			BerryHistory berryHistory = new BerryHistory(0, mid, null, -rdtBerrySpend, rno + "번 래플에 사용");
+			BerryHistory berryHistory = new BerryHistory(0, mid, null, -rdtBerrySpend, String.valueOf(rno));
 			berryHistoryDao.insertBerryHistory(berryHistory);
 			return "성공";
 		} else {
