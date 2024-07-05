@@ -73,10 +73,10 @@ public class MemberService {
 	}
 
 	// mypage에 휴대폰 번호 변경
-	public void updateMphone(Member member) {
+	public void updateMphone(String mid, String mphone) {
 		// memberDao에서 changeMphone이라는 변수 명을 둔후 MemberDao에 changeMphone이라는 메소드에 있는
 		// Member를 가져오라는 의미
-		memberDao.updateMphone(member);
+		memberDao.updateMphone(mid, mphone);
 
 	}
 
@@ -86,9 +86,9 @@ public class MemberService {
 		memberDao.updateMpassword(mid, mpassword);
 	}
 
-	public void updateMaddress(String mid, String maddress, String mzipcode) {
+	public void updateMaddress(String mid, String mzipcode, String maddress) {
 		// 컨트롤러에서 받아온 로그인한 유저의 아이디와 주소를 매개변수로 받아 dao를 호출해 데이터베이스에서 주소를 변경하도록 함
-		memberDao.updateMaddress(mid, maddress, mzipcode);
+		memberDao.updateMaddress(mid, mzipcode, maddress);
 	}
 
 	// 여기입둥
@@ -99,10 +99,6 @@ public class MemberService {
 	/* 1:1 문의 */
 	public void insertInquiry(Inquiry inquiry) {
 		inquiryDao.insertInquiry(inquiry);
-	}
-
-	public Inquiry getInquiry(int ino) {
-		return inquiryDao.readInquiry(ino);
 	}
 
 	// 문의 수정
@@ -260,12 +256,20 @@ public class MemberService {
 		return winnerDao.selectByWinnerList(pager);
 	}
 
+	public void updateMnickname(String mid, String mnickname) {
+		memberDao.updateMnickname(mid, mnickname);
+	}
+	
 	public int getInquiryCount(String mid) {
 		return inquiryDao.getInquiryCount(mid);
 	}
 
 	public List<Inquiry> getInquiryList(Pager pager, String mid) {
 		return inquiryDao.selectByPage(pager,mid);
+	}
+
+	public Inquiry readInquiry(int ino) {
+		return inquiryDao.readInquiry(ino);
 	}
 
 }

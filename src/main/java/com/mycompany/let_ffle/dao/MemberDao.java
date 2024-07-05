@@ -18,7 +18,7 @@ public interface MemberDao {
 
 	void delete(String mid);
 
-	void updateMphone(Member member);
+	void updateMphone(String mid, String mphone);
 	// changeMphone = 메소드 명 이며 우리는 현재 Mphone의 값을 변경시켜주기 위해 MemberDto에 담겨져 있는 값을
 	// 가져오기위해 선언한다.
 
@@ -26,7 +26,7 @@ public interface MemberDao {
 	void updateMpassword(String mid, String mpassword);
 
 	// 유저의 아이디와 주소를 매개변수로 주고 주소를 변경하기 위한 메소드 정의
-	void updateMaddress(String mid, String maddress, String mzipcode);
+	void updateMaddress(String mid, String mzipcode, String maddress);
 
 	// 여기입니둥
 	void login(Member member, String mid, String mpassword);
@@ -59,6 +59,8 @@ public interface MemberDao {
 	List<Member> selectByMember(Pager pager);
 
 	public int memberCount();
+
+	void updateMnickname(String mid, String mnickname);
 	
 	
 
