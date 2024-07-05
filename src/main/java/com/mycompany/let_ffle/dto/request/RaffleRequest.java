@@ -13,4 +13,5 @@ public class RaffleRequest {
 	public RaffleImage raffleImage;
 	public QuizMission quizMission;
 	public TimeMission timeMission;
+	public int raffleProcess;
 }

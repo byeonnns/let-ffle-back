@@ -84,6 +84,7 @@ public class RaffleService {
 		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
 			raffleRequest.setQuizMission(quizMissionDao.selectByRno(rno));
 		}
+		
 		return raffleRequest;
 	}
 
@@ -107,8 +108,28 @@ public class RaffleService {
 		winnerDao.insertWinner(winner);
 	}
 
-	public RaffleDetail readRaffleDetail(RaffleDetail raffleDetail) {
-		return raffleDetailDao.readRaffleDetail(raffleDetail);
+	public String readRaffleDetail(String mid, int rno) {
+		if(raffleDetailDao.readRaffleDetail(mid, rno) > 0) {
+			if(LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
+				return "당첨 발표";
+			} else {
+				String missionCleared = raffleDetailDao.selectRaffleDetail(mid, rno).getRdtmissioncleared();
+				if(missionCleared.equals("PASS")) {
+					return "미션 성공";
+				} else if(missionCleared.equals("FAIL")) {
+					return "미션 실패";
+				} else if(missionCleared.equals("PEND")) {
+					return "미션 대기";
+				}
+			}
+		} else {
+			if(LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
+				return "미참여 래플 종료";
+			} else {
+				return "래플 미참여";
+			}
+		}
+		return "오류";
 	}
 
 	public Map<String, Object> getRaffleDetailList(String mid, String role, int pageNo, String status, String startDate, String endDate) {
@@ -180,7 +201,8 @@ public class RaffleService {
 			}
 			// 미션타입이 time미션일 경우
 		} else if (rMissionType.equals("time")) {
-
+			if(raffleDetailDao.checkTimePass(rno, mid) != 0)
+				raffleDetailDao.updateTimeMissionCleared(rno, mid);
 		}
 	}
 
@@ -232,5 +254,6 @@ public class RaffleService {
 	public int getWinRaffleCount(String mid, String startDate, String endDate) {
 		return winnerDao.countWinRaffle(mid, startDate, endDate);
 	}
+	
 	
 }

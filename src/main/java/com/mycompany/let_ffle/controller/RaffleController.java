@@ -216,12 +216,12 @@ public class RaffleController {
 		return raffleDetail;
 	}
 
-	@GetMapping("/readRaffleDetail")
-	public RaffleDetail raffleDetail(RaffleDetail raffleDetail) {
+	//내가 래플에 응모했는지에 대한 여부 판정
+	@GetMapping("/readRaffleDetail/{rno}")
+	public String raffleDetail(Authentication authentication, @PathVariable int rno) {
 		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail
 		// 객체로 받아 리턴해줌
-		raffleDetail = raffleService.readRaffleDetail(raffleDetail);
-		return raffleDetail;
+		return raffleService.readRaffleDetail(authentication.getName(), rno);
 	}
 
 	// 마이페이지 -> 응모내역 조회 메소드
@@ -280,9 +280,8 @@ public class RaffleController {
 	public void updateRdtMissionCleared(@PathVariable int rno, Authentication authentication, @PathVariable String manswer) {
 		// raffleService로 매개변수로를 넘겨 로직 처리를 요청함
 		raffleService.updateRdtMissionCleared(rno, authentication.getName(), manswer);
-
 	}
-
+	
 	// 베리 사용내역
 	@PutMapping("/updateRdtBerrySpend")
 	public String updateRdtBerrySpend(int rno, Authentication authentication, int RdtBerrySpend) {

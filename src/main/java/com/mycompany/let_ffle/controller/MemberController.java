@@ -295,7 +295,13 @@ public class MemberController {
 		map.put("pager", pager);
 		return map;
 	}
-
+	
+	//래플 좋아요 상태 판정 기능
+	@GetMapping("/likeStatus/{rno}")
+	public boolean likeStatus(Authentication authentication, @PathVariable int rno) {
+		return memberService.getLikeStatus(authentication.getName(), rno);
+	}
+	
 	// 래플 좋아요 추가 기능
 	@PostMapping("/addLikeList/{rno}")
 	public void addLikeList(Authentication authentication, @PathVariable  int rno) {

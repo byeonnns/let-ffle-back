@@ -132,6 +132,15 @@ public class MemberService {
 	public int getLikeListCount(String mid) {
 		return likeListDao.likeListCount(mid);
 	}
+	
+	// 내가 보는 래플 찜 상태 확인
+	public boolean getLikeStatus(String mid, int rno) {
+		int isNull = likeListDao.readLikeStatus(mid, rno);
+		if(isNull == 0)
+			return false;
+		else
+			return true;
+	}
 
 	// 마이페이지 내가찜한 리스트 가져오기
 	public List<RaffleRequest> getLikeList(Pager pager, String mid) {

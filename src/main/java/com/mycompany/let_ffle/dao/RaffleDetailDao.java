@@ -16,7 +16,7 @@ public interface RaffleDetailDao {
 
 	public void insertRaffleDetail(RaffleDetail raffleDetail);
 
-	public RaffleDetail readRaffleDetail(RaffleDetail raffleDetail);
+	public int readRaffleDetail(String mid, int rno);
 
 	public List<RaffleDetail> selectRaffleDetailList(@Param("mid") String mid, @Param("role") String role);
 
@@ -46,5 +46,9 @@ public interface RaffleDetailDao {
 
 	public int selectTodayEntryRaffle(String mid);
 
-	public int selectTodayClearedMission(String mid);	
+	public int selectTodayClearedMission(String mid);
+
+	public void updateTimeMissionCleared(int rno, String mid);
+
+	public int checkTimePass(int rno, String mid);	
 }

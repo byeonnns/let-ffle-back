@@ -37,4 +37,10 @@
 		delete from LikeList
 		where mid = #{mid} AND rno = #{rno}
 	</delete>
+	
+	<select id="readLikeStatus" parameterType="Map" resultType="int">
+		SELECT COUNT(*)
+		FROM likelist
+		WHERE mid = #{mid} AND rno = #{rno}
+	</select>
 </mapper>

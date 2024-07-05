@@ -17,6 +17,6 @@ public interface LikeListDao {
 	public void insertAddLikeList(String mid, int rno);
 
 	public void deleteLikeList(String mid, int rno);
-	
 
+	public int readLikeStatus(String mid, int rno);
 }

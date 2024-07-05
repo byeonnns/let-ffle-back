@@ -10,11 +10,10 @@
 		values (#{rno}, #{mid}, systimestamp, 'PEND', 0)
 	</insert>
 
-	<select id="readRaffleDetail" parameterType="RaffleDetail"
-		resultType="RaffleDetail">
-		select *
+	<select id="readRaffleDetail" parameterType="Map" resultType="int">
+		select COUNT(*)
 		from raffleDetail
-		where rno = #{rno}
+		where rno = #{rno} AND mid = #{mid}
 	</select>
 
 	<select id="selectRaffleDetailList" parameterType="Map"
@@ -36,6 +35,20 @@
 		where rno =
 		#{rno} AND mid = #{mid}
 	</update>
+	
+	<update id="updateTimeMissionCleared" parameterType="Map">
+		UPDATE raffleDetail
+		SET RDTMISSIONCLEARED = 'PASS'
+		WHERE mid = #{mid} AND rno = #{rno}
+	</update>
+	
+	<select id="checkTimePass" parameterType="Map" resultType="int">
+		SELECT count(*)
+		FROM raffle r INNER JOIN raffleDetail rd ON r.rno = rd.rno
+		INNER JOIN timemission t ON r.rno = t.rno
+		WHERE mid = #{mid} AND r.rno = #{rno} AND systimestamp BETWEEN
+		t.tstartedat AND t.tfinishedat
+	</select>
 
 	<update id="updateRdtBerrySpend" parameterType="RaffleDetail">
 		update
