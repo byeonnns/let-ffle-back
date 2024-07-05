@@ -3,7 +3,7 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDao">
 
-<!--페이저의 기능을 위해서 중첩 구문을 사용 자세한 설명은 inquiry.xml에 상세히 나와있다.-->
+	<!--페이저의 기능을 위해서 중첩 구문을 사용 자세한 설명은 inquiry.xml에 상세히 나와있다. -->
 	<select id="selectByPage" parameterType="pager"
 		resultType="Raffle">
       <![CDATA[
@@ -48,7 +48,8 @@
 		select count(*) from raffle
 	</select>
 
-<!--inner join을 사용한 이유는 raffle테이블과 raffleImage테이블 합쳐서 rno 값을 가지는 레코드를 결합시키기 위해서 사용-->
+	<!--inner join을 사용한 이유는 raffle테이블과 raffleImage테이블 합쳐서 rno 값을 가지는 레코드를 결합시키기 
+		위해서 사용 -->
 	<select id="selectByRaffleListForUser"
 		resultType="RaffleRequest">
 		select r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
@@ -63,6 +64,15 @@
 		from raffle r
 		INNER JOIN raffleImage ri ON r.rno = ri.rno
 	</select>
-	
+
+	<update id="updateRaffle" parameterType="RaffleRequest">
+		update raffle
+		set
+		rtitle=#{rtitle}, rsubtitle=#{rsubtitle},
+		rstartedat= #{rstartedat},rfinishedat= #{rfinishedat},
+		rcontent=#{rcontent},rcategory=#{rcategory},rwinnercount=#{rwinnercount}
+		,rmissiontype=#{rmissiontype},rgift=#{rgift}
+		where rno =#{rno}
+	</update>
 
 </mapper>    

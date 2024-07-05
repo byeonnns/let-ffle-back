@@ -11,4 +11,6 @@ public interface QuizMissionDao {
 
 	public QuizMission selectByRno(int rno);
 
+	public	int updateQuizMisson(QuizMission quizMission);
+
 }

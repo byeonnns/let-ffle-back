@@ -16,8 +16,17 @@
 		</selectKey>
 		insert into timemission (rno,tstartedat, tfinishedat)
 		values (#{rno},
-		#{tstartedat},
-		#{tfinishedat})
+		to_timestamp(#{tstartedat}, 'YYYY-MM-DD HH24:MI:SS'),
+		to_timestamp(#{tfinishedat}, 'YYYY-MM-DD HH24:MI:SS'))
 	</insert>
+
+	<update id="updateTimeMisson" parameterType="TimeMission">
+		update timemission
+		set
+		tstartedat = to_timestamp(#{tstartedat}, 'YYYY-MM-DD HH24:MI:SS'),
+		tfinishedat = to_timestamp(#{tfinishedat}, 'YYYY-MM-DD HH24:MI:SS')		
+		where rno =#{rno}
+	</update>
+
 
 </mapper>    

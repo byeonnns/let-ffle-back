@@ -10,4 +10,6 @@ public interface TimeMissionDao {
 	public int insertTimeMisson(TimeMission timeMission);
 
 	public TimeMission selectByRno(int rno);
+
+	public int updateTimeMisson(TimeMission timeMission);
 }

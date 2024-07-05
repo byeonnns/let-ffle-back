@@ -11,4 +11,6 @@ public interface RaffleImageDao {
 
 	public RaffleImage selectByRno(int rno);
 
+	public int updateRaffleImage(RaffleImage raffleImage);
+
 }
