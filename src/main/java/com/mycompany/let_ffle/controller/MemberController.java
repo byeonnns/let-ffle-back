@@ -297,14 +297,14 @@ public class MemberController {
 	}
 
 	// 래플 좋아요 추가 기능
-	@PostMapping("/addLikeList")
-	public void addLikeList(Authentication authentication, int rno) {
+	@PostMapping("/addLikeList/{rno}")
+	public void addLikeList(Authentication authentication, @PathVariable  int rno) {
 		memberService.insertAddLikeList(authentication.getName(), rno);
 	}
 
 	// 래플 좋아료 삭제 기능
-	@DeleteMapping("/deleteLikeList")
-	public String deleteLikeList(Authentication authentication, int rno) {
+	@DeleteMapping("/deleteLikeList/{rno}")
+	public String deleteLikeList(Authentication authentication,@PathVariable int rno) {
 		memberService.deleteLikeList(authentication.getName(), rno);
 		return "관심 래플 삭제";
 	}
