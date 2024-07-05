@@ -204,12 +204,16 @@ public class RaffleController {
 		return null;
 	}
 
-	@PostMapping("/createRaffleDetail")
-	public RaffleDetail createRaffleDetail(RaffleDetail raffleDetail) {
-		// raffleDetail(dto)를 매개변수로 받아 raffleService 메소드를 호출해 raffleDetail객체를 데이터 베이스에
-		// 저장하도록 처리
+	@PostMapping("/createRaffleDetail/{rno}")
+	public RaffleDetail createRaffleDetail(@PathVariable int rno, Authentication authentication) {
+		RaffleDetail raffleDetail = new RaffleDetail();
+		
+		raffleDetail.setRno(rno);
+		raffleDetail.setMid(authentication.getName());
+		
 		raffleService.insertRaffleDetail(raffleDetail);
-		return null;
+		
+		return raffleDetail;
 	}
 
 	@GetMapping("/readRaffleDetail")
@@ -271,9 +275,9 @@ public class RaffleController {
 	}
 
 	// 미션 참여 여부 수정
-	@PutMapping("/updateRdtMissionCleared")
+	@PutMapping("/updateRdtMissionCleared/{rno}/{manswer}")
 	// 매개변수로 rno, authentication을 통해 회원의 이름을 가져오기 위함, manswer(회원이 제출할 퀴즈정답)
-	public void updateRdtMissionCleared(int rno, Authentication authentication, String manswer) {
+	public void updateRdtMissionCleared(@PathVariable int rno, Authentication authentication, @PathVariable String manswer) {
 		// raffleService로 매개변수로를 넘겨 로직 처리를 요청함
 		raffleService.updateRdtMissionCleared(rno, authentication.getName(), manswer);
 
