@@ -10,7 +10,13 @@
 		values (#{rno}, #{mid}, systimestamp, 'PEND', 0)
 	</insert>
 
-	<select id="readRaffleDetail" parameterType="Map" resultType="int">
+	<select id="readRaffleDetail" parameterType="Map" resultType="RaffleDetail">
+		select *
+		from raffleDetail
+		where rno = #{rno} AND mid = #{mid}
+	</select>
+
+	<select id="readRaffleDetailStatus" parameterType="Map" resultType="int">
 		select COUNT(*)
 		from raffleDetail
 		where rno = #{rno} AND mid = #{mid}

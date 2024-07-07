@@ -107,9 +107,13 @@ public class RaffleService {
 	public void insertWinner(Winner winner) {
 		winnerDao.insertWinner(winner);
 	}
-
-	public String readRaffleDetail(String mid, int rno) {
-		if(raffleDetailDao.readRaffleDetail(mid, rno) > 0) {
+	
+	public RaffleDetail readRaffleDetail(String mid, int rno) {
+		return raffleDetailDao.selectRaffleDetail(mid, rno);
+	}
+	
+	public String readRaffleDetailStatus(String mid, int rno) {
+		if(raffleDetailDao.readRaffleDetailStatus(mid, rno) > 0) {
 			if(LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
 				return "당첨 발표";
 			} else {

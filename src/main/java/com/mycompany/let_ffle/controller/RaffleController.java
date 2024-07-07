@@ -218,10 +218,12 @@ public class RaffleController {
 
 	//내가 래플에 응모했는지에 대한 여부 판정
 	@GetMapping("/readRaffleDetail/{rno}")
-	public String raffleDetail(Authentication authentication, @PathVariable int rno) {
+	public Map <String, Object> raffleDetail(Authentication authentication, @PathVariable int rno) {
 		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail
-		// 객체로 받아 리턴해줌
-		return raffleService.readRaffleDetail(authentication.getName(), rno);
+		Map <String, Object> map = new HashMap<>();
+		map.put("raffleDetail", raffleService.readRaffleDetail(authentication.getName(), rno));
+		map.put("raffleStatus", raffleService.readRaffleDetailStatus(authentication.getName(), rno));
+		return map;
 	}
 
 	// 마이페이지 -> 응모내역 조회 메소드
@@ -284,10 +286,11 @@ public class RaffleController {
 	
 	// 베리 사용내역
 	@PutMapping("/updateRdtBerrySpend")
-	public String updateRdtBerrySpend(int rno, Authentication authentication, int RdtBerrySpend) {
+	public String updateRdtBerrySpend(int rno, int rdtBerrySpend, Authentication authentication) {
+		log.info("사용한 베리");
 		String result;
-		if (RdtBerrySpend > 0 && RdtBerrySpend <= 10)
-			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), RdtBerrySpend);
+		if (rdtBerrySpend > 0 && rdtBerrySpend <= 10)
+			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), rdtBerrySpend);
 		else {
 			result = "늘어난줄 알았지? 응 아니야.";
 		}
