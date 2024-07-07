@@ -3,21 +3,21 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.NoticeDao">
 
-	<select id="selectByPage" parameterType="pager"
-		resultType="Notice">
-      <![CDATA[
-      select rnum, nno, ntitle, ncontent,ncreatedat, nupdatedat
+	<select id="selectByPage" resultType="Notice">
+      select rnum, nno, ntitle, nmaincategory,nsubcategory, ncontent,ncreatedat, nupdatedat
       from (
-          select rownum as rnum, nno,ntitle, ncontent, ncreatedat, nupdatedat
+          select rownum as rnum, nno,ntitle, nmaincategory,nsubcategory, ncontent, ncreatedat, nupdatedat
           from (
-              select nno, ntitle, ncontent,ncreatedat, nupdatedat
+              select nno, ntitle,nmaincategory,nsubcategory, ncontent,ncreatedat, nupdatedat
               from notice
+              <if test="subcategory != '전체'">
+              		where nsubcategory = #{subcategory}
+              </if>
               order by nno desc
           )
-          where rownum <= #{endRowNo}
+          where <![CDATA[rownum <= #{pager.endRowNo}]]>
       )
-      where rnum >= #{startRowNo}
-      ]]>
+      where <![CDATA[rnum >= #{pager.startRowNo}]]>
 	</select>
 
 
@@ -38,12 +38,15 @@
 		systimestamp)
 	</insert>
 
-	<select id="noticeCount" resultType="int">
+	<select id="noticeCount" parameterType="String" resultType="int">
 		select count (*)
 		from notice
+		<if test="categoryname != '전체'">
+             where nsubcategory = #{categoryname}
+        </if>
 	</select>
 
-	<select id="selectByNno" parameterType="int" resultType="Notice">
+	<select id="selectByNno" parameterType="Map" resultType="Notice">
 		select *
 		from notice
 		where nno=#{nno}

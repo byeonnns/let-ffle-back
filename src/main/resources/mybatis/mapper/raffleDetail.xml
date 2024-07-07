@@ -183,5 +183,14 @@
 		from raffleDetail
 		where mid = #{mid} AND TRUNC(rdtcreatedat) = TRUNC(sysdate) AND rdtmissioncleared = 'PASS'
 	</select>
+	
+	<select id="getAdminRaffleDetail" parameterType="String" resultType="RaffleDetailRequest">
+		select r.rno as "raffle.rno", r.rtitle as "raffle.rtitle", rdt.rno as "raffleDetail.rno", w.rno as "winner.rno", w.mid as "winner.mid",
+		rdt.mid as "raffleDetail.mid", rdt.rdtcreatedat as "raffleDetail.rdtcreatedat", r.rstartedat as "raffle.rstartedat", r.rfinishedat as "raffle.rfinishedat",
+		rdt.rdtmissioncleared as "raffleDetail.rdtmissioncleared", rdt.rdtberryspend as "raffleDetail.rdtberryspend"
+		from raffle r RIGHT JOIN raffleDetail rdt ON r.rno = rdt.rno
+		INNER JOIN winner w ON w.rno = r.rno
+		where rdt.mid = #{mid}
+	</select>
 
 </mapper>    

@@ -254,6 +254,14 @@ public class RaffleService {
 	public int getWinRaffleCount(String mid, String startDate, String endDate) {
 		return winnerDao.countWinRaffle(mid, startDate, endDate);
 	}
+	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle) {
+		return raffleDao.getMemberRaffleDetail(mid, raffle);
+	}
+	public List<RaffleDetailRequest> getAdminRaffleDetail(String mid) {
+		
+		return raffleDetailDao.getAdminRaffleDetail(mid);
+	}
+	
 	
 	
 }

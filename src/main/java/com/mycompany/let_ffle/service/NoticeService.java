@@ -31,19 +31,17 @@ public class NoticeService {
 		noticeDao.deleteNotice(notice);
 	}
 
-	public int getNoticeCount() {
-		// TODO Auto-generated method stub
-		return noticeDao.noticeCount();
+	public int getNoticeCount(String subcategory) {
+		return noticeDao.noticeCount(subcategory);
 	}
 
-	public List<Notice> getNoticeList(Pager pager) {
+	public List<Notice> getNoticeList(Pager pager, String subcategory) {
 		// TODO Auto-generated method stub
-		return noticeDao.selectByPage(pager);
+		return noticeDao.selectByPage(pager,subcategory);
 	}
 
-	public Notice readNotice(int nno) {
-		// TODO Auto-generated method stub
-		return noticeDao.selectByNno(nno);
+	public Notice readNotice(int nno, String mid, String role) {
+		return noticeDao.selectByNno(nno, mid, role);
 	}
 
 }

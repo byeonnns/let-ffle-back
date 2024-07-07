@@ -27,6 +27,7 @@ import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Winner;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 import com.mycompany.let_ffle.security.JwtProvider;
 import com.mycompany.let_ffle.security.LetffleUserDetails;
@@ -444,14 +445,17 @@ public class MemberController {
 	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가
 	// 1번이라는 것을 지정해주기 위해 1을 기본 값으로 준것이다.
 	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo, Authentication authentication) {
-		int totalRows = memberService.getInquiryCount(authentication.getName());
+		int totalRows = memberService.getInquiryCount(authentication.getName(), authentication.getAuthorities().iterator().next().toString());
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName());
+		// 로그인한 유저의 이름과 유저의 권한을 얻어오기
+		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName(), authentication.getAuthorities().iterator().next().toString());
 		Map<String, Object> map = new HashMap<>();
 		map.put("inquiry", list);
 		map.put("pager", pager);
 		return map;
 	}
+	
+	
 	
 	// 문의 상세 보기
 	@GetMapping("/inquiryDetail/{ino}")
@@ -557,6 +561,13 @@ public class MemberController {
 			member.setMlastlogintime(null);
 			member.setMpassword(null);
 		}
+		return member;
+	}
+	
+	// 관리자 페이지 전체 회원 조회
+	@GetMapping("/getMemberDetail/{mid}")
+	public Member getMemberDetail(@PathVariable String mid) {
+		Member member = memberService.getMember(mid);
 		return member;
 	}
 	

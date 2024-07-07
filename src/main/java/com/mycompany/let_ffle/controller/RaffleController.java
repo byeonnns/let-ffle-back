@@ -1,11 +1,7 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
-
 import java.io.OutputStream;
-import java.math.BigDecimal;
-
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +23,6 @@ import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.RaffleImage;
-import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
@@ -357,5 +350,11 @@ public class RaffleController {
 			log.error(e.toString());
 		}
 	}
-
+	
+	// 관리자 페이지 전체 회원 - ( 래플 참여 현황 ) 
+	@GetMapping("/getAdminRaffleDetail/{mid}")
+	public List<RaffleDetailRequest> getAdminRaffleDetail(@PathVariable String mid) {
+		List<RaffleDetailRequest> list = raffleService.getAdminRaffleDetail(mid);
+		return list;
+	}
 }

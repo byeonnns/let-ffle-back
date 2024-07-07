@@ -1,6 +1,7 @@
 package com.mycompany.let_ffle.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -27,6 +28,8 @@ public interface RaffleDao {
 	public int updateRaffle(Raffle raffle);
 
 	public Raffle deleteRaffle(int rno);
+
+	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle);
 
 
 }
