@@ -50,5 +50,8 @@ public interface RaffleDetailDao {
 
 	public void updateTimeMissionCleared(int rno, String mid);
 
-	public int checkTimePass(int rno, String mid);	
+	public int checkTimePass(int rno, String mid);
+
+	public List<RaffleDetailRequest> getAdminRaffleDetail(String mid);
+	
 }

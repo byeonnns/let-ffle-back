@@ -61,6 +61,9 @@ public interface MemberDao {
 	public int memberCount();
 
 	void updateMnickname(String mid, String mnickname);
+
+	public Member getMemberDetail(String mid);
+	
 	
 	
 

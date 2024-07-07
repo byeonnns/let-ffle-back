@@ -260,16 +260,25 @@ public class MemberService {
 		memberDao.updateMnickname(mid, mnickname);
 	}
 	
-	public int getInquiryCount(String mid) {
-		return inquiryDao.getInquiryCount(mid);
+	public int getInquiryCount(String mid, String role) {
+		return inquiryDao.getInquiryCount(mid, role);
 	}
 
-	public List<Inquiry> getInquiryList(Pager pager, String mid) {
-		return inquiryDao.selectByPage(pager,mid);
+	public List<Inquiry> getInquiryList(Pager pager, String mid, String role) {
+		return inquiryDao.selectByPage(pager,mid,role);
 	}
 
 	public Inquiry readInquiry(int ino) {
 		return inquiryDao.readInquiry(ino);
 	}
+
+	public Member getMemberDetail(String mid) {
+		return memberDao.getMemberDetail(mid);
+	}
+
+	public Member getMember(String mid) {
+		return memberDao.getMemberDetail(mid);
+	}
+
 
 }
