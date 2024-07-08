@@ -110,9 +110,13 @@ public class RaffleService {
 		winnerDao.insertWinner(winner);
 	}
 
-	public String readRaffleDetail(String mid, int rno) {
-		if (raffleDetailDao.readRaffleDetail(mid, rno) > 0) {
-			if (LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
+	public RaffleDetail readRaffleDetail(String mid, int rno) {
+		return raffleDetailDao.selectRaffleDetail(mid, rno);
+	}
+	
+	public String readRaffleDetailStatus(String mid, int rno) {
+		if(raffleDetailDao.readRaffleDetailStatus(mid, rno) > 0) {
+			if(LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
 				return "당첨 발표";
 			} else {
 				String missionCleared = raffleDetailDao.selectRaffleDetail(mid, rno).getRdtmissioncleared();
@@ -257,4 +261,12 @@ public class RaffleService {
 		return raffleDao.searchRaffle(word);
 	}
 
+	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle) {
+		return raffleDao.getMemberRaffleDetail(mid, raffle);
+	}
+	public List<RaffleDetailRequest> getAdminRaffleDetail(String mid) {
+		
+		return raffleDetailDao.getAdminRaffleDetail(mid);
+	}
+	
 }

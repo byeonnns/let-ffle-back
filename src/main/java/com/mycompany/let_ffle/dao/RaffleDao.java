@@ -1,6 +1,7 @@
 package com.mycompany.let_ffle.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -28,5 +29,7 @@ public interface RaffleDao {
 	public List<RaffleRequest> selectByRaffleListForUser(String rcategory, String sortType);
 
 	public List<RaffleRequest> searchRaffle(String word);
+	
+	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle);
 
 }

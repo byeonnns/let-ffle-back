@@ -1,11 +1,7 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
-
 import java.io.OutputStream;
-import java.math.BigDecimal;
-
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +24,6 @@ import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.RaffleImage;
-import com.mycompany.let_ffle.dto.TimeMission;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
@@ -234,10 +227,12 @@ public class RaffleController {
 
 	//내가 래플에 응모했는지에 대한 여부 판정
 	@GetMapping("/readRaffleDetail/{rno}")
-	public String raffleDetail(Authentication authentication, @PathVariable int rno) {
+	public Map <String, Object> raffleDetail(Authentication authentication, @PathVariable int rno) {
 		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail
-		// 객체로 받아 리턴해줌
-		return raffleService.readRaffleDetail(authentication.getName(), rno);
+		Map <String, Object> map = new HashMap<>();
+		map.put("raffleDetail", raffleService.readRaffleDetail(authentication.getName(), rno));
+		map.put("raffleStatus", raffleService.readRaffleDetailStatus(authentication.getName(), rno));
+		return map;
 	}
 
 	// 마이페이지 -> 응모내역 조회 메소드
@@ -300,10 +295,11 @@ public class RaffleController {
 	
 	// 베리 사용내역
 	@PutMapping("/updateRdtBerrySpend")
-	public String updateRdtBerrySpend(int rno, Authentication authentication, int RdtBerrySpend) {
+	public String updateRdtBerrySpend(int rno, int rdtBerrySpend, Authentication authentication) {
+		log.info("사용한 베리");
 		String result;
-		if (RdtBerrySpend > 0 && RdtBerrySpend <= 10)
-			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), RdtBerrySpend);
+		if (rdtBerrySpend > 0 && rdtBerrySpend <= 10)
+			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), rdtBerrySpend);
 		else {
 			result = "늘어난줄 알았지? 응 아니야.";
 		}
@@ -373,5 +369,11 @@ public class RaffleController {
 			log.error(e.toString());
 		}
 	}
-
+	
+	// 관리자 페이지 전체 회원 - ( 래플 참여 현황 ) 
+	@GetMapping("/getAdminRaffleDetail/{mid}")
+	public List<RaffleDetailRequest> getAdminRaffleDetail(@PathVariable String mid) {
+		List<RaffleDetailRequest> list = raffleService.getAdminRaffleDetail(mid);
+		return list;
+	}
 }
