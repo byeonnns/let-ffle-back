@@ -38,8 +38,7 @@
 		update
 		raffleDetail
 		set rdtMissionCleared = #{rdtMissionCleared}
-		where rno =
-		#{rno} AND mid = #{mid}
+		where rno = #{rno} AND mid = #{mid}
 	</update>
 	
 	<update id="updateTimeMissionCleared" parameterType="Map">
@@ -81,6 +80,12 @@
 		rdt.rdtmissioncleared as "raffleDetail.rdtmissioncleared", rdt.rdtberryspend as "raffleDetail.rdtberryspend"
 		from raffle r INNER JOIN raffleDetail rdt ON r.rno = rdt.rno
 		where rdt.mid = #{mid} AND rdt.rdtcreatedat between #{startdate} AND #{enddate}
+	</select>
+	
+	<select id="getRaffleDetailList" parameterType="int" resultType="RaffleDetail">
+		select *
+		from raffleDetail
+		where rno = #{rno}
 	</select>
 
 	
@@ -127,12 +132,12 @@
 	</select>
 	
 	<select id="selectRaffleDetailRequest" parameterType="Map" resultType="RaffleDetailRequest">
-      select rnum, rno "raffle.rno", rtitle "raffle.rtitle", rstartedat "raffle.rstartedat", rfinishedat "raffle.rfinishedat",
+      select rnum, rno "raffle.rno", rtitle "raffle.rtitle", rstartedat "raffle.rstartedat", rfinishedat "raffle.rfinishedat", rwinnercount "raffle.rwinnercount",
        rdtcreatedat "raffleDetail.rdtcreatedat", rdtmissioncleared "raffleDetail.rdtmissioncleared", rdtberryspend "raffleDetail.rdtberryspend"
       from (
-          select rownum as rnum, rno, rtitle, rstartedat, rfinishedat, rdtcreatedat, rdtmissioncleared, rdtberryspend
+          select rownum as rnum, rno, rtitle, rstartedat, rfinishedat, rwinnercount, rdtcreatedat, rdtmissioncleared, rdtberryspend
           from (
-              SELECT r.rno, r.rtitle, r.rstartedat, r.rfinishedat, rd.rdtcreatedat, rd.rdtmissioncleared, rd.rdtberryspend
+              SELECT r.rno, r.rtitle, r.rstartedat, r.rfinishedat, r.rwinnercount, rd.rdtcreatedat, rd.rdtmissioncleared, rd.rdtberryspend
 				FROM raffleDetail rd 
 				INNER JOIN raffle r ON rd.rno = r.rno
 				WHERE mid = #{mid}

@@ -3,12 +3,14 @@ package com.mycompany.let_ffle.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mycompany.let_ffle.dao.BerryHistoryDao;
 import com.mycompany.let_ffle.dao.MemberDao;
@@ -27,6 +29,7 @@ import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -107,8 +110,21 @@ public class RaffleService {
 		raffleDetailDao.insertRaffleDetail(raffleDetail);
 	}
 
-	public void insertWinner(Winner winner) {
-		winnerDao.insertWinner(winner);
+	@Transactional
+	public String insertWinner(int rno, String mid) {
+		//당첨자를 뽑지 않았을 경우
+		if(winnerDao.winnerExistenceCheck(rno) == 0) {
+			Raffle raffle = raffleDao.selectByRno(rno);
+			List<String> list = pickWinner(rno, raffle.getRwinnercount());
+			log.info("당첨된 사람들 체크 : " + list);
+			for(String winner : list) {
+				winnerDao.insertWinner(rno, winner);
+			}
+		}
+		
+		
+		//TODO 당첨자 뽑은 경우
+		return "제작 예정";
 	}
 
 	public RaffleDetail readRaffleDetail(String mid, int rno) {
@@ -117,7 +133,6 @@ public class RaffleService {
 	
 	public String readRaffleDetailStatus(String mid, int rno) {
 		if(raffleDetailDao.readRaffleDetailStatus(mid, rno) > 0) {
-			log.info(LocalDateTime.now() + "/" + raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime());
 			if(LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
 				return "당첨 발표";
 			} else {
@@ -177,7 +192,7 @@ public class RaffleService {
 			else
 				rdr.setNowStatus("종료");
 
-			rdr.setProbability(computeProbability(mid, rdr.getRaffle().getRno()));
+			rdr.setProbability(computeProbability(mid, rdr.getRaffle().getRno(), rdr.getRaffle().getRwinnercount()));
 		}
 		map.put("RaffleDetailRequest", list);
 
@@ -231,17 +246,6 @@ public class RaffleService {
 		}
 	}
 
-	// 확률 계산용
-	private String computeProbability(String mid, int rno) {
-		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
-		RaffleDetail myProbability = raffleDetailDao.selectRaffleDetail(mid, rno);
-		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2
-				+ pp.get("BERRYSPEND").intValue();
-		int missionCleared = (myProbability.getRdtmissioncleared().equals("PASS") ? 2 : 0);
-		double myScore = 10 + missionCleared + myProbability.getRdtberryspend();
-		return String.format("%.2f", myScore / ppScore * 100);
-	}
-
 	public List<Raffle> getWinnerDetailList(String mid, Pager pager, String startDate, String endDate) {
 		return winnerDao.selectWinnerDetailList(mid, pager, startDate, endDate);
 
@@ -266,9 +270,65 @@ public class RaffleService {
 	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle) {
 		return raffleDao.getMemberRaffleDetail(mid, raffle);
 	}
+	
 	public List<RaffleDetailRequest> getAdminRaffleDetail(String mid) {
-		
 		return raffleDetailDao.getAdminRaffleDetail(mid);
 	}
 	
+	// 확률 계산용
+	private String computeProbability(String mid, int rno, int winnerCount) {
+		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
+		RaffleDetail myProbability = raffleDetailDao.selectRaffleDetail(mid, rno);
+		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2
+				+ pp.get("BERRYSPEND").intValue();
+		int missionCleared = (myProbability.getRdtmissioncleared().equals("PASS") ? 2 : 0);
+		double myScore = 10 + missionCleared + myProbability.getRdtberryspend();
+		myScore = 1 - Math.pow(1 - myScore / ppScore, winnerCount);
+		return String.format("%.2f", myScore * 100);
+	}
+	
+	// 당첨 로직
+	private List<String> pickWinner(int rno, int winnerCount){
+		List<String> winner = new ArrayList<>();
+		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
+		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2 + pp.get("BERRYSPEND").intValue();
+		log.info("총점 : " + ppScore);
+		List<RaffleDetail> raffleDetail = raffleDetailDao.getRaffleDetailList(rno);
+		List<EntryMember> entryMember = new ArrayList<>();
+		for(int i=0; i<winnerCount; i++) {
+			int index = 0;
+			int tempPpScore = ppScore;
+			for(RaffleDetail rd : raffleDetail) {
+				int missionCleared = (rd.getRdtmissioncleared().equals("PASS") ? 2 : 0);
+				int myScore = 10 + missionCleared + rd.getRdtberryspend();
+				entryMember.add(new EntryMember(index, rd.getMid(), myScore, tempPpScore, tempPpScore-myScore+1));
+				log.info("이번에 생성된 엔트리 : " + rd.getMid() + "/" + myScore + "/" + tempPpScore + "/" + (tempPpScore-myScore+1));
+				tempPpScore -= myScore;
+				index++;
+			}
+
+			int winNum = (int)(Math.random() * ppScore);
+			log.info("당첨 번호 : " + winNum);
+			
+			for(EntryMember em : entryMember) {
+				if(em.startPoint <= winNum && winNum <= em.endPoint) {
+					winner.add(em.mid);
+					ppScore -= em.score;
+					raffleDetail.remove(em.index);
+					entryMember.clear();
+					break;
+				}
+			}
+		}
+		return winner;
+	}
+	
+	@AllArgsConstructor
+	private class EntryMember {
+		int index;
+		String mid;
+		int score;
+		int endPoint;
+		int startPoint;
+	}
 }

@@ -259,9 +259,9 @@ public class RaffleController {
 
 
 	@PostMapping("/createWinner")
-	public Winner createWinner(Winner winner) {
+	public String createWinner(@RequestParam int rno, Authentication authentication) {
 		// winner(dto)를 매개변수로 받아 raffleService 메소드를 호출해 winner객체를 데이터베이스에 저장하도록 처리
-		raffleService.insertWinner(winner);
+		raffleService.insertWinner(rno, authentication.getName());
 		return null;
 	}
 
@@ -374,6 +374,7 @@ public class RaffleController {
 	@GetMapping("/getAdminRaffleDetail/{mid}")
 	public List<RaffleDetailRequest> getAdminRaffleDetail(@PathVariable String mid) {
 		List<RaffleDetailRequest> list = raffleService.getAdminRaffleDetail(mid);
+		log.info(mid);
 		return list;
 	}
 }

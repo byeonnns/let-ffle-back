@@ -3,8 +3,8 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.WinnerDao">
 
-	<insert id="insertWinner" parameterType="Winner">
-		insert into winner
+	<insert id="insertWinner" parameterType="Map">
+		insert into winner(rno, mid)
 		values (#{rno}, #{mid})
 	</insert>
 	
@@ -69,10 +69,20 @@
 	</select>
 	
 	<select id="selectByWinnerList" parameterType="Map" resultType="RaffleDetailRequest">
-    
     	select rnum, mid AS "winner.mid", rtitle AS "raffle.rtitle", rno AS "winner.rno", 
     	wreceivername AS "winner.wreceivername", wreceiverzipcode AS "winner.wreceiverzipcode", 
     	wreceiveraddress AS "winner.wreceiveraddress", wreceiverphone AS "winner.wreceiverphone"
+    </select>
+    	
+	<select id="winnerExistenceCheck" parameterType="int" resultType="int">
+		select count(*)
+		from winner
+		where rno = #{rno}
+	</select>
+	
+	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
+    <![CDATA[
+    	select rnum, mid, rtitle, rno , wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
       from (
           select rownum as rnum, mid, rtitle, rno, wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
           from (

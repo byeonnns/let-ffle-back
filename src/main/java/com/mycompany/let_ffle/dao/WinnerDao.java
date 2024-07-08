@@ -12,7 +12,7 @@ import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 @Mapper
 public interface WinnerDao {
 
-	public int insertWinner(Winner winner);
+	public void insertWinner(int rno, String mid);
 
 	public Winner selectWinnerDetail(int rno);
 
@@ -21,6 +21,8 @@ public interface WinnerDao {
 	public int countWinRaffle(String mid, String startDate, String endDate);
 	
 	public int winnerCount();
+	
+	public int winnerExistenceCheck(int rno);
 
 	public List<RaffleDetailRequest> selectByWinnerList(Pager pager, String searchType, String word);
 

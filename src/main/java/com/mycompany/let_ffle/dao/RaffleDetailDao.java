@@ -22,6 +22,8 @@ public interface RaffleDetailDao {
 
 	public List<RaffleDetail> getMyRaffleDetailRequestList(String mid, String startdate, String enddate);
 	
+	public List<RaffleDetail> getRaffleDetailList(int rno);
+	
 	// 래플번호(rno)와 회원 아이디(mid), 미션 참여여부(rdtMissionCleared)를 통해 raffleDetail 데이터베이스 정보를 수정( 어떤 회원이 어떤 래플에 참여를 하였는지 안하였는지 )
 	// 넘겨줄 매개변수가 2개 이상일 경우 Map을 파라미터 값으로 받음
 	public void updateRdtMissionCleard(int rno, String mid, String rdtMissionCleared);
