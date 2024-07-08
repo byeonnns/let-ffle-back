@@ -31,5 +31,8 @@ public interface RaffleDao {
 	public List<RaffleRequest> searchRaffle(String word);
 	
 	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle);
+	
+	public List<RaffleRequest> getNewReleaseRaffles();
 
+	public List<RaffleRequest> getCutOffSoonRaffles();
 }

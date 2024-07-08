@@ -277,6 +277,14 @@ public class RaffleService {
 		return raffleDetailDao.getAdminRaffleDetail(mid);
 	}
 	
+	public List<RaffleRequest> getNewReleaseRaffles() {
+		return raffleDao.getNewReleaseRaffles();
+	}
+
+	public List<RaffleRequest> getCutOffSoonRaffles() {
+		return raffleDao.getCutOffSoonRaffles();
+	}
+	
 	// 확률 계산용
 	private String computeProbability(String mid, int rno, int winnerCount) {
 		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
@@ -324,7 +332,7 @@ public class RaffleService {
 		}
 		return winner;
 	}
-	
+
 	@AllArgsConstructor
 	private class EntryMember {
 		int index;
@@ -333,4 +341,6 @@ public class RaffleService {
 		int endPoint;
 		int startPoint;
 	}
+
+
 }

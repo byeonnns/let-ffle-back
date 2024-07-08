@@ -52,33 +52,37 @@
 
 	<!--inner join을 사용한 이유는 raffle테이블과 raffleImage테이블 합쳐서 rno 값을 가지는 레코드를 결합시키기 
 		위해서 사용 -->
-	<select id="selectByRaffleListForUser" parameterType="String" resultType="RaffleRequest">
+	<select id="selectByRaffleListForUser" parameterType="String"
+		resultType="RaffleRequest">
 		SELECT r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
-		r.rsubtitle as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
-		r.rstartedat as "raffle.rstartedat", r.rfinishedat as
+		r.rsubtitle
+		as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
+		r.rstartedat
+		as "raffle.rstartedat", r.rfinishedat as
 		"raffle.rfinishedat",
 		ri.rthumbnailimg as "raffleImage.rthumbnailimg",
-		ri.rthumbnailimgtype as
+		ri.rthumbnailimgtype
+		as
 		"raffleImage.rthumbnailimgtype",
 		ri.rthumbnailimgoname as
 		"raffleImage.rthumbnailimgoname",
 		(SELECT COUNT(*) FROM raffleDetail rd
 		WHERE rd.rno = r.rno) AS
 		"raffle.rwinnercount"
-		
+
 		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
 		<if test="rcategory != 'all'">
 			WHERE r.rcategory = #{rcategory}
 		</if>
-		
+
 		<if test="sortType == 'popular'">
 			ORDER by "raffle.rwinnercount" DESC
 		</if>
-		
+
 		<if test="sortType == 'new'">
 			ORDER by r.rstartedat DESC
 		</if>
-		
+
 		<if test="sortType == 'cutoffsoon'">
 			<![CDATA[ 
 			AND r.rfinishedat < systimestamp
@@ -98,7 +102,8 @@
 		where rno =#{rno}
 	</update>
 
-	<select id="searchRaffle" parameterType="String" resultType="RaffleRequest">
+	<select id="searchRaffle" parameterType="String"
+		resultType="RaffleRequest">
 		SELECT r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
 		r.rsubtitle as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
 		r.rstartedat as "raffle.rstartedat", r.rfinishedat as
@@ -108,8 +113,39 @@
 		"raffleImage.rthumbnailimgtype",
 		ri.rthumbnailimgoname as
 		"raffleImage.rthumbnailimgoname"
-		
+
 		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
-		where r.rtitle like '%${word}%'
+		where r.rtitle
+		like '%${word}%'
 	</select>
-</mapper>    
+
+	<select id="getNewReleaseRaffles" resultType="RaffleRequest">
+	<![CDATA[ 
+	SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", 
+	rsubtitle AS "raffle.rsubtitle", rthumbnailimg AS "raffleimage.rthumbnailimg", rcreatedat AS "raffle.rcreatedat"
+	FROM (
+    	SELECT 
+        	r.rno, rtitle, rsubtitle, rthumbnailimg, rcreatedat,
+        	ROW_NUMBER() OVER (ORDER BY rcreatedat DESC) as row_num
+    	FROM raffle r
+    	INNER JOIN raffleimage ri ON r.rno = ri.rno
+	) subquery
+	WHERE row_num <= 3
+	]]>
+	</select>
+	
+	<select id="getCutOffSoonRaffles" resultType="RaffleRequest">
+	<![CDATA[ 
+	SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", 
+	rsubtitle AS "raffle.rsubtitle", rthumbnailimg AS "raffleimage.rthumbnailimg", rcreatedat AS "raffle.rcreatedat"
+	FROM (
+    	SELECT 
+        	r.rno, rtitle, rsubtitle, rthumbnailimg, rcreatedat, rfinishedat,
+        	ROW_NUMBER() OVER (ORDER BY rfinishedat DESC) as row_num
+    	FROM raffle r
+    	INNER JOIN raffleimage ri ON r.rno = ri.rno
+	) subquery
+	WHERE row_num <= 3
+	]]>
+	</select>
+</mapper>
