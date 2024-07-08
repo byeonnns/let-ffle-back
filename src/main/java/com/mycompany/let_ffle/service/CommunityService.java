@@ -40,8 +40,8 @@ public class CommunityService {
 		return boardDao.boardCount();
 	}
 
-	public List<Board> selectByBoardList(Pager pager) {
-		return boardDao.selectByBoardList(pager);
+	public List<Board> selectByBoardList(Pager pager, String searchType, String word) {
+		return boardDao.selectByBoardList(pager, searchType, word);
 	}
 
 	
@@ -69,6 +69,18 @@ public class CommunityService {
 	public Board selectBoardByBno(int bno) {
 		// TODO Auto-generated method stub
 		return boardDao.selectBoardByBno(bno);
+	}
+
+	public int boardCountByWord(String searchType, String word) {
+		return boardDao.boardCountByWord(searchType, word);
+	}
+
+	public int boardCountByCategory(String category) {
+		return boardDao.boardCountByCategory(category);
+	}
+
+	public List<Board> selectByBoardListWithCategory(Pager pager, String category) {
+		return boardDao.selectByBoardListWithCategory(pager, category);
 	}
 
 

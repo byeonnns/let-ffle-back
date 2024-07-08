@@ -19,14 +19,14 @@ public interface RaffleDao {
 
 	public int raffleCount();
 
-	public List<RaffleRequest> selectByRaffleListForUser();
-
 	public List<Raffle> selectByPage(Pager pager);
-
 
 	public int updateRaffle(Raffle raffle);
 
 	public Raffle deleteRaffle(int rno);
 
+	public List<RaffleRequest> selectByRaffleListForUser(String rcategory, String sortType);
+
+	public List<RaffleRequest> searchRaffle(String word);
 
 }

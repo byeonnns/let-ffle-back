@@ -38,19 +38,59 @@ public class CommunityController {
 	// 게시물 목록 조회
 	@GetMapping("/getBoardList")
 	// 사용자가 pageNo를 제공하지 않으면 pageNo의 값을 기본값인 1로 지정
-	public Map<String, Object> getBoardList(@RequestParam(defaultValue = "1") int pageNo) {
+	public Map<String, Object> getBoardList(@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam(defaultValue = "") String searchType, @RequestParam(defaultValue = "") String word) {
+		
 		log.info("pageNo : " + pageNo);
-		// boardCount() 메소드를 호출해 게시판의 총 게시글 수를 가져오기
-		// Pager 객체에게 전달하기 위해 totalRows 변수에 저장
-		int totalRows = communityService.boardCount();
+		log.info("word : " + word);
+		log.info("searchType : " + searchType);
+		
+		int totalRows = 0;
+		
+		if (!word.equals("")) {
+			totalRows = communityService.boardCountByWord(searchType, word);
+		} else {
+			// boardCount() 메소드를 호출해 게시판의 총 게시글 수를 가져오기
+			// Pager 객체에게 전달하기 위해 totalRows 변수에 저장
+			totalRows = communityService.boardCount();
+		}
 
 		// Pager 객체에 한 페이지에 보여질 게시물 수(5), 페이지네이션에 표시할 페이지 수(5), 총 게시물 수(totalRows), 현재
 		// 페이지 번호(pageNo)를 제공
-		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		Pager pager = new Pager(10, 5, totalRows, pageNo);
 
 		// 사용자가 요청한 pageNo에 해당하는 게시물을 List로 가져오기
-		List<Board> list = communityService.selectByBoardList(pager);
+		List<Board> list = communityService.selectByBoardList(pager, searchType ,word);
 
+		// JSON 응답을 생성 -> board와 pager를 모두 제공해야 하므로 Map을 이용
+		Map<String, Object> map = new HashMap<>();
+		// 게시글 목록(list)을 응답에 추가
+		map.put("board", list);
+		// 페이지를 응답에 추가
+		map.put("pager", pager);
+
+		// JSON 응답 반환
+		return map;
+	}
+	
+	@GetMapping("/getBoardListByCategory/{category}")
+	// 사용자가 pageNo를 제공하지 않으면 pageNo의 값을 기본값인 1로 지정
+	public Map<String, Object> getBoardListByCategory(@RequestParam(defaultValue = "1") int pageNo, 
+			@PathVariable String category) {
+		
+		log.info("pageNo : " + pageNo);
+		log.info("category : " + category);
+		
+		int totalRows = communityService.boardCountByCategory(category);
+
+		// Pager 객체에 한 페이지에 보여질 게시물 수(5), 페이지네이션에 표시할 페이지 수(5), 총 게시물 수(totalRows), 현재
+		// 페이지 번호(pageNo)를 제공
+		Pager pager = new Pager(10, 5, totalRows, pageNo);
+
+		// 사용자가 요청한 pageNo에 해당하는 게시물을 List로 가져오기
+		List<Board> list = communityService.selectByBoardListWithCategory(pager, category);
+
+		log.info("list : " + list.toString());
 		// JSON 응답을 생성 -> board와 pager를 모두 제공해야 하므로 Map을 이용
 		Map<String, Object> map = new HashMap<>();
 		// 게시글 목록(list)을 응답에 추가
