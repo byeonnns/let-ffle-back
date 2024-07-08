@@ -160,12 +160,22 @@ public class MemberController {
 	
 	// 관리자 페이지 - 전체 회원 조회 및 페이지네이션
 	@GetMapping("/getAdminMemberList")
-	public Map<String, Object> getAdminMemberList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = memberService.getMemberCount();
+	public Map<String, Object> getAdminMemberList(@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam(defaultValue = "") String searchType, @RequestParam(defaultValue = "") String word) {
+		log.info("searchType : " + searchType);
+		log.info("word : " + word);
+		
+		int totalRows = 0;
+		
+		if (!word.equals("")) {
+			totalRows = memberService.getMemberCountByWord(searchType, word);
+		} else {			
+			totalRows = memberService.getMemberCount();
+		}
 
-		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		Pager pager = new Pager(20, 5, totalRows, pageNo);
 		log.info("pageNo" + pageNo);
-		List<Member> list = memberService.getAdminMemberList(pager);
+		List<Member> list = memberService.getAdminMemberList(pager, searchType, word);
 		Map<String, Object> map = new HashMap<>();
 		map.put("member", list);
 		map.put("pager", pager);
@@ -537,15 +547,26 @@ public class MemberController {
 
 	// 관리자 페이지 당첨자 조회
 	@GetMapping("/getAdminWinnerList")
-	public Map<String, Object> getWinnerList(@RequestParam(defaultValue = "1") int pageNo) {
-		// 당첨자의 수를 얻어옴 
-		int totalRows = memberService.getWinnerCount();
+	public Map<String, Object> getWinnerList(@RequestParam(defaultValue = "1") int pageNo,
+			@RequestParam(defaultValue = "") String searchType, @RequestParam(defaultValue = "") String word) {
 		
+		log.info("searchType : " + searchType);
+		log.info("word : " + word);
+		
+		// 당첨자의 수를 얻어옴 
+		int totalRows = 0;
+		
+		if (!word.equals("")) {
+			totalRows = memberService.getWinnerCountByWord(searchType, word);
+		} else {			
+			totalRows = memberService.getWinnerCount();
+		}
 		log.info("totalRows : " + totalRows);
 
-		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		log.info("pageNo" + pageNo);
-		List<Winner> list = memberService.getAdminWinnerList(pager);
+		Pager pager = new Pager(30, 5, totalRows, pageNo);
+		log.info("pageNo : " + pageNo);
+		List<RaffleDetailRequest> list = memberService.getAdminWinnerList(pager, searchType, word);
+		log.info("list : " + list.toString());
 		Map<String, Object> map = new HashMap<>();
 		map.put("winner", list);
 		map.put("pager", pager);

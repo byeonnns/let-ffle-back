@@ -240,20 +240,24 @@ public class MemberService {
 		winnerDao.updateWinner(winner);
 	}
 
-	public List<Member> getAdminMemberList(Pager pager) {
-		return memberDao.selectByMember(pager);
+	public List<Member> getAdminMemberList(Pager pager, String searchType, String word) {
+		return memberDao.selectByMember(pager, searchType, word);
 	}
 
 	public int getMemberCount() {
 		return memberDao.memberCount();
 	}
-
+	
+	public int getMemberCountByWord(String searchType, String word) {
+		return memberDao.memberCountByWord(searchType, word);
+	}
+	
 	public int getWinnerCount() {
 		return winnerDao.winnerCount();
 	}
 
-	public List<Winner> getAdminWinnerList(Pager pager) {
-		return winnerDao.selectByWinnerList(pager);
+	public List<RaffleDetailRequest> getAdminWinnerList(Pager pager, String searchType, String word) {
+		return winnerDao.selectByWinnerList(pager, searchType, word);
 	}
 
 	public void updateMnickname(String mid, String mnickname) {
@@ -280,5 +284,8 @@ public class MemberService {
 		return memberDao.getMemberDetail(mid);
 	}
 
+	public int getWinnerCountByWord(String searchType, String word) {
+		return winnerDao.winnerCountByWord(searchType, word);
+	}
 
 }

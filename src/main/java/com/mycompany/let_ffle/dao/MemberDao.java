@@ -56,15 +56,14 @@ public interface MemberDao {
 	
 	int countByMphone(String mphone);
 
-	List<Member> selectByMember(Pager pager);
+	List<Member> selectByMember(Pager pager, String searchType, String word);
 
 	public int memberCount();
 
 	void updateMnickname(String mid, String mnickname);
 
 	public Member getMemberDetail(String mid);
-	
-	
-	
+
+	int memberCountByWord(String searchType, String word);
 
 }

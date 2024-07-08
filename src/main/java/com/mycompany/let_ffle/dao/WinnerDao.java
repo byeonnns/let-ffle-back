@@ -24,10 +24,11 @@ public interface WinnerDao {
 	
 	public int winnerExistenceCheck(int rno);
 
-	public List<Winner> selectByWinnerList(Pager pager);
+	public List<RaffleDetailRequest> selectByWinnerList(Pager pager, String searchType, String word);
 
 	public void updateWinner(Winner winner);
 
 	public int winnerCheck(int rno, String mid);
 
+	public int winnerCountByWord(String searchType, String word);
 }
