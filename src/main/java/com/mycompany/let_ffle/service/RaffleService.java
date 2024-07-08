@@ -2,6 +2,7 @@ package com.mycompany.let_ffle.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,8 @@ public class RaffleService {
 	
 	public String readRaffleDetailStatus(String mid, int rno) {
 		if(raffleDetailDao.readRaffleDetailStatus(mid, rno) > 0) {
-			if(LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
+			log.info(LocalDateTime.now() + "/" + raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime());
+			if(LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
 				return "당첨 발표";
 			} else {
 				String missionCleared = raffleDetailDao.selectRaffleDetail(mid, rno).getRdtmissioncleared();
@@ -127,7 +129,7 @@ public class RaffleService {
 				}
 			}
 		} else {
-			if(LocalDate.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDate())) {
+			if(LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
 				return "미참여 래플 종료";
 			} else {
 				return "래플 미참여";
@@ -168,7 +170,7 @@ public class RaffleService {
 			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
 				rdr.getRaffleDetail().setRdtmissioncleared("대기 중");
 
-			if (rdr.getRaffle().getRfinishedat().toLocalDate().isAfter(LocalDate.now()))
+			if (rdr.getRaffle().getRfinishedat().toLocalDateTime().isAfter(LocalDateTime.now()))
 				rdr.setNowStatus("진행 중");
 			else
 				rdr.setNowStatus("종료");
