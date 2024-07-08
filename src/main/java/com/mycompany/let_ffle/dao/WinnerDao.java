@@ -28,4 +28,6 @@ public interface WinnerDao {
 
 	public void updateWinner(Winner winner);
 
+	public int winnerCheck(int rno, String mid);
+
 }

@@ -122,9 +122,11 @@ public class RaffleService {
 			}
 		}
 		
-		
-		//TODO 당첨자 뽑은 경우
-		return "제작 예정";
+		if(winnerDao.winnerCheck(rno, mid) != 0) {
+			return "당첨";
+		} else {
+			return "낙첨";
+		}
 	}
 
 	public RaffleDetail readRaffleDetail(String mid, int rno) {

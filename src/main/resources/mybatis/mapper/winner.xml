@@ -62,6 +62,12 @@
 		where rno = #{rno}
 	</select>
 	
+	<select id="winnerCheck" parameterType="Map" resultType="int">
+		select count(*)
+		from winner
+		where rno = #{rno} AND mid = #{mid}
+	</select>
+	
 	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
     <![CDATA[
     	select rnum, mid, rtitle, rno , wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
@@ -76,6 +82,6 @@
       )
       where rnum >= #{startRowNo}
     ]]>
-</select>
+	</select>
 
 </mapper>    
