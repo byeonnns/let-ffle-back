@@ -56,19 +56,40 @@
 		select count(*) from winner
 	</select>
 	
-	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
-    <![CDATA[
-    	select rnum, mid, rtitle, rno , wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+	<select id="winnerCountByWord" resultType="int">
+		select count(*)
+		from winner
+		<if test="searchType == 'mid'">
+			where mid like '%${word}%'
+		</if>
+		<if test="searchType == 'rtitle'">
+			w INNER JOIN raffle r ON w.rno = r.rno
+			where rtitle like '%${word}%'
+		</if>
+	</select>
+	
+	<select id="selectByWinnerList" parameterType="Map" resultType="RaffleDetailRequest">
+    
+    	select rnum, mid AS "winner.mid", rtitle AS "raffle.rtitle", rno AS "winner.rno", 
+    	wreceivername AS "winner.wreceivername", wreceiverzipcode AS "winner.wreceiverzipcode", 
+    	wreceiveraddress AS "winner.wreceiveraddress", wreceiverphone AS "winner.wreceiverphone"
       from (
           select rownum as rnum, mid, rtitle, rno, wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
           from (
               select w.mid, r.rtitle, r.rno, w.wreceivername, w.wreceiverzipcode, w.wreceiveraddress, w.wreceiverphone
               from winner w INNER JOIN raffle r ON w.rno = r.rno
+              <if test="searchType == 'mid'">
+              where mid like '%${word}%'
+              </if>
+              <if test="searchType == 'rtitle'">
+              where rtitle like '%${word}%'
+              </if>
               order by rno asc
           )
-          where rownum <= #{endRowNo}
+          <![CDATA[
+          where rownum <= #{pager.endRowNo}
       )
-      where rnum >= #{startRowNo}
+      where rnum >= #{pager.startRowNo}
     ]]>
 </select>
 

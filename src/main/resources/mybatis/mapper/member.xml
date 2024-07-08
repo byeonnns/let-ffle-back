@@ -27,7 +27,8 @@
 	<select id="selectByMid" parameterType="String">
 		select *
 		from member
-		where mid=#{mid}
+		where
+		mid=#{mid}
 	</select>
 
 	<update id="updateMphone" parameterType="Member">
@@ -36,10 +37,11 @@
 		#{mphone}
 		where mid = #{mid}
 	</update>
-	
+
 	<update id="updateMnickname" parameterType="String">
 		update member
-		set mnickname=
+		set
+		mnickname=
 		#{mnickname}
 		where mid = #{mid}
 	</update>
@@ -101,19 +103,21 @@
       where rnum >= #{pager.startRowNo}
       ]]>
 	</select>
-	
+
 	<select id="findId" parameterType="String">
 		select mid
 		from member
-		where mphone = #{mphone}
+		where
+		mphone = #{mphone}
 	</select>
-	
+
 	<select id="findPassword" parameterType="String">
 		select count(*)
-		from member
+		from
+		member
 		where mphone = #{mphone} AND mid = #{mid}
 	</select>
-	
+
 
 	<select id="selectLoginTime" parameterType="String"
 		resultType="Member">
@@ -121,73 +125,106 @@
 		from member
 		where mid = #{mid}
 	</select>
-	
+
 	<update id="updateLoginTime" parameterType="String">
 		update
 		member
-		set mlastlogintime = systimestamp
+		set
+		mlastlogintime = systimestamp
 		where mid = #{mid}
 	</update>
-	
+
 	<select id="selectBerry" parameterType="String" resultType="int">
 		select mberry
 		from member
 		where mid = #{mid}
 	</select>
-	
+
 	<update id="updateBerry" parameterType="Map">
 		update member
-		set mberry = mberry + #{mberry}
+		set mberry =
+		mberry + #{mberry}
 		where mid = #{mid}
 	</update>
-	
+
 	<select id="countByMid" parameterType="String" resultType="int">
 		select count(*)
 		from member
 		where
 		mid = #{mid}
 	</select>
-	
+
 	<select id="countByMnickname" parameterType="String">
 		select count(*)
-		from member
+		from
+		member
 		where
 		mnickname = #{mnickname}
 	</select>
-	
+
 	<select id="countByMphone" parameterType="String">
 		select count(*)
-		from member
+		from
+		member
 		where
 		mphone = #{mphone}
 	</select>
-	
-	<select id="selectByMember" parameterType="int" resultType="Member">
-		<![CDATA[
-      select rnum, mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole, menabled, mberry, mlastlogintime
-      from (
-          select rownum as rnum, mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole, menabled, mberry, mlastlogintime
-          from (
-              select mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole, menabled, mberry, mlastlogintime
-              from member
-              order by mid desc
-          )
-          where rownum <= #{endRowNo}
+
+	<select id="selectByMember" parameterType="Map"
+		resultType="Member">
+
+		select rnum, mid, mpassword, mname, mnickname, mphone, maddress,
+		mzipcode, mrole, menabled, mberry, mlastlogintime
+		from (
+		select rownum as rnum, mid, mpassword, mname, mnickname, mphone, maddress,
+		mzipcode, mrole, menabled, mberry, mlastlogintime
+		from (
+		select mid, mpassword, mname, mnickname, mphone, maddress, mzipcode, mrole,
+		menabled, mberry, mlastlogintime
+		from member
+		<if test="searchType == 'mid'">
+			where mid like '%${word}%'
+		</if>
+		<if test="searchType == 'mname'">
+			where mname like '%${word}%'
+		</if>
+		<if test="searchType == 'mnickname'">
+			where mnickname like '%${word}%'
+		</if>
+		order by mid desc
+		)
+          <![CDATA[ 
+          where rownum <= #{pager.endRowNo}
       )
-      where rnum >= #{startRowNo}
+      where rnum >= #{pager.startRowNo}
       ]]>
 	</select>
-	
+
 	<select id="memberCount" resultType="int">
 		select count(*)
 		from member
 	</select>
-	
-	<select id="getMemberDetail" parameterType="String" resultType="Member">
+
+	<select id="memberCountByWord" resultType="int">
+		select count(*)
+		from member
+		<if test="searchType == 'mid'">
+			where mid like '%${word}%'
+		</if>
+		<if test="searchType == 'mname'">
+			where mname like '%${word}%'
+		</if>
+		<if test="searchType == 'mnickname'">
+			where mnickname like '%${word}%'
+		</if>
+	</select>
+
+	<select id="getMemberDetail" parameterType="String"
+		resultType="Member">
 		select *
 		from member
 		where mid = #{mid}
 	</select>
-	
+
 
 </mapper>    

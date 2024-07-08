@@ -22,8 +22,10 @@ public interface WinnerDao {
 	
 	public int winnerCount();
 
-	public List<Winner> selectByWinnerList(Pager pager);
+	public List<RaffleDetailRequest> selectByWinnerList(Pager pager, String searchType, String word);
 
 	public void updateWinner(Winner winner);
+
+	public int winnerCountByWord(String searchType, String word);
 
 }
