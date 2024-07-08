@@ -3,8 +3,8 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.WinnerDao">
 
-	<insert id="insertWinner" parameterType="Winner">
-		insert into winner
+	<insert id="insertWinner" parameterType="Map">
+		insert into winner(rno, mid)
 		values (#{rno}, #{mid})
 	</insert>
 	
@@ -54,6 +54,12 @@
 
 	<select id="winnerCount" resultType="int">
 		select count(*) from winner
+	</select>
+	
+	<select id="winnerExistenceCheck" parameterType="int" resultType="int">
+		select count(*)
+		from winner
+		where rno = #{rno}
 	</select>
 	
 	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
