@@ -18,9 +18,9 @@ public interface NoticeDao {
 
 	public void deleteNotice(Notice notice);
 
-	public int noticeCount(String subcategory);
+	public int noticeCount(String mainCategory, String subCategory);
 
-	public List<Notice> selectByPage(Pager pager, String subcategory);
+	public List<Notice> selectByPage(Pager pager, String mainCategory, String subCategory);
 
 	public Notice selectByNno(int nno, String mid, String role);
 	

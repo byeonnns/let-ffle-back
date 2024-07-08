@@ -31,13 +31,12 @@ public class NoticeService {
 		noticeDao.deleteNotice(notice);
 	}
 
-	public int getNoticeCount(String subcategory) {
-		return noticeDao.noticeCount(subcategory);
+	public int getNoticeCount(String mainCategory, String subCategory) {
+		return noticeDao.noticeCount(mainCategory, subCategory);
 	}
 
-	public List<Notice> getNoticeList(Pager pager, String subcategory) {
-		// TODO Auto-generated method stub
-		return noticeDao.selectByPage(pager,subcategory);
+	public List<Notice> getNoticeList(Pager pager, String mainCategory, String subCategory) {
+		return noticeDao.selectByPage(pager, mainCategory, subCategory);
 	}
 
 	public Notice readNotice(int nno, String mid, String role) {

@@ -10,8 +10,9 @@
           from (
               select nno, ntitle,nmaincategory,nsubcategory, ncontent,ncreatedat, nupdatedat
               from notice
-              <if test="subcategory != '전체'">
-              		where nsubcategory = #{subcategory}
+              where nmaincategory = #{mainCategory}
+              <if test="subCategory != '전체'">
+              		AND nsubcategory = #{subCategory}
               </if>
               order by nno desc
           )
@@ -41,8 +42,9 @@
 	<select id="noticeCount" parameterType="String" resultType="int">
 		select count (*)
 		from notice
-		<if test="categoryname != '전체'">
-             where nsubcategory = #{categoryname}
+		where nmaincategory = #{mainCategory}
+		<if test="subCategory != '전체'">
+             AND nsubcategory = #{subCategory}
         </if>
 	</select>
 

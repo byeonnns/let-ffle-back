@@ -32,16 +32,17 @@ public class NoticeController {
 
 	// 페이저
 	@GetMapping("/getNoticeList")
-	public Map<String, Object> getNoticeList(@RequestParam(defaultValue = "1") int pageNo, @RequestParam(required = false, defaultValue = "전체") String subcategory) {
+	public Map<String, Object> getNoticeList(@RequestParam(defaultValue = "1") int pageNo, String mainCategory ,@RequestParam(required = false, defaultValue = "전체") String subCategory) {
 		log.info("" + pageNo);
-		log.info(subcategory);
-		int totalRows = noticeService.getNoticeCount(subcategory);
+		log.info(mainCategory);
+		log.info(subCategory);
+		int totalRows = noticeService.getNoticeCount(mainCategory ,subCategory);
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		List<Notice> list = noticeService.getNoticeList(pager, subcategory);
+		List<Notice> list = noticeService.getNoticeList(pager, mainCategory ,subCategory);
 		Map<String, Object> map = new HashMap<>();
 		map.put("Notice", list);
 		map.put("Pager", pager);
-		map.put("Subcategory", subcategory);
+		map.put("Subcategory", subCategory);
 
 		return map;
 	}
