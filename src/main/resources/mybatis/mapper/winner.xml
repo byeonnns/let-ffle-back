@@ -67,12 +67,6 @@
 			where rtitle like '%${word}%'
 		</if>
 	</select>
-	
-	<select id="selectByWinnerList" parameterType="Map" resultType="RaffleDetailRequest">
-    	select rnum, mid AS "winner.mid", rtitle AS "raffle.rtitle", rno AS "winner.rno", 
-    	wreceivername AS "winner.wreceivername", wreceiverzipcode AS "winner.wreceiverzipcode", 
-    	wreceiveraddress AS "winner.wreceiveraddress", wreceiverphone AS "winner.wreceiverphone"
-    </select>
     	
 	<select id="winnerExistenceCheck" parameterType="int" resultType="int">
 		select count(*)
@@ -86,9 +80,10 @@
 		where rno = #{rno} AND mid = #{mid}
 	</select>
 	
-	<select id="selectByWinnerList" parameterType="pager" resultType="Winner">
-    <![CDATA[
-    	select rnum, mid, rtitle, rno , wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+	<select id="selectByWinnerList" parameterType="Map" resultType="RaffleDetailRequest">
+    	select rnum, mid AS "winner.mid", rtitle AS "raffle.rtitle", rno AS "winner.rno", 
+    	wreceivername AS "winner.wreceivername", wreceiverzipcode AS "winner.wreceiverzipcode", 
+    	wreceiveraddress AS "winner.wreceiveraddress", wreceiverphone AS "winner.wreceiverphone"
       from (
           select rownum as rnum, mid, rtitle, rno, wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
           from (
