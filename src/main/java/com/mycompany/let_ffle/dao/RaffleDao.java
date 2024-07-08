@@ -18,7 +18,9 @@ public interface RaffleDao {
 	// rno 래플 번호를 통해 해당 래플dto를 가져옴
 	public Raffle selectByRno(int rno);
 
-	public int raffleCount();
+	public int raffleCount(String rcategory);
+	public int ongoingRaffleCount(String rcategory);
+	public int closedRaffleCount(String rcategory);
 
 	public List<Raffle> selectByPage(Pager pager);
 

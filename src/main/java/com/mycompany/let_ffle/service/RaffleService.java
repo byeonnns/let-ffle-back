@@ -94,7 +94,7 @@ public class RaffleService {
 	}
 
 	public int getCount() {
-		return raffleDao.raffleCount();
+		return raffleDao.raffleCount(null);
 	}
 
 	public List<Raffle> getListForAdmin(Pager pager) {
@@ -283,6 +283,32 @@ public class RaffleService {
 
 	public List<RaffleRequest> getCutOffSoonRaffles() {
 		return raffleDao.getCutOffSoonRaffles();
+	}
+	
+	public Map<String, Object> getAdminDashboard() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("totalRaffle", raffleDao.raffleCount(null));
+		map.put("totalSportsRaffle", raffleDao.raffleCount("sports"));
+		map.put("totalArtRaffle", raffleDao.raffleCount("art"));
+		map.put("totalFashionRaffle", raffleDao.raffleCount("fashion"));
+		
+		map.put("totalMember", raffleDetailDao.raffleMemberCount(null));
+		map.put("totalSportsMember", raffleDetailDao.raffleMemberCount("sports"));
+		map.put("totalArtMember", raffleDetailDao.raffleMemberCount("art"));
+		map.put("totalFashionMember", raffleDetailDao.raffleMemberCount("fashion"));
+		
+		map.put("ongoingRaffle", raffleDao.ongoingRaffleCount(null));
+		map.put("ongoingSportsRaffle", raffleDao.ongoingRaffleCount("sports"));
+		map.put("ongoingArtRaffle", raffleDao.ongoingRaffleCount("art"));
+		map.put("ongoingFashionRaffle", raffleDao.ongoingRaffleCount("fashion"));
+		
+		map.put("ongoingSportsMember", raffleDetailDao.ongoingMemberCount("sports"));
+		map.put("ongoingArtMember", raffleDetailDao.ongoingMemberCount("art"));
+		map.put("ongoingFashionMember", raffleDetailDao.ongoingMemberCount("fashion"));
+		
+		map.put("closedRaffle", raffleDao.closedRaffleCount(null));
+		
+		return map;
 	}
 	
 	// 확률 계산용

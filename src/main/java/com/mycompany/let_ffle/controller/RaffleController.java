@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.let_ffle.dao.RaffleDao;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
@@ -397,5 +398,10 @@ public class RaffleController {
 		List<RaffleDetailRequest> list = raffleService.getAdminRaffleDetail(mid);
 		log.info(mid);
 		return list;
+	}
+	
+	@GetMapping("/getAdminDashboard")
+	public Map<String, Object> getAdminDashboard() {
+		return raffleService.getAdminDashboard();
 	}
 }

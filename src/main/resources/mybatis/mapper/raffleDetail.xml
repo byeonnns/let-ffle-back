@@ -203,5 +203,36 @@
 		INNER JOIN winner w ON w.rno = r.rno
 		where rdt.mid = #{mid}
 	</select>
+	
+	
+	<select id="raffleMemberCount" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM raffle r INNER JOIN raffleDetail rd ON r.rno = rd.rno
+		<if test='rcategory == "sports"'>
+			WHERE rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "art"'>
+			WHERE rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "fashion"'>
+			WHERE rcategory = #{rcategory}
+		</if>
+	</select>
+	<select id="ongoingMemberCount" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM raffle r INNER JOIN raffleDetail rd ON r.rno = rd.rno
+		<![CDATA[
+		WHERE r.rstartedat <= systimestamp AND systimestamp <= r.rfinishedat
+		]]>
+		<if test='rcategory == "sports"'>
+			AND rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "art"'>
+			AND rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "fashion"'>
+			AND rcategory = #{rcategory}
+		</if>
+	</select>
 
 </mapper>    
