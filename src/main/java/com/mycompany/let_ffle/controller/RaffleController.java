@@ -125,8 +125,22 @@ public class RaffleController {
 	}
 
 	@GetMapping("/getRaffleList")
-	public List<RaffleRequest> getRaffleList() {
-		List<RaffleRequest> list = raffleService.getListForUser();
+	public List<RaffleRequest> getRaffleList(@RequestParam(defaultValue = "all") String category, @RequestParam(defaultValue = "popular") String sortType) {
+		List<RaffleRequest> list = raffleService.getListForUser(category, sortType);
+		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
+		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
+		log.info("rcategory : " + category);
+		log.info("sortType : " + sortType);
+		for (RaffleRequest rr : list) {
+			rr.setRaffleImage(null);
+		}
+		return list;
+	}
+	
+	@GetMapping("/searchRaffleList/{word}")
+	public List<RaffleRequest> searchRaffleList(@PathVariable String word) {
+		log.info("word : " + word);
+		List<RaffleRequest> list = raffleService.searchRaffle(word);
 		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
 		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
 		for (RaffleRequest rr : list) {

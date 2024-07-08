@@ -48,7 +48,33 @@
 		from board
 		where benabled = 1
 	</select>
-
+	
+	<select id="boardCountByWord" parameterType="String" resultType="int">
+		select
+		count(*)
+		from board
+		where benabled = 1
+		<if test="searchType == 'title'">
+		AND btitle like '%${word}%'
+		</if>
+		<if test="searchType == 'content'">
+		AND bcontent like '%${word}%'
+		</if>
+		<if test="searchType == 'nickname'">
+		AND mid like '%${word}%'
+		</if>
+		<if test="searchType == 'titleOrContet'">
+		AND (btitle like '%${word}%' OR bcontent like '%${word}%')
+		</if>
+	</select>
+	
+	<select id="boardCountByCategory" parameterType="String" resultType="int">
+		select
+		count(*)
+		from board
+		where benabled = 1
+		AND bcategory = #{category}
+	</select>
 
 	<select id="selectBoardByBno" parameterType="int"
 		resultType="Board">
@@ -60,9 +86,9 @@
 	<!-- 안쪽 select문 board의 bno를 기준으로 내림차순으로 조회 중간쪽 select문 내부 쿼리의 rownum을 사용해 
 		고유 번호를 부여 후 rownum이 #{endRowNo}보다 작은 경우 페이징을 구현하기 위함 바깥쪽 select문 rownum을 
 		사용해 #{startRowNo}보다 큰 경우 페이징을 구현하기 위함 -->
-	<select id="selectByBoardList" parameterType="pager"
+	<select id="selectByBoardList" parameterType="Map"
 		resultType="Board">
-		<![CDATA[      
+		    
       select rnum, bno, mnickname as mid, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
       from (
           select rownum as rnum, bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
@@ -70,11 +96,45 @@
               select bno, mnickname, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
               from board b INNER JOIN member m on b.mid = m.mid
               where benabled = 1
+              
+              <if test="word != '' and searchType == 'title'">
+              AND btitle like '%${word}%'
+              </if>
+              <if test="word != '' and searchType == 'content'">
+              AND bcontent like '%${word}%'
+              </if>
+              <if test="word != '' and searchType == 'nickname'">
+              AND mnickname like '%${word}%'
+              </if>
+              <if test="word != '' and searchType == 'titleOrContet'">
+              AND (btitle like '%${word}%' OR bcontent like '%${word}%')
+              </if>
               order by bno desc
           )
-          where rownum <= #{endRowNo}
+          <![CDATA[ 
+          where rownum <= #{pager.endRowNo}
       )
-      where rnum >= #{startRowNo}
+      where rnum >= #{pager.startRowNo}
+      ]]>
+	</select>
+	
+	<select id="selectByBoardListWithCategory" parameterType="Map"
+		resultType="Board">
+		    
+      select rnum, bno, mnickname as mid, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
+      from (
+          select rownum as rnum, bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
+          from (
+              select bno, mnickname, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
+              from board b INNER JOIN member m on b.mid = m.mid
+              where benabled = 1
+              AND bcategory = #{category}
+              order by bno desc
+          )
+          <![CDATA[ 
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
       ]]>
 	</select>
 

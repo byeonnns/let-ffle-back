@@ -20,13 +20,19 @@ public interface BoardDao {
 
 	public int boardCount();
 
-	public List<Board> selectByBoardList(Pager pager);
+	public List<Board> selectByBoardList(Pager pager, String searchType, String word);
 
 	public void updatehitCount(int bno);
 
 	public List<Board> getBoardTitleList(Pager pager, String mid);
 
 	public Board selectBoardByBno(int bno);
+
+	public int boardCountByWord(String searchType, String word);
+
+	public int boardCountByCategory(String category);
+
+	public List<Board> selectByBoardListWithCategory(Pager pager, String category);
 	
 	
 

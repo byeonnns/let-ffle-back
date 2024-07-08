@@ -48,7 +48,8 @@ public class RaffleService {
 	BerryHistoryDao berryHistoryDao;
 	@Autowired
 	MemberDao memberDao;
-	//래플 등록
+
+	// 래플 등록
 	public void insertRaffle(RaffleRequest raffleRequest) {
 		raffleDao.insertRaffle(raffleRequest.getRaffle());
 		raffleImageDao.insertRaffleImage(raffleRequest.getRaffleImage());
@@ -61,18 +62,18 @@ public class RaffleService {
 			quizMissionDao.insertQuizMisson(raffleRequest.getQuizMission());
 		}
 	}
-	//래플 수정
+
+	// 래플 수정
 	public void updateRaffle(RaffleRequest raffleRequest) {
 		raffleDao.updateRaffle(raffleRequest.getRaffle());
 		raffleImageDao.updateRaffleImage(raffleRequest.getRaffleImage());
-		
+
 		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
 			timeMissionDao.updateTimeMisson(raffleRequest.getTimeMission());
 			// raffle(dto)의 미션타입이 quiz이라면 quizMissionDao를 호출해 quizMission을 생성
 		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
 			quizMissionDao.updateQuizMisson(raffleRequest.getQuizMission());
 		}
-		
 
 	}
 
@@ -85,20 +86,21 @@ public class RaffleService {
 		} else if (raffleRequest.getRaffle().getRmissiontype().equals("quiz")) {
 			raffleRequest.setQuizMission(quizMissionDao.selectByRno(rno));
 		}
-		
+
 		return raffleRequest;
 	}
 
 	public int getCount() {
 		return raffleDao.raffleCount();
 	}
-	
+
 	public List<Raffle> getListForAdmin(Pager pager) {
 		return raffleDao.selectByPage(pager);
 	}
 
-	public List<RaffleRequest> getListForUser() {
-		return raffleDao.selectByRaffleListForUser();
+	public List<RaffleRequest> getListForUser(String rcategory, String sortType) {
+
+		return raffleDao.selectByRaffleListForUser(rcategory, sortType);
 	}
 
 	public void insertRaffleDetail(RaffleDetail raffleDetail) {
@@ -108,7 +110,7 @@ public class RaffleService {
 	public void insertWinner(Winner winner) {
 		winnerDao.insertWinner(winner);
 	}
-	
+
 	public RaffleDetail readRaffleDetail(String mid, int rno) {
 		return raffleDetailDao.selectRaffleDetail(mid, rno);
 	}
@@ -120,11 +122,11 @@ public class RaffleService {
 				return "당첨 발표";
 			} else {
 				String missionCleared = raffleDetailDao.selectRaffleDetail(mid, rno).getRdtmissioncleared();
-				if(missionCleared.equals("PASS")) {
+				if (missionCleared.equals("PASS")) {
 					return "미션 성공";
-				} else if(missionCleared.equals("FAIL")) {
+				} else if (missionCleared.equals("FAIL")) {
 					return "미션 실패";
-				} else if(missionCleared.equals("PEND")) {
+				} else if (missionCleared.equals("PEND")) {
 					return "미션 대기";
 				}
 			}
@@ -138,7 +140,8 @@ public class RaffleService {
 		return "오류";
 	}
 
-	public Map<String, Object> getRaffleDetailList(String mid, String role, int pageNo, String status, String startDate, String endDate) {
+	public Map<String, Object> getRaffleDetailList(String mid, String role, int pageNo, String status, String startDate,
+			String endDate) {
 		Map<String, Object> map = new HashMap<>();
 
 		int myTotalRaffle = raffleDetailDao.selectTotalRaffle(mid, role, startDate, endDate);
@@ -148,21 +151,20 @@ public class RaffleService {
 		map.put("myOngoingRaffle", myOngoingRaffle);
 		map.put("myClosedRaffle", myClosedRaffle);
 		Pager pager = new Pager(1, 1, 1, 1);
-		
-		if(status.equals("Ongoing")) {
+
+		if (status.equals("Ongoing")) {
 			pager = new Pager(5, 5, myOngoingRaffle, pageNo);
-		}
-		else if(status.equals("Closed")) {
+		} else if (status.equals("Closed")) {
 			pager = new Pager(5, 5, myClosedRaffle, pageNo);
-		}
-		else {
+		} else {
 			pager = new Pager(5, 5, myTotalRaffle, pageNo);
 		}
-		
-		List<RaffleDetailRequest> list = raffleDetailDao.selectRaffleDetailRequest(mid, pager, status, startDate, endDate);
-		for(RaffleDetailRequest rdr : list) {
-			
-			if(rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
+
+		List<RaffleDetailRequest> list = raffleDetailDao.selectRaffleDetailRequest(mid, pager, status, startDate,
+				endDate);
+		for (RaffleDetailRequest rdr : list) {
+
+			if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
 
 				rdr.getRaffleDetail().setRdtmissioncleared("완료");
 			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("FAIL"))
@@ -179,10 +181,7 @@ public class RaffleService {
 		}
 		map.put("RaffleDetailRequest", list);
 
-
-
 		map.put("pager", pager);
-		
 
 		return map;
 	}
@@ -207,7 +206,7 @@ public class RaffleService {
 			}
 			// 미션타입이 time미션일 경우
 		} else if (rMissionType.equals("time")) {
-			if(raffleDetailDao.checkTimePass(rno, mid) != 0)
+			if (raffleDetailDao.checkTimePass(rno, mid) != 0)
 				raffleDetailDao.updateTimeMissionCleared(rno, mid);
 		}
 	}
@@ -243,7 +242,6 @@ public class RaffleService {
 		return String.format("%.2f", myScore / ppScore * 100);
 	}
 
-
 	public List<Raffle> getWinnerDetailList(String mid, Pager pager, String startDate, String endDate) {
 		return winnerDao.selectWinnerDetailList(mid, pager, startDate, endDate);
 
@@ -260,6 +258,11 @@ public class RaffleService {
 	public int getWinRaffleCount(String mid, String startDate, String endDate) {
 		return winnerDao.countWinRaffle(mid, startDate, endDate);
 	}
+
+	public List<RaffleRequest> searchRaffle(String word) {
+		return raffleDao.searchRaffle(word);
+	}
+
 	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle) {
 		return raffleDao.getMemberRaffleDetail(mid, raffle);
 	}
@@ -267,7 +270,5 @@ public class RaffleService {
 		
 		return raffleDetailDao.getAdminRaffleDetail(mid);
 	}
-	
-	
 	
 }

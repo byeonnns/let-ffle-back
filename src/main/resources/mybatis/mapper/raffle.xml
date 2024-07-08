@@ -52,29 +52,64 @@
 
 	<!--inner join을 사용한 이유는 raffle테이블과 raffleImage테이블 합쳐서 rno 값을 가지는 레코드를 결합시키기 
 		위해서 사용 -->
-	<select id="selectByRaffleListForUser"
-		resultType="RaffleRequest">
-		select r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
-		r.rsubtitle as "raffle.rsubtitle",
-		r.rstartedat as "raffle.rstartedat",
-		r.rfinishedat as "raffle.rfinishedat",
-		r.rcategory as
-		"raffle.rcategory",
+	<select id="selectByRaffleListForUser" parameterType="String" resultType="RaffleRequest">
+		SELECT r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
+		r.rsubtitle as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
+		r.rstartedat as "raffle.rstartedat", r.rfinishedat as
+		"raffle.rfinishedat",
 		ri.rthumbnailimg as "raffleImage.rthumbnailimg",
-		ri.rthumbnailimgtype as "raffleImage.rthumbnailimgtype",
-		ri.rthumbnailimgoname as "raffleImage.rthumbnailimgoname"
-		from raffle r
-		INNER JOIN raffleImage ri ON r.rno = ri.rno
+		ri.rthumbnailimgtype as
+		"raffleImage.rthumbnailimgtype",
+		ri.rthumbnailimgoname as
+		"raffleImage.rthumbnailimgoname",
+		(SELECT COUNT(*) FROM raffleDetail rd
+		WHERE rd.rno = r.rno) AS
+		"raffle.rwinnercount"
+		
+		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
+		<if test="rcategory != 'all'">
+			WHERE r.rcategory = #{rcategory}
+		</if>
+		
+		<if test="sortType == 'popular'">
+			ORDER by "raffle.rwinnercount" DESC
+		</if>
+		
+		<if test="sortType == 'new'">
+			ORDER by r.rstartedat DESC
+		</if>
+		
+		<if test="sortType == 'cutoffsoon'">
+			<![CDATA[ 
+			AND r.rfinishedat < systimestamp
+			]]>
+			ORDER by r.rfinishedat
+		</if>
 	</select>
 
 	<update id="updateRaffle" parameterType="RaffleRequest">
 		update raffle
 		set
 		rtitle=#{rtitle}, rsubtitle=#{rsubtitle},
-		rstartedat= #{rstartedat},rfinishedat= #{rfinishedat},
+		rstartedat=
+		#{rstartedat},rfinishedat= #{rfinishedat},
 		rcontent=#{rcontent},rcategory=#{rcategory},rwinnercount=#{rwinnercount}
 		,rmissiontype=#{rmissiontype},rgift=#{rgift}
 		where rno =#{rno}
 	</update>
 
+	<select id="searchRaffle" parameterType="String" resultType="RaffleRequest">
+		SELECT r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
+		r.rsubtitle as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
+		r.rstartedat as "raffle.rstartedat", r.rfinishedat as
+		"raffle.rfinishedat",
+		ri.rthumbnailimg as "raffleImage.rthumbnailimg",
+		ri.rthumbnailimgtype as
+		"raffleImage.rthumbnailimgtype",
+		ri.rthumbnailimgoname as
+		"raffleImage.rthumbnailimgoname"
+		
+		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
+		where r.rtitle like '%${word}%'
+	</select>
 </mapper>    
