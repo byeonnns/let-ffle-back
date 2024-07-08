@@ -46,10 +46,6 @@
 		where rno=#{rno}
 	</select>
 
-	<select id="raffleCount" resultType="int">
-		select count(*) from raffle
-	</select>
-
 	<!--inner join을 사용한 이유는 raffle테이블과 raffleImage테이블 합쳐서 rno 값을 가지는 레코드를 결합시키기 
 		위해서 사용 -->
 	<select id="selectByRaffleListForUser" parameterType="String" resultType="RaffleRequest">
@@ -112,4 +108,43 @@
 		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
 		where r.rtitle like '%${word}%'
 	</select>
+	
+	<select id="raffleCount" parameterType="String" resultType="int">
+		select count(*)
+		from raffle
+		<if test='rcategory == "sports"'>
+			WHERE rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "art"'>
+			WHERE rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "fashion"'>
+			WHERE rcategory = #{rcategory}
+		</if>
+	</select>
+	<select id="ongoingRaffleCount" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM raffle
+		<![CDATA[
+		WHERE rstartedat <= systimestamp AND systimestamp <= rfinishedat
+		]]>
+		<if test='rcategory == "sports"'>
+			AND rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "art"'>
+			AND rcategory = #{rcategory}
+		</if>
+		<if test='rcategory == "fashion"'>
+			AND rcategory = #{rcategory}
+		</if>
+	</select>
+	<select id="closedRaffleCount" resultType="int">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM raffle
+		WHERE rfinishedat < systimestamp
+	]]>
+	</select>
+	
+	
 </mapper>    

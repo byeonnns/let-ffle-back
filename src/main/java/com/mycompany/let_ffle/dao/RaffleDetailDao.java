@@ -56,4 +56,7 @@ public interface RaffleDetailDao {
 
 	public List<RaffleDetailRequest> getAdminRaffleDetail(String mid);
 	
+	public int raffleMemberCount(String rcategory);
+	public int ongoingMemberCount(String rcategory);
+	
 }
