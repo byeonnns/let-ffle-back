@@ -15,6 +15,10 @@ public interface BerryHistoryDao {
 	List<BerryHistory> selectByMid(String mid, Pager pager, String option);
 
 	public int countTotalBH(String mid);
+	
 	public int countSaveBH(String mid);
+	
 	public int countUseBH(String mid);
+
+	List<BerryHistory> getBerryHistoryUpToTen(String mid);
 }

@@ -288,4 +288,8 @@ public class MemberService {
 		return winnerDao.winnerCountByWord(searchType, word);
 	}
 
+	public List<BerryHistory> getBerryHistoryUpToTen(String mid) {
+		return berryHistoryDao.getBerryHistoryUpToTen(mid);
+	}
+
 }

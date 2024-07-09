@@ -56,4 +56,14 @@
 	]]>
 	</select>
 
+	<select id="getBerryHistoryUpToTen" parameterType="String" resultType="BerryHistory">
+		SELECT *
+		FROM (
+		  SELECT *
+		  FROM berryhistory
+		  WHERE mid = #{mid}
+		  ORDER BY bhchangedat DESC
+		)
+		<![CDATA[WHERE ROWNUM <= 10]]>
+	</select>
 </mapper>    
