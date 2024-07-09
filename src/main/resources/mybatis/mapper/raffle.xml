@@ -56,12 +56,6 @@
 		r.rstartedat
 		as "raffle.rstartedat", r.rfinishedat as
 		"raffle.rfinishedat",
-		ri.rthumbnailimg as "raffleImage.rthumbnailimg",
-		ri.rthumbnailimgtype
-		as
-		"raffleImage.rthumbnailimgtype",
-		ri.rthumbnailimgoname as
-		"raffleImage.rthumbnailimgoname",
 		(SELECT COUNT(*) FROM raffleDetail rd
 		WHERE rd.rno = r.rno) AS
 		"raffle.rwinnercount"

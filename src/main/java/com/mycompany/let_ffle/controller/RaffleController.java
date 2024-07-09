@@ -333,7 +333,7 @@ public class RaffleController {
 	@GetMapping("/raffleThumbnailAttach/{rno}")
 	public void download(@PathVariable int rno, HttpServletResponse response) {
 		// 해당 게시물 가져오기
-		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
+		RaffleImage raffleImage = raffleService.getThumbnailImage(rno);
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
 		try {
 			String fileName = new String(raffleImage.getRthumbnailimgoname().getBytes("UTF-8"), "ISO-8859-1");
@@ -354,7 +354,7 @@ public class RaffleController {
 	@GetMapping("/raffleGiftAttach/{rno}")
 	public void downloadGift(@PathVariable int rno, HttpServletResponse response) {
 		// 해당 게시물 가져오기
-		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
+		RaffleImage raffleImage = raffleService.getGiftImage(rno);
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
 		try {
 			String fileName = new String(raffleImage.getRgiftimgoname().getBytes("UTF-8"), "ISO-8859-1");
@@ -375,7 +375,7 @@ public class RaffleController {
 	@GetMapping("/raffleDetailAttach/{rno}")
 	public void downloadDetail(@PathVariable int rno, HttpServletResponse response) {
 		// 해당 게시물 가져오기
-		RaffleImage raffleImage = raffleService.readRaffleImage(rno);
+		RaffleImage raffleImage = raffleService.getDetailImage(rno);
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
 		try {
 			String fileName = new String(raffleImage.getRdetailimgoname().getBytes("UTF-8"), "ISO-8859-1");

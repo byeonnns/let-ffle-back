@@ -13,4 +13,10 @@ public interface RaffleImageDao {
 
 	public int updateRaffleImage(RaffleImage raffleImage);
 
+	public RaffleImage getDetailImage(int rno);
+
+	public RaffleImage getThumbnailImage(int rno);
+
+	public RaffleImage getGiftImage(int rno);
+
 }
