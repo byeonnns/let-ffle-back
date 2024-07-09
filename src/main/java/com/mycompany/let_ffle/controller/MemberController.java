@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.let_ffle.dto.BerryHistory;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
@@ -528,6 +529,12 @@ public class MemberController {
 	@GetMapping("/getBerryHistoryList")
 	public Map<String, Object> getBerryHistoryList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "Total")String option) {
 		return memberService.getBerryHistoryList(authentication.getName(), pageNo, option);
+	}
+	
+	@GetMapping("/getBerryHistoryListForHome")
+	public List<BerryHistory> getBerryHistoryListForHome(Authentication authentication) {
+		List<BerryHistory> list = memberService.getBerryHistoryUpToTen(authentication.getName());
+		return list;
 	}
 
 	// 문의 내용 답변 작성
