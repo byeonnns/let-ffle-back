@@ -100,10 +100,12 @@ public class MemberController {
 			// 주입받은 JwtProvider 객체가 가지고 있는 createAccessToken() 호출
 			// 이 때 현재 로그인한 유저의 mid와 mrole을 제공
 			String accessToken = jwtProvider.createAccessToken(mid, letffleUserDetails.getMember().getMrole());
-
+			String mrole = letffleUserDetails.getAuthorities().iterator().next().toString();
+			
 			// 사용자에게 반환해줄 응답을 Map에 추가
 			map.put("result", "success");
 			map.put("mid", mid);
+			map.put("mrole", mrole);
 			map.put("accessToken", accessToken);
 
 			Member member = memberService.selectLoginTime(mid);

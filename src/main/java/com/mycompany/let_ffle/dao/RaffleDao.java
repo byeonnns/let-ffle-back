@@ -37,4 +37,6 @@ public interface RaffleDao {
 	public List<RaffleRequest> getNewReleaseRaffles();
 
 	public List<RaffleRequest> getCutOffSoonRaffles();
+
+	public RaffleRequest selectForMonitor(int rno);
 }

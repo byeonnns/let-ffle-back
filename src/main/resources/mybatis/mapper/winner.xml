@@ -8,10 +8,20 @@
 		values (#{rno}, #{mid})
 	</insert>
 	
-	<select id="selectWinnerDetail" parameterType="int" resultType="Winner">
-		select *
-		from winner
-		where rno = #{rno}
+	<select id="selectWinnerDetail" parameterType="Map" resultType="Winner">
+	select rnum, rno, mid, mname "rtitle", wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+    	from (
+        	select rownum as rnum, rno, mid, mname, wreceivername, wreceiverzipcode, wreceiveraddress, wreceiverphone
+        	from (
+            	SELECT w.rno, m.mid, m.mname, w.wreceivername, w.wreceiverzipcode, w.wreceiveraddress, w.wreceiverphone
+            	FROM winner w INNER JOIN member m ON w.mid = m.mid
+            	WHERE rno = #{rno}
+            	)
+    <![CDATA[ 
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
+    ]]>
 	</select>
 	
 	<select id="selectWinnerDetailList" parameterType="Map" resultType="Raffle">
@@ -54,6 +64,12 @@
 
 	<select id="winnerCount" resultType="int">
 		select count(*) from winner
+	</select>
+	
+	<select id="getRaffleWinnerCount" parameterType="int" resultType="int">
+		select count(*)
+		from winner
+		where rno = #{rno}
 	</select>
 	
 	<select id="winnerCountByWord" resultType="int">

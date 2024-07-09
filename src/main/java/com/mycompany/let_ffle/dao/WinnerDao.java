@@ -14,7 +14,7 @@ public interface WinnerDao {
 
 	public void insertWinner(int rno, String mid);
 
-	public Winner selectWinnerDetail(int rno);
+	public List<Winner> selectWinnerDetail(int rno, Pager pager);
 
 	public List<Raffle> selectWinnerDetailList(String mid, Pager pager, String startDate, String endDate);
 
@@ -31,4 +31,6 @@ public interface WinnerDao {
 	public int winnerCheck(int rno, String mid);
 
 	public int winnerCountByWord(String searchType, String word);
+
+	public int getRaffleWinnerCount(int rno);
 }

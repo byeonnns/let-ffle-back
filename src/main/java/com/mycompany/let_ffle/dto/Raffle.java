@@ -9,6 +9,7 @@ public class Raffle {
 	private int rno; // 래플 번호
 	private String rtitle; // 래플 제목
 	private String rsubtitle; // 래플 서브 제목
+	private Timestamp rcreatedat; // 래플 시작 일자
 	private Timestamp rstartedat; // 래플 시작 일자
 	private Timestamp rfinishedat; // 래플 종료 일자
 	private String rcontent; // 래플 내용

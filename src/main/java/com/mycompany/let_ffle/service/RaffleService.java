@@ -203,8 +203,8 @@ public class RaffleService {
 		return map;
 	}
 
-	public Winner readWinnerDetail(int rno) {
-		return winnerDao.selectWinnerDetail(rno);
+	public List<Winner> readWinnerDetail(int rno, Pager pager) {
+		return winnerDao.selectWinnerDetail(rno, pager);
 	}
 
 	// 매개변수로 rno, mid, manswer(회원이 제출할 문제 답안) 받음
@@ -311,6 +311,10 @@ public class RaffleService {
 		return map;
 	}
 	
+	public RaffleRequest getRaffleMonitor(int rno) {
+		return raffleDao.selectForMonitor(rno);
+	}
+	
 	// 확률 계산용
 	private String computeProbability(String mid, int rno, int winnerCount) {
 		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
@@ -368,5 +372,7 @@ public class RaffleService {
 		int startPoint;
 	}
 
-
+	public int getMonitorWinCount(int rno) {
+		return winnerDao.getRaffleWinnerCount(rno);
+	}
 }

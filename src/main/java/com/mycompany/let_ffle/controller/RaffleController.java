@@ -288,9 +288,14 @@ public class RaffleController {
 	}
 
 	@GetMapping("/readWinnerDetail")
-	public Winner readWinnerDetail(int rno) {
-		Winner winner = raffleService.readWinnerDetail(rno);
-		return winner;
+	public Map<String, Object> readWinnerDetail(@RequestParam int rno, @RequestParam(defaultValue = "1")int pageNo) {
+		Map<String, Object> map = new HashMap<>();
+		int totalRows = raffleService.getMonitorWinCount(rno);
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<Winner> winner = raffleService.readWinnerDetail(rno, pager);
+		map.put("winner", winner);
+		map.put("pager", pager);
+		return map;
 	}
 
 	// 마이페이지 -> 당첨내역 조회 메소드
@@ -403,5 +408,12 @@ public class RaffleController {
 	@GetMapping("/getAdminDashboard")
 	public Map<String, Object> getAdminDashboard() {
 		return raffleService.getAdminDashboard();
+	}
+	
+	
+	//래플 모니터링
+	@GetMapping("/getRaffleMonitor")
+	public RaffleRequest getRaffleMonitor(@RequestParam int rno) {
+		return raffleService.getRaffleMonitor(rno);
 	}
 }
