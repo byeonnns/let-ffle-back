@@ -301,7 +301,7 @@ public class RaffleController {
 	// 마이페이지 -> 당첨내역 조회 메소드
 	@GetMapping("/getWinnerDetailList")
 	// 매개변수로 authentication 받음
-	public Map<String, Object>getWinnerDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
+	public Map<String, Object> getWinnerDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
 			@RequestParam(defaultValue = "null")String start, @RequestParam(defaultValue = "null")String end) {
 		Map<String, Object> map = new HashMap<>();
 		int totalRows = raffleService.getWinRaffleCount(authentication.getName(), start, end);
@@ -410,10 +410,21 @@ public class RaffleController {
 		return raffleService.getAdminDashboard();
 	}
 	
-	
 	//래플 모니터링
 	@GetMapping("/getRaffleMonitor")
 	public RaffleRequest getRaffleMonitor(@RequestParam int rno) {
 		return raffleService.getRaffleMonitor(rno);
+	}
+	
+	//모니터 참여자 리스트
+	@GetMapping("/getMemberMonitor")
+	public Map<String, Object> getMemberMonitor(@RequestParam int rno, @RequestParam int pageNo) {
+		Map<String, Object> map = new HashMap<>();
+		int totalRows = raffleService.countEntryMember(rno);
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<RaffleDetailRequest> list = raffleService.getMemberMonitor(rno, pager);
+		map.put("member", list);
+		map.put("pager", pager);
+		return map;
 	}
 }

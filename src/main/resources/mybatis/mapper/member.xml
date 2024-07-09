@@ -225,6 +225,23 @@
 		from member
 		where mid = #{mid}
 	</select>
+	
+	<select id="getMonitorList" parameterType="Map" resultType="RaffleDetailRequest">
+      <![CDATA[
+      select rnum, rno "raffleDetail.rno", mid "raffleDetail.mid", mname "nowStatus", rdtcreatedat "raffleDetail.rdtcreatedat",
+      	rdtmissioncleared "raffleDetail.rdtmissioncleared", rdtberryspend "raffleDetail.rdtberryspend"
+      	from (
+          select rownum as rnum, rno, mid, mname, rdtcreatedat, rdtmissioncleared, rdtberryspend
+          from (
+              SELECT m.mid, m.mname, rd.rno, rd.rdtcreatedat, rd.rdtmissioncleared, rd.rdtberryspend
+				FROM member m INNER JOIN raffleDetail rd ON m.mid = rd.mid
+				WHERE rd.rno = #{rno}
+          )
+          where rownum <= #{pager.endRowNo}
+      )
+      where rnum >= #{pager.startRowNo}
+      ]]>
+	</select>
 
 
 </mapper>    
