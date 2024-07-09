@@ -253,8 +253,16 @@ public class RaffleService {
 
 	}
 
-	public RaffleImage readRaffleImage(int rno) {
-		return raffleImageDao.selectByRno(rno);
+	public RaffleImage getThumbnailImage(int rno) {
+		return raffleImageDao.getThumbnailImage(rno);
+	}
+	
+	public RaffleImage getGiftImage(int rno) {
+		return raffleImageDao.getGiftImage(rno);
+	}
+	
+	public RaffleImage getDetailImage(int rno) {
+		return raffleImageDao.getDetailImage(rno);
 	}
 
 	public Raffle deleteRaffle(int rno) {
