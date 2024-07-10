@@ -1,6 +1,7 @@
 package com.mycompany.let_ffle.service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -106,13 +107,22 @@ public class RaffleService {
 		return raffleDao.selectByRaffleListForUser(rcategory, sortType);
 	}
 
+	@Transactional
 	public String insertRaffleDetail(RaffleDetail raffleDetail) {
-		List<RaffleDetail> list = raffleDetailDao.selectTodayEntryRaffle(raffleDetail.getMid());
+		String mid = raffleDetail.getMid();
+		List<RaffleDetail> list = raffleDetailDao.selectTodayEntryRaffle(mid);
 		if(list.size() >= 3)
 			return "fail";
 		else {
 			raffleDetailDao.insertRaffleDetail(raffleDetail);
-			return "success";
+			if(raffleDetailDao.selectTodayEntryRaffle(mid).size() == 3) {
+				Timestamp nowTimestamp = new Timestamp(System.currentTimeMillis());
+				BerryHistory berryHistory = new BerryHistory(0, mid, nowTimestamp, 1, "일일 3회 래플 응모 달성");
+				memberDao.updateBerry(mid, 1);
+				berryHistoryDao.insertBerryHistory(berryHistory);
+				return "berry";
+			} else
+				return "success";
 		}
 	}
 

@@ -159,7 +159,6 @@ public class MemberService {
 
 		Timestamp nowLoginDate = new Timestamp(System.currentTimeMillis());
 
-		// 주석 달자
 		if (nowLoginDate.toLocalDateTime().toLocalDate()
 				.isAfter(member.getMlastlogintime().toLocalDateTime().toLocalDate())) {
 			BerryHistory berryHistory = new BerryHistory(0, mid, nowLoginDate, 1, "매일 최초 로그인");
