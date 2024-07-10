@@ -37,9 +37,9 @@
 	</update>
 
 	<select id="readBoard" parameterType="int" resultType="Board">
-		select bno,  mnickname as mid , btitle, bcontent, bcategory,
-		battachoname, battachtype, battachdata, bhitcount, bcreatedat,
-		benabled
+		select b.bno, b.mid , b.btitle, b.bcontent, b.bcategory,
+		m.mnickname as battachoname, b.battachtype, b.battachdata, b.bhitcount, b.bcreatedat,
+		b.benabled
 		from board b INNER JOIN member m on b.mid = m.mid
 		where bno = #{bno}
 	</select>
