@@ -21,7 +21,6 @@
       ]]>
 	</select>
 
-
 	<!-- insert id = dao메소드명과 동일 parameterType = 파라미터로 받아온 타입 keyProperty = 
 		쿼리 결과로 얻은 시퀀스 값을 rno 속성에 설정, resultType = 쿼리 결과를 int(정수형)을 의미, order = 메인 
 		쿼리 문이 실행 전에 <selectkey>쿼리를 실행함 시퀀스 값이 메인 쿼리가 실행되기 전에 먼저 설정되도록 함 -->
@@ -66,16 +65,22 @@
 		</if>
 
 		<if test="sortType == 'popular'">
+			<![CDATA[ 
+			AND r.rstartedat < systimestamp
+			]]>
 			ORDER by "raffle.rwinnercount" DESC
 		</if>
 
 		<if test="sortType == 'new'">
+			<![CDATA[ 
+			AND r.rstartedat < systimestamp
+			]]>
 			ORDER by r.rstartedat DESC
 		</if>
 
 		<if test="sortType == 'cutoffsoon'">
 			<![CDATA[ 
-			AND r.rfinishedat < systimestamp
+			AND r.rstartedat < systimestamp
 			]]>
 			ORDER by r.rfinishedat
 		</if>
@@ -176,19 +181,6 @@
 		FROM raffle
 		WHERE rfinishedat < systimestamp
 	]]>
-	</select>
-	
-	<select id="selectForMonitor" parameterType="int" resultType="RaffleRequest">
-	select rno "raffle.rno", rtitle "raffle.rtitle", rsubtitle "raffle.rsubtitle", rcreatedat "raffle.rcreatedat",
-		rstartedat "raffle.rstartedat", rfinishedat "raffle.rfinishedat", rcategory "raffle.rcategory",
-		rwinnercount "raffle.rwinnercount", rmissiontype "raffle.rmissiontype", rgift "raffle.rgift",
-        (
-            SELECT COUNT(*)
-            FROM raffledetail
-            WHERE rno = #{rno}
-        ) "raffleProcess"
-	from raffle
-	where rno = #{rno}
 	</select>
 	
 </mapper>    
