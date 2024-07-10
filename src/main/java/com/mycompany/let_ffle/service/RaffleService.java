@@ -182,12 +182,11 @@ public class RaffleService {
 		for (RaffleDetailRequest rdr : list) {
 
 			if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
-
-				rdr.getRaffleDetail().setRdtmissioncleared("완료");
+				rdr.getRaffleDetail().setRdtmissioncleared("성공");
 			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("FAIL"))
 				rdr.getRaffleDetail().setRdtmissioncleared("실패");
 			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
-				rdr.getRaffleDetail().setRdtmissioncleared("대기 중");
+				rdr.getRaffleDetail().setRdtmissioncleared("미진행");
 
 			if (rdr.getRaffle().getRfinishedat().toLocalDateTime().isAfter(LocalDateTime.now()))
 				rdr.setNowStatus("진행 중");
@@ -323,6 +322,29 @@ public class RaffleService {
 		return raffleDao.selectForMonitor(rno);
 	}
 	
+	public int getMonitorWinCount(int rno) {
+		return winnerDao.getRaffleWinnerCount(rno);
+	}
+	
+	public int countEntryMember(int rno) {
+		return raffleDetailDao.countEntryMember(rno);
+	}
+
+	public List<RaffleDetailRequest> getMemberMonitor(int rno, Pager pager) {
+		int winnerCount = winnerDao.getRaffleWinnerCount(rno);
+		List<RaffleDetailRequest> list = memberDao.getMonitorList(rno, pager);
+		for (RaffleDetailRequest rdr : list) {
+			if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PASS"))
+				rdr.getRaffleDetail().setRdtmissioncleared("성공");
+			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("FAIL"))
+				rdr.getRaffleDetail().setRdtmissioncleared("실패");
+			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
+				rdr.getRaffleDetail().setRdtmissioncleared("미진행");
+			rdr.setProbability(computeProbability(rdr.getRaffleDetail().getMid(), rno, winnerCount));
+		}
+		return list;
+	}
+	
 	// 확률 계산용
 	private String computeProbability(String mid, int rno, int winnerCount) {
 		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
@@ -378,9 +400,5 @@ public class RaffleService {
 		int score;
 		int endPoint;
 		int startPoint;
-	}
-
-	public int getMonitorWinCount(int rno) {
-		return winnerDao.getRaffleWinnerCount(rno);
 	}
 }

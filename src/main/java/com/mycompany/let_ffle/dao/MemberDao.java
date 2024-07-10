@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 
 @Mapper
 public interface MemberDao {
@@ -65,5 +66,7 @@ public interface MemberDao {
 	public Member getMemberDetail(String mid);
 
 	int memberCountByWord(String searchType, String word);
+
+	public List<RaffleDetailRequest> getMonitorList(int rno, Pager pager);
 
 }

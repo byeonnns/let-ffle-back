@@ -66,11 +66,19 @@
 		select count(*) from winner
 	</select>
 	
+	
 	<select id="getRaffleWinnerCount" parameterType="int" resultType="int">
 		select count(*)
 		from winner
 		where rno = #{rno}
 	</select>
+	
+	<select id="winnerExistenceCheck" parameterType="int" resultType="int">
+		select count(*)
+		from winner
+		where rno = #{rno}
+	</select>
+	
 	
 	<select id="winnerCountByWord" resultType="int">
 		select count(*)
@@ -82,12 +90,6 @@
 			w INNER JOIN raffle r ON w.rno = r.rno
 			where rtitle like '%${word}%'
 		</if>
-	</select>
-    	
-	<select id="winnerExistenceCheck" parameterType="int" resultType="int">
-		select count(*)
-		from winner
-		where rno = #{rno}
 	</select>
 	
 	<select id="winnerCheck" parameterType="Map" resultType="int">

@@ -58,5 +58,7 @@ public interface RaffleDetailDao {
 	
 	public int raffleMemberCount(String rcategory);
 	public int ongoingMemberCount(String rcategory);
+
+	public int countEntryMember(int rno);
 	
 }
