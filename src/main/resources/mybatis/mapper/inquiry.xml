@@ -16,13 +16,9 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
           select DISTINCT rownum as rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
           from (
               select ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-              from inquiry
-              <where>
-              	<if test="role == 'ROLE_USER'">
-              		mid = #{mid}
-              	</if>
-              </where>
-              order by ino desc
+	              from inquiry
+	             	where mid = #{mid} 
+	              	order by ino desc
           )
           <![CDATA[where rownum <= #{pager.endRowNo}]]>
       )
@@ -44,9 +40,7 @@ ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데
 	<select id="getInquiryCount" parameterType="Map" resultType="int">
 		select count(*)
 		from inquiry
-		<if test="role == 'ROLE_USER'">
 			where mid = #{mid}
-		</if>
 	</select>
 
 	<select id="readInquiry" parameterType="int"
