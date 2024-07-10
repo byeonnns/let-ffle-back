@@ -292,4 +292,8 @@ public class MemberService {
 		return berryHistoryDao.getBerryHistoryUpToTen(mid);
 	}
 
+	public Inquiry selectInquiryIno(int ino) {
+		return inquiryDao.selectInquiryIno(ino);
+	}
+
 }

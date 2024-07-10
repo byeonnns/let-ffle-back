@@ -1,9 +1,12 @@
 package com.mycompany.let_ffle.controller;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -515,6 +518,32 @@ public class MemberController {
 		inquiry.setIattachdata(null);
 
 		return inquiry;
+	}
+	
+	// 문의 첨부 다운로드용
+	@GetMapping("/iattach/{ino}")
+	public void iattach(@PathVariable int ino, HttpServletResponse response) {
+		// 해당 Board 객체 가져오기
+		Inquiry inquiry = memberService.selectInquiryIno(ino);
+		log.info("inquiry : " + inquiry);
+		try {
+			// 첨부파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 응답 헤더에 내용을 추가
+			String fileName = new String(inquiry.getIattachoname().getBytes("UTF-8"), "ISO-8859-1");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+			// 파일 타입을 헤더에 추가
+			response.setContentType(inquiry.getIattachtype());
+			log.info(inquiry.getIattachtype());
+
+			// Response Body에 파일 데이터 출력
+			OutputStream os = response.getOutputStream();
+			os.write(inquiry.getIattachdata());
+			os.flush();
+			os.close();
+			log.info("" + ino);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
 	}
 	
 	@GetMapping("/getMyPageDashboard")

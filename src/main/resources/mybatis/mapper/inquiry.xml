@@ -74,5 +74,12 @@ if문에 들어간 내용은 문의하기의 이미지 파일 인데, 특정 값
 		set ireply =#{ireply}
 		where ino=#{ino}
 	</update>
+	
+	<select id="selectInquiryIno" parameterType="int" resultType="Inquiry">
+		select *
+		from inquiry
+		where ino = #{ino}
+	</select>
+
 
 </mapper>    

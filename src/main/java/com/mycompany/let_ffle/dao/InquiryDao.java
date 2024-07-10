@@ -16,5 +16,7 @@ public interface InquiryDao {
 	public void updateInquiryReply(int ino, String ireply);
 	public int getInquiryCount(String mid, String role);
 	public List<Inquiry> selectByPage(Pager pager, String mid, String role);
+	public Inquiry selectInquiryIno(int ino);
+	
 	
 }
