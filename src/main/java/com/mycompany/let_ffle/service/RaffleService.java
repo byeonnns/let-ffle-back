@@ -112,17 +112,17 @@ public class RaffleService {
 
 	@Transactional
 	public String insertWinner(int rno, String mid) {
-		//당첨자를 뽑지 않았을 경우
-		if(winnerDao.winnerExistenceCheck(rno) == 0) {
+		// 당첨자를 뽑지 않았을 경우
+		if (winnerDao.winnerExistenceCheck(rno) == 0) {
 			Raffle raffle = raffleDao.selectByRno(rno);
 			List<String> list = pickWinner(rno, raffle.getRwinnercount());
 			log.info("당첨된 사람들 체크 : " + list);
-			for(String winner : list) {
+			for (String winner : list) {
 				winnerDao.insertWinner(rno, winner);
 			}
 		}
-		
-		if(winnerDao.winnerCheck(rno, mid) != 0) {
+
+		if (winnerDao.winnerCheck(rno, mid) != 0) {
 			return "당첨";
 		} else {
 			return "낙첨";
@@ -132,10 +132,10 @@ public class RaffleService {
 	public RaffleDetail readRaffleDetail(String mid, int rno) {
 		return raffleDetailDao.selectRaffleDetail(mid, rno);
 	}
-	
+
 	public String readRaffleDetailStatus(String mid, int rno) {
-		if(raffleDetailDao.readRaffleDetailStatus(mid, rno) > 0) {
-			if(LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
+		if (raffleDetailDao.readRaffleDetailStatus(mid, rno) > 0) {
+			if (LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
 				return "당첨 발표";
 			} else {
 				String missionCleared = raffleDetailDao.selectRaffleDetail(mid, rno).getRdtmissioncleared();
@@ -148,7 +148,7 @@ public class RaffleService {
 				}
 			}
 		} else {
-			if(LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
+			if (LocalDateTime.now().isAfter(raffleDao.selectByRno(rno).getRfinishedat().toLocalDateTime())) {
 				return "미참여 래플 종료";
 			} else {
 				return "래플 미참여";
@@ -255,11 +255,11 @@ public class RaffleService {
 	public RaffleImage getThumbnailImage(int rno) {
 		return raffleImageDao.getThumbnailImage(rno);
 	}
-	
+
 	public RaffleImage getGiftImage(int rno) {
 		return raffleImageDao.getGiftImage(rno);
 	}
-	
+
 	public RaffleImage getDetailImage(int rno) {
 		return raffleImageDao.getDetailImage(rno);
 	}
@@ -279,11 +279,19 @@ public class RaffleService {
 	public Map<String, Object> getMemberRaffleDetail(String mid, Raffle raffle) {
 		return raffleDao.getMemberRaffleDetail(mid, raffle);
 	}
-	
+
 	public List<RaffleDetailRequest> getAdminRaffleDetail(String mid) {
-		return raffleDetailDao.getAdminRaffleDetail(mid);
+		List<RaffleDetailRequest> list = raffleDetailDao.getAdminRaffleDetail(mid);
+		for (RaffleDetailRequest rdr : list) {
+			if(winnerDao.winnerCheck(rdr.getRaffle().getRno(), mid) > 0) {
+				rdr.setNowStatus("당첨");
+			} else {
+				rdr.setNowStatus("미당첨");
+			}
+		}
+		return list;
 	}
-	
+
 	public List<RaffleRequest> getNewReleaseRaffles() {
 		return raffleDao.getNewReleaseRaffles();
 	}
@@ -291,41 +299,41 @@ public class RaffleService {
 	public List<RaffleRequest> getCutOffSoonRaffles() {
 		return raffleDao.getCutOffSoonRaffles();
 	}
-	
+
 	public Map<String, Object> getAdminDashboard() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("totalRaffle", raffleDao.raffleCount(null));
 		map.put("totalSportsRaffle", raffleDao.raffleCount("sports"));
 		map.put("totalArtRaffle", raffleDao.raffleCount("art"));
 		map.put("totalFashionRaffle", raffleDao.raffleCount("fashion"));
-		
+
 		map.put("totalMember", raffleDetailDao.raffleMemberCount(null));
 		map.put("totalSportsMember", raffleDetailDao.raffleMemberCount("sports"));
 		map.put("totalArtMember", raffleDetailDao.raffleMemberCount("art"));
 		map.put("totalFashionMember", raffleDetailDao.raffleMemberCount("fashion"));
-		
+
 		map.put("ongoingRaffle", raffleDao.ongoingRaffleCount(null));
 		map.put("ongoingSportsRaffle", raffleDao.ongoingRaffleCount("sports"));
 		map.put("ongoingArtRaffle", raffleDao.ongoingRaffleCount("art"));
 		map.put("ongoingFashionRaffle", raffleDao.ongoingRaffleCount("fashion"));
-		
+
 		map.put("ongoingSportsMember", raffleDetailDao.ongoingMemberCount("sports"));
 		map.put("ongoingArtMember", raffleDetailDao.ongoingMemberCount("art"));
 		map.put("ongoingFashionMember", raffleDetailDao.ongoingMemberCount("fashion"));
-		
+
 		map.put("closedRaffle", raffleDao.closedRaffleCount(null));
-		
+
 		return map;
 	}
-	
+
 	public RaffleRequest getRaffleMonitor(int rno) {
 		return raffleDao.selectForMonitor(rno);
 	}
-	
+
 	public int getMonitorWinCount(int rno) {
 		return winnerDao.getRaffleWinnerCount(rno);
 	}
-	
+
 	public int countEntryMember(int rno) {
 		return raffleDetailDao.countEntryMember(rno);
 	}
@@ -344,7 +352,7 @@ public class RaffleService {
 		}
 		return list;
 	}
-	
+
 	// 확률 계산용
 	private String computeProbability(String mid, int rno, int winnerCount) {
 		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
@@ -356,32 +364,34 @@ public class RaffleService {
 		myScore = 1 - Math.pow(1 - myScore / ppScore, winnerCount);
 		return String.format("%.2f", myScore * 100);
 	}
-	
+
 	// 당첨 로직
-	private List<String> pickWinner(int rno, int winnerCount){
+	private List<String> pickWinner(int rno, int winnerCount) {
 		List<String> winner = new ArrayList<>();
 		Map<String, BigDecimal> pp = raffleDetailDao.readpp(rno);
-		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2 + pp.get("BERRYSPEND").intValue();
+		int ppScore = pp.get("TOTALENTRY").intValue() * 10 + pp.get("MISSIONCLEARED").intValue() * 2
+				+ pp.get("BERRYSPEND").intValue();
 		log.info("총점 : " + ppScore);
 		List<RaffleDetail> raffleDetail = raffleDetailDao.getRaffleDetailList(rno);
 		List<EntryMember> entryMember = new ArrayList<>();
-		for(int i=0; i<winnerCount; i++) {
+		for (int i = 0; i < winnerCount; i++) {
 			int index = 0;
 			int tempPpScore = ppScore;
-			for(RaffleDetail rd : raffleDetail) {
+			for (RaffleDetail rd : raffleDetail) {
 				int missionCleared = (rd.getRdtmissioncleared().equals("PASS") ? 2 : 0);
 				int myScore = 10 + missionCleared + rd.getRdtberryspend();
-				entryMember.add(new EntryMember(index, rd.getMid(), myScore, tempPpScore, tempPpScore-myScore+1));
-				log.info("이번에 생성된 엔트리 : " + rd.getMid() + "/" + myScore + "/" + tempPpScore + "/" + (tempPpScore-myScore+1));
+				entryMember.add(new EntryMember(index, rd.getMid(), myScore, tempPpScore, tempPpScore - myScore + 1));
+				log.info("이번에 생성된 엔트리 : " + rd.getMid() + "/" + myScore + "/" + tempPpScore + "/"
+						+ (tempPpScore - myScore + 1));
 				tempPpScore -= myScore;
 				index++;
 			}
 
-			int winNum = (int)(Math.random() * ppScore);
+			int winNum = (int) (Math.random() * ppScore);
 			log.info("당첨 번호 : " + winNum);
-			
-			for(EntryMember em : entryMember) {
-				if(em.startPoint <= winNum && winNum <= em.endPoint) {
+
+			for (EntryMember em : entryMember) {
+				if (em.startPoint <= winNum && winNum <= em.endPoint) {
 					winner.add(em.mid);
 					ppScore -= em.score;
 					raffleDetail.remove(em.index);

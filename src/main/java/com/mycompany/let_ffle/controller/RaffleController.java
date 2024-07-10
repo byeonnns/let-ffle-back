@@ -401,8 +401,6 @@ public class RaffleController {
 	@GetMapping("/getAdminRaffleDetail/{mid}")
 	public List<RaffleDetailRequest> getAdminRaffleDetail(@PathVariable String mid) {
 		List<RaffleDetailRequest> list = raffleService.getAdminRaffleDetail(mid);
-		log.info(mid);
-		log.info("list : " + list.toString());
 		return list;
 	}
 	
