@@ -144,7 +144,7 @@
 	]]>
 	</select>
 	
-	<select id="raffleCount" parameterType="String" resultType="int">
+	<select id="getRaffleCount" parameterType="String" resultType="int">
 		select count(*)
 		from raffle
 		<if test='rcategory == "sports"'>

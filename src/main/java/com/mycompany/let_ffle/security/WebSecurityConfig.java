@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 	@Bean
 	public RoleHierarchy roleHierarchy() {
 		RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
-		hierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_USER");
+		hierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
 		return hierarchy;
 	}
 
@@ -96,26 +96,4 @@ public class WebSecurityConfig {
 
 		return source;
 	}
-
-	/*
-	 * public static final void main(String[] args) { JwtProvider jwtProvider = new
-	 * JwtProvider("com.mycompany.jsonwebtoken.kosacourse");
-	 * 
-	 * String accessToken = jwtProvider.createAccessToken("user", "ROLE_USER");
-	 * log.info("AccessToken: " + accessToken);
-	 * 
-	 * Jws<Claims> jws = jwtProvider.validateToken(accessToken);
-	 * log.info("validate: " + ((jws != null) ? true : false));
-	 * 
-	 * if (jws != null) { String userId = jwtProvider.getUserId(jws);
-	 * log.info("userId: " + userId);
-	 * 
-	 * String autority = jwtProvider.getAuthority(jws); log.info("autority: " +
-	 * autority);
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
-
 }

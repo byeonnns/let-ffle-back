@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mycompany.let_ffle.dao.RaffleDao;
 import com.mycompany.let_ffle.dto.Pager;
 import com.mycompany.let_ffle.dto.Raffle;
 import com.mycompany.let_ffle.dto.RaffleDetail;
@@ -28,7 +28,6 @@ import com.mycompany.let_ffle.dto.RaffleImage;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
-import com.mycompany.let_ffle.service.MemberService;
 import com.mycompany.let_ffle.service.RaffleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,83 +40,69 @@ public class RaffleController {
 
 	@Autowired
 	private RaffleService raffleService;
-	@Autowired
-	private MemberService memberService;
 
+	// 래플 등록
 	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/createRaffle")
 	public RaffleRequest createRaffle(RaffleRequest raffleRequest) {
-		log.info("실행");
-		log.info("raffleRequest : " + raffleRequest);
-
-		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rthumbnailattach 가 null값이 아니고 비어있지
-		// 않으면 파일 이름과, 종류, 데이터를 설정
+		// 첨부 파일 포함 여부 검사
 		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
 				&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
-			// 파일 이름을 설정
 			raffleRequest.getRaffleImage().setRthumbnailimgoname(mf.getOriginalFilename());
-			// 파일 종류를 설정
 			raffleRequest.getRaffleImage().setRthumbnailimgtype(mf.getContentType());
 			try {
-				// 파일 데이터를 설정0
 				raffleRequest.getRaffleImage().setRthumbnailimg(mf.getBytes());
 			} catch (IOException e) {
 			}
 		}
-
-		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rgiftattach가 null 값이 아니고 비어있지 않으면 파일
-		// 이름과, 종류, 데이터를 설정
+		
 		if (raffleRequest.getRaffleImage().getRgiftattach() != null
 				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
-			// 파일 이름 설정
 			raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
-			// 파일 종류 설정
 			raffleRequest.getRaffleImage().setRgiftimgtype(mf.getContentType());
 			try {
-				// 파일 데이터를 설정
 				raffleRequest.getRaffleImage().setRgiftimg(mf.getBytes());
 			} catch (IOException e) {
 			}
-
 		}
 
-		// raffleRequest(dto)의 RaffleImage(dto) 안에 Rdetailattach가 null 값이 아니고 비어있지 않으면
-		// 파일 이름과, 종류, 데이터를 설정
 		if (raffleRequest.getRaffleImage().getRdetailattach() != null
 				&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
-			// 파일 이름 설정
 			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
-			// 파일 종류 설정
 			raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
-
 			try {
-				// 파일 데이터를 설정
 				raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
 			} catch (IOException e) {
-
 			}
 		}
-		// json으로 변환되지 않는 필드를 null 처리하기 위함
+		
 		raffleService.insertRaffle(raffleRequest);
+		
+		// JSON 응답 생성 : 변환되지 않는 필드를 null 처리
 		raffleRequest.getRaffleImage().setRthumbnailattach(null);
 		raffleRequest.getRaffleImage().setRthumbnailimg(null);
 		raffleRequest.getRaffleImage().setRdetailattach(null);
 		raffleRequest.getRaffleImage().setRdetailimg(null);
 		raffleRequest.getRaffleImage().setRgiftattach(null);
 		raffleRequest.getRaffleImage().setRgiftimg(null);
+		
 		return raffleRequest;
 	}
 
+	// 관리자용 래플 목록 가져오기
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getAdminRaffleList")
 	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = raffleService.getCount();
+		int totalRows = raffleService.getRaffleCount();
 
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 
-		List<Raffle> list = raffleService.getListForAdmin(pager);
+		List<Raffle> list = raffleService.getRaffleListForAdmin(pager);
+		
 		Map<String, Object> map = new HashMap<>();
 		map.put("Raffle", list);
 		map.put("pager", pager);
@@ -125,71 +110,71 @@ public class RaffleController {
 		return map;
 	}
 
+	// 사용자용 래플 목록 가져오기
 	@GetMapping("/getRaffleList")
-	public List<RaffleRequest> getRaffleList(@RequestParam(defaultValue = "all") String category, @RequestParam(defaultValue = "popular") String sortType) {
-		List<RaffleRequest> list = raffleService.getListForUser(category, sortType);
-		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
-		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
-		log.info("rcategory : " + category);
-		log.info("sortType : " + sortType);
+	public List<RaffleRequest> getRaffleList(@RequestParam(defaultValue = "all") String category,
+			@RequestParam(defaultValue = "popular") String sortType) {
+		List<RaffleRequest> list = raffleService.getRaffleListForUser(category, sortType);
+		
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
+		
 		return list;
 	}
-	
+
+	// 메인 페이지용 최신 등록 래플 가져오기
 	@GetMapping("/getNewReleaseRaffles")
 	public List<RaffleRequest> getNewReleaseRaffles() {
 		List<RaffleRequest> list = raffleService.getNewReleaseRaffles();
-		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
-		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
+		
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
+		
 		return list;
 	}
-	
+
+	// 메인 페이지용 마감 임박 래플 가져오기
 	@GetMapping("/getCutOffSoonRaffles")
 	public List<RaffleRequest> getCutOffSoonRaffles() {
 		List<RaffleRequest> list = raffleService.getCutOffSoonRaffles();
-		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
-		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
+		
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
+		
 		return list;
 	}
-	
+
+	// 래플 목록 검색 기능
 	@GetMapping("/searchRaffleList/{word}")
 	public List<RaffleRequest> searchRaffleList(@PathVariable String word) {
-		log.info("word : " + word);
 		List<RaffleRequest> list = raffleService.searchRaffle(word);
-		// 포스트맨에서 이미지의 데이터이름 너무길기때문에 향상된 포문으로 rr:list 이런 형식으로 작성한이유는 리스트가 끝날때까지 모든요소에
-		// 레플이미지 객체를 널처리해주기 위해 사용(rr는 변수이름)
+
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
+		
 		return list;
 	}
 
+	// 래플 상세
 	@GetMapping("/readRaffle/{rno}")
 	public RaffleRequest readRaffle(@PathVariable int rno) {
-		RaffleRequest raffleRequest = raffleService.readRaffle(rno);
-		return raffleRequest;
+		return raffleService.readRaffle(rno);
 	}
 
+	// 래플 수정
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/updateRaffle")
 	public RaffleRequest updateRaffle(RaffleRequest raffleRequest) {
-
 		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
 				&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
-			// 파일 이름을 설정
 			raffleRequest.getRaffleImage().setRthumbnailimgoname(mf.getOriginalFilename());
-			// 파일 종류를 설정
 			raffleRequest.getRaffleImage().setRthumbnailimgtype(mf.getContentType());
 			try {
-				// 파일 데이터를 설정0
 				raffleRequest.getRaffleImage().setRthumbnailimg(mf.getBytes());
 			} catch (IOException e) {
 			}
@@ -198,44 +183,39 @@ public class RaffleController {
 		if (raffleRequest.getRaffleImage().getRgiftattach() != null
 				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
-			// 파일 이름 설정
 			raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
-			// 파일 종류 설정
 			raffleRequest.getRaffleImage().setRgiftimgtype(mf.getContentType());
 			try {
-				// 파일 데이터를 설정
 				raffleRequest.getRaffleImage().setRgiftimg(mf.getBytes());
 			} catch (IOException e) {
 			}
-
 		}
 
 		if (raffleRequest.getRaffleImage().getRdetailattach() != null
 				&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
-			// 파일 이름 설정
 			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
-			// 파일 종류 설정
 			raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
-
 			try {
-				// 파일 데이터를 설정
 				raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
 			} catch (IOException e) {
-
 			}
 		}
+		
 		raffleService.updateRaffle(raffleRequest);
 
 		return raffleRequest;
 	}
 
+	// 래플 삭제
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/deleteRaffle")
-	public Raffle deleteRaffle(int rno) {
+	public void deleteRaffle(int rno) {
 		raffleService.deleteRaffle(rno);
-		return null;
 	}
 
+	// 래플 응모 기능
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/createRaffleDetail/{rno}")
 	public String createRaffleDetail(@PathVariable int rno, Authentication authentication) {
 		RaffleDetail raffleDetail = new RaffleDetail();
@@ -244,104 +224,109 @@ public class RaffleController {
 		return raffleService.insertRaffleDetail(raffleDetail);
 	}
 
-	//내가 래플에 응모했는지에 대한 여부 판정
+	// 내가 래플에 응모했는지에 대한 여부 판정
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/readRaffleDetail/{rno}")
-	public Map <String, Object> raffleDetail(Authentication authentication, @PathVariable int rno) {
-		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail
-		Map <String, Object> map = new HashMap<>();
+	public Map<String, Object> raffleDetail(Authentication authentication, @PathVariable int rno) {
+		Map<String, Object> map = new HashMap<>();
 		map.put("mberry", raffleService.countMyBerry(authentication.getName()));
 		map.put("raffleDetail", raffleService.readRaffleDetail(authentication.getName(), rno));
 		map.put("raffleStatus", raffleService.readRaffleDetailStatus(authentication.getName(), rno));
+		
 		return map;
 	}
 
-	// 마이페이지 -> 응모내역 조회 메소드
+	// 응모 내역 조회
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/getRaffleDetailList")
-	public Map<String, Object> getRaffleDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "Total") String status, @RequestParam(defaultValue = "null")String start, @RequestParam(defaultValue = "null")String end) {
+	public Map<String, Object> getRaffleDetailList(Authentication authentication,
+			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "Total") String status,
+			@RequestParam(defaultValue = "null") String start, @RequestParam(defaultValue = "null") String end) {
 		Map<String, Object> map = new HashMap<>();
 		map = raffleService.getRaffleDetailList(authentication.getName(),
 				authentication.getAuthorities().iterator().next().toString(), pageNo, status, start, end);
-
+		
 		return map;
 	}
 
-
-	// 마이페이지 -> 내가 응모한 내역 기간별 조회
+	// 응모 내역 기간별 조회
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/getMyRaffleDetailRequestList")
 	public List<RaffleDetail> getMyRaffleDetailRequestList(Authentication authentication, String startdate,
 			String enddate) {
-		List<RaffleDetail> list = raffleService.getMyRaffleDetailRequestList(authentication.getName(), startdate,
-				enddate);
-		return list;
-
+		return raffleService.getMyRaffleDetailRequestList(authentication.getName(), startdate, enddate);
 	}
 
-
+	// 당첨자 등록
 	@PostMapping("/createWinner")
 	public String createWinner(@RequestParam int rno, Authentication authentication) {
-		// winner(dto)를 매개변수로 받아 raffleService 메소드를 호출해 winner객체를 데이터베이스에 저장하도록 처리
 		return raffleService.insertWinner(rno, authentication.getName());
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/readWinnerDetail")
-	public Map<String, Object> readWinnerDetail(@RequestParam int rno, @RequestParam(defaultValue = "1")int pageNo) {
-		Map<String, Object> map = new HashMap<>();
+	public Map<String, Object> readWinnerDetail(@RequestParam int rno, @RequestParam(defaultValue = "1") int pageNo) {
 		int totalRows = raffleService.getMonitorWinCount(rno);
+		
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		
 		List<Winner> winner = raffleService.readWinnerDetail(rno, pager);
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put("winner", winner);
 		map.put("pager", pager);
+		
 		return map;
 	}
 
-	// 마이페이지 -> 당첨내역 조회 메소드
+	// 당첨 목록 조회
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/getWinnerDetailList")
-	// 매개변수로 authentication 받음
-	public Map<String, Object> getWinnerDetailList(Authentication authentication, @RequestParam(defaultValue = "1") int pageNo,
-			@RequestParam(defaultValue = "null")String start, @RequestParam(defaultValue = "null")String end) {
-		Map<String, Object> map = new HashMap<>();
+	public Map<String, Object> getWinnerDetailList(Authentication authentication,
+			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "null") String start,
+			@RequestParam(defaultValue = "null") String end) {
 		int totalRows = raffleService.getWinRaffleCount(authentication.getName(), start, end);
+		
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		
 		List<Raffle> list = raffleService.getWinnerDetailList(authentication.getName(), pager, start, end);
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("pager", pager);
+		
 		return map;
 	}
 
 	// 미션 참여 여부 수정
 	@PutMapping("/updateRdtMissionCleared/{rno}/{manswer}")
-	// 매개변수로 rno, authentication을 통해 회원의 이름을 가져오기 위함, manswer(회원이 제출할 퀴즈정답)
-	public String updateRdtMissionCleared(@PathVariable int rno, Authentication authentication, @PathVariable String manswer) {
-		// raffleService로 매개변수로를 넘겨 로직 처리를 요청함
+	public String updateRdtMissionCleared(@PathVariable int rno, Authentication authentication,
+			@PathVariable String manswer) {
 		return raffleService.updateRdtMissionCleared(rno, authentication.getName(), manswer);
 	}
-	
-	// 베리 사용내역
+
+	// 베리 사용 내역
 	@PutMapping("/updateRdtBerrySpend")
 	public String updateRdtBerrySpend(int rno, int rdtBerrySpend, Authentication authentication) {
-		log.info("사용한 베리");
-		String result;
+		String result = "";
 		if (rdtBerrySpend > 0 && rdtBerrySpend <= 10)
 			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), rdtBerrySpend);
-		else {
-			result = "늘어난줄 알았지? 응 아니야.";
-		}
 
 		return result;
 	}
 
-	// 썸네일 이미지
+	// 썸네일 이미지 요청
 	@GetMapping("/raffleThumbnailAttach/{rno}")
 	public void download(@PathVariable int rno, HttpServletResponse response) {
-		// 해당 게시물 가져오기
 		RaffleImage raffleImage = raffleService.getThumbnailImage(rno);
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
 		try {
 			String fileName = new String(raffleImage.getRthumbnailimgoname().getBytes("UTF-8"), "ISO-8859-1");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			
 			// 파일 타입을 헤더에 추가
 			response.setContentType(raffleImage.getRthumbnailimgtype());
+			
 			// 응답 바디에 파일 데이터를 출력
 			OutputStream os = response.getOutputStream();
 			os.write(raffleImage.getRthumbnailimg());
@@ -352,17 +337,18 @@ public class RaffleController {
 		}
 	}
 
-	// 경품 이미지
+	// 경품 이미지 요청
 	@GetMapping("/raffleGiftAttach/{rno}")
 	public void downloadGift(@PathVariable int rno, HttpServletResponse response) {
-		// 해당 게시물 가져오기
 		RaffleImage raffleImage = raffleService.getGiftImage(rno);
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
 		try {
 			String fileName = new String(raffleImage.getRgiftimgoname().getBytes("UTF-8"), "ISO-8859-1");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			
 			// 파일 타입을 헤더에 추가
 			response.setContentType(raffleImage.getRgiftimgtype());
+			
 			// 응답 바디에 파일 데이터를 출력
 			OutputStream os = response.getOutputStream();
 			os.write(raffleImage.getRgiftimg());
@@ -373,17 +359,18 @@ public class RaffleController {
 		}
 	}
 
-	// 레플 디테일 이미지
+	// 레플 디테일 이미지 요청
 	@GetMapping("/raffleDetailAttach/{rno}")
 	public void downloadDetail(@PathVariable int rno, HttpServletResponse response) {
-		// 해당 게시물 가져오기
 		RaffleImage raffleImage = raffleService.getDetailImage(rno);
 		// 파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위한 코드
 		try {
 			String fileName = new String(raffleImage.getRdetailimgoname().getBytes("UTF-8"), "ISO-8859-1");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			
 			// 파일 타입을 헤더에 추가
 			response.setContentType(raffleImage.getRdetailimgtype());
+			
 			// 응답 바디에 파일 데이터를 출력
 			OutputStream os = response.getOutputStream();
 			os.write(raffleImage.getRdetailimg());
@@ -393,32 +380,38 @@ public class RaffleController {
 			log.error(e.toString());
 		}
 	}
-	
-	// 관리자 페이지 전체 회원 - ( 래플 참여 현황 ) 
+
+	// 관리자용 전체 회원의 참여 내역 조회
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getAdminRaffleDetail/{mid}")
 	public List<RaffleDetailRequest> getAdminRaffleDetail(@PathVariable String mid) {
-		List<RaffleDetailRequest> list = raffleService.getAdminRaffleDetail(mid);
-		return list;
+		return raffleService.getAdminRaffleDetail(mid);
 	}
-	
+
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getAdminDashboard")
 	public Map<String, Object> getAdminDashboard() {
 		return raffleService.getAdminDashboard();
 	}
-	
-	//래플 모니터링
+
+	// 래플 모니터링
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getRaffleMonitor")
 	public RaffleRequest getRaffleMonitor(@RequestParam int rno) {
 		return raffleService.getRaffleMonitor(rno);
 	}
-	
-	//모니터 참여자 리스트
+
+	// 모니터 참여자 리스트
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getMemberMonitor")
 	public Map<String, Object> getMemberMonitor(@RequestParam int rno, @RequestParam int pageNo) {
-		Map<String, Object> map = new HashMap<>();
 		int totalRows = raffleService.countEntryMember(rno);
+		
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		
 		List<RaffleDetailRequest> list = raffleService.getMemberMonitor(rno, pager);
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put("member", list);
 		map.put("pager", pager);
 		return map;

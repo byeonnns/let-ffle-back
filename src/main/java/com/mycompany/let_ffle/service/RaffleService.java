@@ -94,15 +94,15 @@ public class RaffleService {
 		return raffleRequest;
 	}
 
-	public int getCount() {
-		return raffleDao.raffleCount(null);
+	public int getRaffleCount() {
+		return raffleDao.getRaffleCount(null);
 	}
 
-	public List<Raffle> getListForAdmin(Pager pager) {
+	public List<Raffle> getRaffleListForAdmin(Pager pager) {
 		return raffleDao.selectByPage(pager);
 	}
 
-	public List<RaffleRequest> getListForUser(String rcategory, String sortType) {
+	public List<RaffleRequest> getRaffleListForUser(String rcategory, String sortType) {
 
 		return raffleDao.selectByRaffleListForUser(rcategory, sortType);
 	}
@@ -333,10 +333,10 @@ public class RaffleService {
 
 	public Map<String, Object> getAdminDashboard() {
 		Map<String, Object> map = new HashMap<>();
-		map.put("totalRaffle", raffleDao.raffleCount(null));
-		map.put("totalSportsRaffle", raffleDao.raffleCount("sports"));
-		map.put("totalArtRaffle", raffleDao.raffleCount("art"));
-		map.put("totalFashionRaffle", raffleDao.raffleCount("fashion"));
+		map.put("totalRaffle", raffleDao.getRaffleCount(null));
+		map.put("totalSportsRaffle", raffleDao.getRaffleCount("sports"));
+		map.put("totalArtRaffle", raffleDao.getRaffleCount("art"));
+		map.put("totalFashionRaffle", raffleDao.getRaffleCount("fashion"));
 
 		map.put("totalMember", raffleDetailDao.raffleMemberCount(null));
 		map.put("totalSportsMember", raffleDetailDao.raffleMemberCount("sports"));
