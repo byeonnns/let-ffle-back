@@ -183,4 +183,17 @@
 	]]>
 	</select>
 	
+	<select id="selectForMonitor" parameterType="int" resultType="RaffleRequest">
+	select rno "raffle.rno", rtitle "raffle.rtitle", rsubtitle "raffle.rsubtitle", rcreatedat "raffle.rcreatedat",
+		rstartedat "raffle.rstartedat", rfinishedat "raffle.rfinishedat", rcategory "raffle.rcategory",
+		rwinnercount "raffle.rwinnercount", rmissiontype "raffle.rmissiontype", rgift "raffle.rgift",
+        (
+            SELECT COUNT(*)
+            FROM raffledetail
+            WHERE rno = #{rno}
+        ) "raffleProcess"
+	from raffle
+	where rno = #{rno}
+	</select>
+	
 </mapper>    
