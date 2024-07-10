@@ -48,7 +48,7 @@
         </if>
 	</select>
 
-	<select id="selectByNno" parameterType="Map" resultType="Notice">
+	<select id="selectByNno" parameterType="int" resultType="Notice">
 		select *
 		from notice
 		where nno=#{nno}

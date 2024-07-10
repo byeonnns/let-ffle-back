@@ -6,56 +6,53 @@
 	<insert id="insertBoard" parameterType="Board">
 		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
 			SELECT
-			SEQ_BNO.NEXTVAL from dual
+			SEQ_BNO.NEXTVAL FROM dual
 		</selectKey>
-		insert into board (bno, mid, btitle, bcontent, bcategory,
-		battachoname, battachtype, battachdata, bhitcount, bcreatedat,
-		benabled)
-		values
-		(#{bno},#{mid},#{btitle},#{bcontent},#{bcategory},#{battachoname},#{battachtype},#{battachdata},#{bhitcount},systimestamp,#{benabled})
+		INSERT into board (
+		bno, mid, btitle, bcontent, bcategory, battachoname, 
+		battachtype, battachdata, bhitcount, bcreatedat, benabled
+		)
+		VALUES (
+		#{bno},#{mid},#{btitle},#{bcontent},#{bcategory},#{battachoname},
+		#{battachtype},#{battachdata},#{bhitcount},systimestamp,#{benabled}
+		)
 	</insert>
 
 	<update id="updateBoard" parameterType="Board">
-		update board
-		set
-		btitle=#{btitle}, bcontent=#{bcontent},
-		bcategory=#{bcategory},
-		bupdatedat=systimestamp
+		UPDATE board
+		SET	btitle=#{btitle}, bcontent=#{bcontent},
+		bcategory=#{bcategory}, bupdatedat=systimestamp
 		<if test="battachdata!=null">
 			, battachoname=#{battachoname}
 			, battachtype=#{battachtype}
 			, battachdata=#{battachdata}
 		</if>
-		where bno=#{bno}
+		WHERE bno=#{bno}
 	</update>
 
 	<update id="deleteBoard" parameterType="int">
-		update board
-		set
-		benabled=0
-		where bno=#{bno}
+		UPDATE board
+		SET benabled=0
+		WHERE bno=#{bno}
 	</update>
 
 	<select id="readBoard" parameterType="int" resultType="Board">
-		select b.bno, b.mid , b.btitle, b.bcontent, b.bcategory,
-		m.mnickname as battachoname, b.battachtype, b.battachdata, b.bhitcount, b.bcreatedat,
-		b.benabled
-		from board b INNER JOIN member m on b.mid = m.mid
-		where bno = #{bno}
+		SELECT b.bno, b.mid, b.btitle, b.bcontent, b.bcategory,	m.mnickname AS "battachoname", 
+		b.battachtype, b.battachdata, b.bhitcount, b.bcreatedat, b.benabled
+		FROM board b INNER JOIN member m ON b.mid = m.mid
+		WHERE bno = #{bno}
 	</select>
 
 	<select id="boardCount" resultType="int">
-		select
-		count(*)
-		from board
-		where benabled = 1
+		SELECT count(*)
+		FROM board
+		WHERE benabled = 1
 	</select>
 	
-	<select id="boardCountByWord" parameterType="String" resultType="int">
-		select
-		count(*)
-		from board
-		where benabled = 1
+	<select id="getBoardCountByWord" parameterType="String" resultType="int">
+		SELECT count(*)
+		FROM board
+		WHERE benabled = 1
 		<if test="searchType == 'title'">
 		AND btitle like '%${word}%'
 		</if>
@@ -70,104 +67,87 @@
 		</if>
 	</select>
 	
-	<select id="boardCountByCategory" parameterType="String" resultType="int">
-		select
-		count(*)
-		from board
-		where benabled = 1
+	<select id="getBoardCountByCategory" parameterType="String" resultType="int">
+		SELECT count(*)
+		FROM board
+		WHERE benabled = 1
 		AND bcategory = #{category}
 	</select>
 
-	<select id="selectBoardByBno" parameterType="int"
-		resultType="Board">
-		select *
-		from board
-		where bno =#{bno}
+	<select id="getBoardByBno" parameterType="int" resultType="Board">
+		SELECT *
+		FROM board
+		WHERE bno =#{bno}
 	</select>
 
-	<!-- 안쪽 select문 board의 bno를 기준으로 내림차순으로 조회 중간쪽 select문 내부 쿼리의 rownum을 사용해 
-		고유 번호를 부여 후 rownum이 #{endRowNo}보다 작은 경우 페이징을 구현하기 위함 바깥쪽 select문 rownum을 
-		사용해 #{startRowNo}보다 큰 경우 페이징을 구현하기 위함 -->
-	<select id="selectByBoardList" parameterType="Map"
-		resultType="Board">
-		    
-      select rnum, bno, mnickname as mid, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
-      from (
-          select rownum as rnum, bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
-          from (
-              select bno, mnickname, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
-              from board b INNER JOIN member m on b.mid = m.mid
-              where benabled = 1
+	<select id="getBoardList" parameterType="Map" resultType="Board">
+		SELECT rnum, bno, mnickname as mid, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
+		FROM (
+			SELECT rownum as rnum, bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
+			FROM (
+				SELECT bno, mnickname, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
+				FROM board b INNER JOIN member m on b.mid = m.mid
+				WHERE benabled = 1
               
-              <if test="word != '' and searchType == 'title'">
-              AND btitle like '%${word}%'
-              </if>
-              <if test="word != '' and searchType == 'content'">
-              AND bcontent like '%${word}%'
-              </if>
-              <if test="word != '' and searchType == 'nickname'">
-              AND mnickname like '%${word}%'
-              </if>
-              <if test="word != '' and searchType == 'titleOrContet'">
-              AND (btitle like '%${word}%' OR bcontent like '%${word}%')
-              </if>
-              order by bno desc
-          )
-          <![CDATA[ 
-          where rownum <= #{pager.endRowNo}
-      )
-      where rnum >= #{pager.startRowNo}
-      ]]>
+				<if test="word != '' and searchType == 'title'">
+				AND btitle like '%${word}%'
+				</if>
+				<if test="word != '' and searchType == 'content'">
+				AND bcontent like '%${word}%'
+				</if>
+				<if test="word != '' and searchType == 'nickname'">
+				AND mnickname like '%${word}%'
+				</if>
+				<if test="word != '' and searchType == 'titleOrContet'">
+				AND (btitle like '%${word}%' OR bcontent like '%${word}%')
+				</if>
+				ORDER BY bno desc
+			)
+			<![CDATA[ 
+			WHERE rownum <= #{pager.endRowNo}
+		)
+		WHERE rnum >= #{pager.startRowNo}
+		]]>
 	</select>
 	
-	<select id="selectByBoardListWithCategory" parameterType="Map"
-		resultType="Board">
-		    
-      select rnum, bno, mnickname as mid, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
-      from (
-          select rownum as rnum, bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
-          from (
-              select bno, mnickname, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
-              from board b INNER JOIN member m on b.mid = m.mid
-              where benabled = 1
-              AND bcategory = #{category}
-              order by bno desc
-          )
-          <![CDATA[ 
-          where rownum <= #{pager.endRowNo}
-      )
-      where rnum >= #{pager.startRowNo}
-      ]]>
+	<select id="getBoardListByCategory" parameterType="Map"	resultType="Board">
+		SELECT rnum, bno, mnickname AS mid, bcategory, btitle, bcontent,bcreatedat, bupdatedat, bhitcount
+		FROM (
+			SELECT rownum AS rnum, bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
+			FROM (
+				SELECT bno, mnickname, bcategory, btitle, bcontent, bcreatedat, bupdatedat, bhitcount
+				FROM board b INNER JOIN member m ON b.mid = m.mid
+				WHERE benabled = 1
+				AND bcategory = #{category}
+				ORDER BY bno DESC
+			)
+			<![CDATA[ 
+			WHERE rownum <= #{pager.endRowNo}
+		)
+		WHERE rnum >= #{pager.startRowNo}
+		]]>
 	</select>
 
-	<update id="updatehitCount" parameterType="int">
-		update board
-		set
-		bhitcount = bhitcount + 1
-		where bno = #{bno}
+	<update id="updateHitCount" parameterType="int">
+		UPDATE board
+		SET bhitcount = bhitcount + 1
+		WHERE bno = #{bno}
 	</update>
 
-
-	<!-- 마이페이지에 내가 작성한 댓글 가져오기 가장 안쪽 select문 board테이블과 boardComment를 INNER JOIN(게시글 
-		번호, 게시글 제목, 게시글 작성일자를 가져오기 위함) 중복을 제거한 후 댓글이 작성된 것만 조회 두번째 select문 게시글 번호, 
-		게시글 제목, 게시글 작성일자를 각 행의 고유번호를 순차적으로 할당함 가장 바깥쪽 select문 pager.startRowNo을 필터링 
-		후 조회함 -->
-	<select id="getBoardTitleList" parameterType="Map"
-		resultType="Board">
+	<select id="getBoardTitleList" parameterType="Map" resultType="Board">
 		<![CDATA[
-      select rnum, bno, btitle, bcreatedat
-      from (
-          select rownum as rnum, bno, btitle, bcreatedat
-          from ( 
-				select DISTINCT b.bno, b.btitle, b.bcreatedat
-				from board b INNER JOIN boardComment bc on b.bno = bc.bno
-				where bc.mid = #{mid} AND bc.cenabled = 1   
-				order by b.bno desc 
-          )
-          where rownum <= #{pager.endRowNo}
-      )
-      where rnum >= #{pager.startRowNo}
-      ]]>
+		SELECT rnum, bno, btitle, bcreatedat
+		FROM (
+			SELECT rownum as rnum, bno, btitle, bcreatedat
+			FROM ( 
+				SELECT DISTINCT b.bno, b.btitle, b.bcreatedat
+				FROM board b INNER JOIN boardComment bc on b.bno = bc.bno
+				WHERE bc.mid = #{mid} AND bc.cenabled = 1   
+				ORDER BY b.bno DESC
+			)
+			WHERE rownum <= #{pager.endRowNo}
+		)
+		WHERE rnum >= #{pager.startRowNo}
+		]]>
 	</select>
-
 </mapper>    

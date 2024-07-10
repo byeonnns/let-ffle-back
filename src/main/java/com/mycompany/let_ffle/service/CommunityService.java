@@ -32,7 +32,7 @@ public class CommunityService {
 
 	public Board readBoard(int bno) {
 		// 게시글 조회 요청이 들어오면 조회수를 1 증가시킴
-		boardDao.updatehitCount(bno);
+		boardDao.updateHitCount(bno);
 		return boardDao.readBoard(bno);
 	}
 
@@ -40,50 +40,40 @@ public class CommunityService {
 		return boardDao.boardCount();
 	}
 
-	public List<Board> selectByBoardList(Pager pager, String searchType, String word) {
-		return boardDao.selectByBoardList(pager, searchType, word);
+	public List<Board> getBoardList(Pager pager, String searchType, String word) {
+		return boardDao.getBoardList(pager, searchType, word);
 	}
-
 	
 	//댓글
 	public int getCommentCount(int bno) {
-
-		return boardCommentDao.commentCount(bno);
+		return boardCommentDao.getCommentCount(bno);
 	}
 
 	public List<BoardComment> getCommentList(int bno) {
-		
-		return boardCommentDao.selectByCommentList(bno);
+		return boardCommentDao.getCommentList(bno);
 	}
 
 	public void deleteComment(int cno) {
-
 		boardCommentDao.deleteComment(cno);
 	}
 
 	public void insertComment(BoardComment boardComment) {
-		
 		boardCommentDao.insertComment(boardComment);
 	}
 
-	public Board selectBoardByBno(int bno) {
-		// TODO Auto-generated method stub
-		return boardDao.selectBoardByBno(bno);
+	public Board getBoardByBno(int bno) {
+		return boardDao.getBoardByBno(bno);
 	}
 
-	public int boardCountByWord(String searchType, String word) {
-		return boardDao.boardCountByWord(searchType, word);
+	public int getBoardCountByWord(String searchType, String word) {
+		return boardDao.getBoardCountByWord(searchType, word);
 	}
 
-	public int boardCountByCategory(String category) {
-		return boardDao.boardCountByCategory(category);
+	public int getBoardCountByCategory(String category) {
+		return boardDao.getBoardCountByCategory(category);
 	}
 
-	public List<Board> selectByBoardListWithCategory(Pager pager, String category) {
-		return boardDao.selectByBoardListWithCategory(pager, category);
+	public List<Board> getBoardListByCategory(Pager pager, String category) {
+		return boardDao.getBoardListByCategory(pager, category);
 	}
-
-
-
-	
 }

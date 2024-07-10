@@ -2,51 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.let_ffle.dao.BoardCommentDao">
-	<!--중첩구문에서 innerjoin 게시물에 작성된 댓글들 가져오기 외부 커리 처음 select 부분 최종 결과를 반환하여 pager.startrownum 
-		행만 필터링한다. 중간 쿼리 두번쨰 select 부분 pager.endRownum 이하인 행만 선택하여 필터링한다. 내부 커리 inner 
-		join 이 있는 부분 먼저 boadcomment 와 Member에서 공통인 나의 mid를 가져와서 댓글작성에 나타는 mnickname을 
-		사용해야 하기 때문에 inner join 사용 mid가 특정 값과 일치 하고, 삭제되지 않는 행만 가져와서 내림차순으로 정렬하는 방식으로 
-		사용하였다. -->
-	<select id="selectByCommentList" parameterType="int"
+	<select id="getCommentList" parameterType="int"
 		resultType="boardcomment">
-		select mnickname as mid, ccontent, ccreatedat, cno
-		from boardcomment bc INNER JOIN member m on bc.mid = m.mid
-		where bno = #{bno} AND cenabled = 1
+		SELECT mnickname AS mid, ccontent, ccreatedat, cno
+		FROM boardcomment bc INNER JOIN member m ON bc.mid = m.mid
+		WHERE bno = #{bno} AND cenabled = 1
 	</select>
-
 
 	<insert id="insertComment" parameterType="BoardComment">
 		<selectKey keyProperty="cno" resultType="int" order="BEFORE">
 			SELECT
 			SEQ_CNO.NEXTVAL FROM dual
 		</selectKey>
-		insert into
-		boardcomment (cno,bno,mid,ccontent,ccreatedat,cenabled)
-		VALUES
-		(#{cno},#{bno},#{mid},#{ccontent},systimestamp,1)
+		INSERT into	boardcomment (
+		cno, bno, mid, ccontent, ccreatedat, cenabled
+		)
+		VALUES (
+		#{cno}, #{bno}, #{mid}, #{ccontent}, systimestamp, 1
+		)
 	</insert>
-	<!--게시물에 등록된 댓글의 갯수를 알기위해서 -->
-	<select id="commentCount" resultType="int">
-		select count (*)
-		from
-		boardcomment
-		where cenabled = 1 AND bno = #{bno}
+	
+	<select id="getCommentCount" resultType="int">
+		SELECT count (*)
+		FROM boardcomment
+		WHERE cenabled = 1 AND bno = #{bno}
 	</select>
 
 	<update id="deleteComment" parameterType="int">
-		update boardcomment
-		set
-		cenabled = 0
-		where cno=#{cno}
+		UPDATE boardcomment
+		SET cenabled = 0
+		WHERE cno=#{cno}
 	</update>
 
-	<select id="getBoardCommentCount" parameterType="String"
-		resultType="int">
-		select count(*)
-		from boardComment
-		where mid = #{mid} AND
-		cenabled = 1
+	<select id="getBoardCommentCount" parameterType="String" resultType="int">
+		SELECT count(*)
+		FROM boardComment
+		WHERE mid = #{mid} AND cenabled = 1
 	</select>
-
-
 </mapper>    

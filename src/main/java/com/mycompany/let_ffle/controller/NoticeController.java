@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,15 +31,15 @@ public class NoticeController {
 	@Autowired
 	private NoticeService noticeService;
 
-	// 페이저
+	// 공지사항 목록 가져오기
 	@GetMapping("/getNoticeList")
-	public Map<String, Object> getNoticeList(@RequestParam(defaultValue = "1") int pageNo, String mainCategory ,@RequestParam(required = false, defaultValue = "전체") String subCategory) {
-		log.info("" + pageNo);
-		log.info(mainCategory);
-		log.info(subCategory);
+	public Map<String, Object> getNoticeList(@RequestParam(defaultValue = "1") int pageNo, 
+			String mainCategory ,@RequestParam(required = false, defaultValue = "전체") String subCategory) {
 		int totalRows = noticeService.getNoticeCount(mainCategory ,subCategory);
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		List<Notice> list = noticeService.getNoticeList(pager, mainCategory ,subCategory);
+		
+		// JSON 응답 생성
 		Map<String, Object> map = new HashMap<>();
 		map.put("Notice", list);
 		map.put("Pager", pager);
@@ -48,46 +49,41 @@ public class NoticeController {
 	}
 
 	// 공지사항 등록
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/createNotice")
 	public Notice createNotice(Notice notice) {
 		// 첨부파일이 포함되어 있는지 검사
-		log.info(notice.toString());
 		if (notice.getNattach() != null && !notice.getNattach().isEmpty()) {
-			// 첨부파일이 포함된 경우
-			// MultipartFile 객체에 첨부파일 데이터를 저장
 			MultipartFile mf = notice.getNattach();
-
-			// Inquiry 객체의 iattachoname, Iattachtype 필드 값으로 각각 파일명과 확장자명을 저장
 			notice.setNattachoname(mf.getOriginalFilename());
 			notice.setNattachtype(mf.getContentType());
-
-			// Inquiry 객체의 iattachdata 필드에 바이너리 데이터를 저장
 			try {
 				notice.setNattachdata(mf.getBytes());
 			} catch (IOException e) {
 			}
 		}
-
-		// 변경된 값으로 Notice를 저장하도록 noticeService의 insertNotice() 호출
-		// 매개변수로 Notice 객체를 넘겨줌
+		
 		noticeService.insertNotice(notice);
 
-		// JSON 응답에는 바이너리 데이터가 출력되지 않음
-		// 따라서 해당 필드값을 null로 변경 후 응답을 반환
+		// JSON 응답 생성 : 변환되지 않는 데이터는 null 처리
 		notice.setNattach(null);
 		notice.setNattachdata(null);
 
 		return notice;
 	}
 
+	// 공지사항 읽기
 	@GetMapping("/readNotice/{nno}")
-	public Notice readNotice(@PathVariable int nno, Authentication authentication) {
-		Notice notice = noticeService.readNotice(nno, authentication.getName(), authentication.getAuthorities().iterator().next().toString());
-		log.info(authentication.getAuthorities().iterator().next().toString());
-		notice.setNattachdata(null);
+	public Notice readNotice(@PathVariable int nno) {
+		Notice notice = noticeService.readNotice(nno);
+		if (notice.getNattach() != null) {			
+			notice.setNattach(null);
+			notice.setNattachdata(null);
+		}
 		return notice;
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/updateNotice")
 	public Notice updateNotice(Notice notice) {
 		if (notice.getNattach() != null && !notice.getNattach().isEmpty()) {
@@ -108,6 +104,7 @@ public class NoticeController {
 		return notice;
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@DeleteMapping("/deleteNotice")
 	public Notice deleteNotice(Notice notice) {
 		noticeService.deleteNotice(notice);

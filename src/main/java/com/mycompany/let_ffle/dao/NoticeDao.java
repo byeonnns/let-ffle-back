@@ -22,6 +22,6 @@ public interface NoticeDao {
 
 	public List<Notice> selectByPage(Pager pager, String mainCategory, String subCategory);
 
-	public Notice selectByNno(int nno, String mid, String role);
+	public Notice selectByNno(int nno);
 	
 }

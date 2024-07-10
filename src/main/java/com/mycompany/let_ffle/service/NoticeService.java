@@ -39,8 +39,8 @@ public class NoticeService {
 		return noticeDao.selectByPage(pager, mainCategory, subCategory);
 	}
 
-	public Notice readNotice(int nno, String mid, String role) {
-		return noticeDao.selectByNno(nno, mid, role);
+	public Notice readNotice(int nno) {
+		return noticeDao.selectByNno(nno);
 	}
 
 }

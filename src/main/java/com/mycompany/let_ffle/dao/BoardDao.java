@@ -9,7 +9,6 @@ import com.mycompany.let_ffle.dto.Pager;
 
 @Mapper
 public interface BoardDao {
-
 	public int insertBoard(Board board);
 
 	public void updateBoard(Board board);
@@ -20,27 +19,17 @@ public interface BoardDao {
 
 	public int boardCount();
 
-	public List<Board> selectByBoardList(Pager pager, String searchType, String word);
+	public int getBoardCountByWord(String searchType, String word);
+	
+	public int getBoardCountByCategory(String category);
+	
+	public Board getBoardByBno(int bno);
+	
+	public List<Board> getBoardList(Pager pager, String searchType, String word);
 
-	public void updatehitCount(int bno);
+	public List<Board> getBoardListByCategory(Pager pager, String category);
+	
+	public void updateHitCount(int bno);
 
 	public List<Board> getBoardTitleList(Pager pager, String mid);
-
-	public Board selectBoardByBno(int bno);
-
-	public int boardCountByWord(String searchType, String word);
-
-	public int boardCountByCategory(String category);
-
-	public List<Board> selectByBoardListWithCategory(Pager pager, String category);
-	
-	
-
-
-
-	
-	
-
-	
-
 }
