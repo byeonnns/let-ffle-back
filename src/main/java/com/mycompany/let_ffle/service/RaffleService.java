@@ -106,8 +106,14 @@ public class RaffleService {
 		return raffleDao.selectByRaffleListForUser(rcategory, sortType);
 	}
 
-	public void insertRaffleDetail(RaffleDetail raffleDetail) {
-		raffleDetailDao.insertRaffleDetail(raffleDetail);
+	public String insertRaffleDetail(RaffleDetail raffleDetail) {
+		List<RaffleDetail> list = raffleDetailDao.selectTodayEntryRaffle(raffleDetail.getMid());
+		if(list.size() >= 3)
+			return "fail";
+		else {
+			raffleDetailDao.insertRaffleDetail(raffleDetail);
+			return "success";
+		}
 	}
 
 	@Transactional

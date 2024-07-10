@@ -237,15 +237,11 @@ public class RaffleController {
 	}
 
 	@PostMapping("/createRaffleDetail/{rno}")
-	public RaffleDetail createRaffleDetail(@PathVariable int rno, Authentication authentication) {
+	public String createRaffleDetail(@PathVariable int rno, Authentication authentication) {
 		RaffleDetail raffleDetail = new RaffleDetail();
-		
 		raffleDetail.setRno(rno);
 		raffleDetail.setMid(authentication.getName());
-		
-		raffleService.insertRaffleDetail(raffleDetail);
-		
-		return raffleDetail;
+		return raffleService.insertRaffleDetail(raffleDetail);
 	}
 
 	//내가 래플에 응모했는지에 대한 여부 판정

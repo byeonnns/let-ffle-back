@@ -22,6 +22,7 @@ import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.Inquiry;
 import com.mycompany.let_ffle.dto.Member;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.RaffleDetail;
 import com.mycompany.let_ffle.dto.Winner;
 import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 import com.mycompany.let_ffle.dto.request.RaffleRequest;
@@ -202,9 +203,15 @@ public class MemberService {
 
 	public Map<String, Object> getMyPageDashboard(String mid) {
 		Map<String, Object> map = new HashMap<>();
+		int cleardMission = 0;
 		map.put("mNickname", memberDao.selectByMid(mid).getMnickname());
-		map.put("todayEntryRaffle", raffleDetailDao.selectTodayEntryRaffle(mid));
-		map.put("todayClearedMission", raffleDetailDao.selectTodayClearedMission(mid));
+		List<RaffleDetail> list = raffleDetailDao.selectTodayEntryRaffle(mid);
+		for(RaffleDetail rd : list) {
+			if(raffleDetailDao.selectTodayClearedMission(mid, rd.getRno()) > 0)
+				cleardMission++;
+		}
+		map.put("todayEntryRaffle", list.size());
+		map.put("todayClearedMission", cleardMission);
 		return map;
 	}
 

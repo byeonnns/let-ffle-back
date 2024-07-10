@@ -189,16 +189,16 @@
 		WHERE mid = #{mid} AND rno = #{rno}
 	</select>
 	
-	<select id="selectTodayEntryRaffle" parameterType="String" resultType="int">
-		select count(*)
+	<select id="selectTodayEntryRaffle" parameterType="String" resultType="RaffleDetail">
+		select *
 		from raffleDetail
 		where mid = #{mid} AND TRUNC(rdtcreatedat) = TRUNC(sysdate)
 	</select>
 	
-	<select id="selectTodayClearedMission" parameterType="String" resultType="int">
+	<select id="selectTodayClearedMission" parameterType="Map" resultType="int">
 		select count(*)
 		from raffleDetail
-		where mid = #{mid} AND TRUNC(rdtcreatedat) = TRUNC(sysdate) AND rdtmissioncleared = 'PASS'
+		where mid = #{mid} AND rno = #{rno} AND TRUNC(rdtcreatedat) = TRUNC(sysdate) AND rdtmissioncleared = 'PASS'
 	</select>
 	
 	<select id="getAdminRaffleDetail" parameterType="String" resultType="RaffleDetailRequest">
