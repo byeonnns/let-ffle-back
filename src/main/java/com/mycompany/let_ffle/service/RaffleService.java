@@ -337,6 +337,10 @@ public class RaffleService {
 	public int countEntryMember(int rno) {
 		return raffleDetailDao.countEntryMember(rno);
 	}
+	
+	public int countMyBerry(String mid) {
+		return memberDao.selectBerry(mid);
+	}
 
 	public List<RaffleDetailRequest> getMemberMonitor(int rno, Pager pager) {
 		int winnerCount = winnerDao.getRaffleWinnerCount(rno);

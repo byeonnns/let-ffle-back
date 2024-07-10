@@ -253,6 +253,7 @@ public class RaffleController {
 	public Map <String, Object> raffleDetail(Authentication authentication, @PathVariable int rno) {
 		// raffleDetail(dto)를 매개변수로 raffleService 메소드를 호출해 데이터베이스에 저장된 값을 raffleDetail
 		Map <String, Object> map = new HashMap<>();
+		map.put("mberry", raffleService.countMyBerry(authentication.getName()));
 		map.put("raffleDetail", raffleService.readRaffleDetail(authentication.getName(), rno));
 		map.put("raffleStatus", raffleService.readRaffleDetailStatus(authentication.getName(), rno));
 		return map;
