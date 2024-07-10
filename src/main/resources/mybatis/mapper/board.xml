@@ -37,9 +37,11 @@
 	</update>
 
 	<select id="readBoard" parameterType="int" resultType="Board">
-		select *
-		from board
-		where bno =#{bno}
+		select bno,  mnickname as mid , btitle, bcontent, bcategory,
+		battachoname, battachtype, battachdata, bhitcount, bcreatedat,
+		benabled
+		from board b INNER JOIN member m on b.mid = m.mid
+		where bno = #{bno}
 	</select>
 
 	<select id="boardCount" resultType="int">
