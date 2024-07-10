@@ -312,9 +312,9 @@ public class RaffleController {
 	// 미션 참여 여부 수정
 	@PutMapping("/updateRdtMissionCleared/{rno}/{manswer}")
 	// 매개변수로 rno, authentication을 통해 회원의 이름을 가져오기 위함, manswer(회원이 제출할 퀴즈정답)
-	public void updateRdtMissionCleared(@PathVariable int rno, Authentication authentication, @PathVariable String manswer) {
+	public String updateRdtMissionCleared(@PathVariable int rno, Authentication authentication, @PathVariable String manswer) {
 		// raffleService로 매개변수로를 넘겨 로직 처리를 요청함
-		raffleService.updateRdtMissionCleared(rno, authentication.getName(), manswer);
+		return raffleService.updateRdtMissionCleared(rno, authentication.getName(), manswer);
 	}
 	
 	// 베리 사용내역

@@ -223,7 +223,7 @@ public class RaffleService {
 	}
 
 	// 매개변수로 rno, mid, manswer(회원이 제출할 문제 답안) 받음
-	public void updateRdtMissionCleared(int rno, String mid, String manswer) {
+	public String updateRdtMissionCleared(int rno, String mid, String manswer) {
 		// rno를 통해 raffle(dto)의 미션타입을 rMissionType 변수에 반환
 		String rMissionType = raffleDao.selectByRno(rno).getRmissiontype();
 		// 미션타입이 퀴즈미션이면 rno를 통해 quizMission(dto)의 qanswer(퀴즈의 정답)을 가져와 qanswer 변수에 반환
@@ -240,6 +240,21 @@ public class RaffleService {
 		} else if (rMissionType.equals("time")) {
 			if (raffleDetailDao.checkTimePass(rno, mid) != 0)
 				raffleDetailDao.updateTimeMissionCleared(rno, mid);
+		}
+		int cleardMission = 0;
+		List<RaffleDetail> list = raffleDetailDao.selectTodayEntryRaffle(mid);
+		for(RaffleDetail rd : list) {
+			if(raffleDetailDao.selectTodayClearedMission(mid, rd.getRno()) > 0)
+				cleardMission++;
+		}
+		if(cleardMission == 3) {
+			Timestamp nowTimestamp = new Timestamp(System.currentTimeMillis());
+			BerryHistory berryHistory = new BerryHistory(0, mid, nowTimestamp, 1, "일일 응모 래플 미션 올 클리어");
+			memberDao.updateBerry(mid, 1);
+			berryHistoryDao.insertBerryHistory(berryHistory);
+			return "berry";
+		} else {
+			return null;
 		}
 	}
 
