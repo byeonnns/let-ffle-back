@@ -562,6 +562,7 @@ public class MemberController {
 	
 	@GetMapping("/getBerryHistoryListForHome")
 	public List<BerryHistory> getBerryHistoryListForHome(Authentication authentication) {
+		log.info("실행");
 		List<BerryHistory> list = memberService.getBerryHistoryUpToTen(authentication.getName());
 		return list;
 	}

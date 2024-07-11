@@ -22,7 +22,7 @@ public interface RaffleDao {
 	
 	public int closedRaffleCount(String rcategory);
 
-	public List<Raffle> selectByPage(Pager pager);
+	public List<Raffle> selectByPage(Pager pager, String word);
 
 	public int updateRaffle(Raffle raffle);
 
@@ -39,4 +39,6 @@ public interface RaffleDao {
 	public List<RaffleRequest> getCutOffSoonRaffles();
 
 	public RaffleRequest selectForMonitor(int rno);
+
+	public int getRaffleCountByWord(String word);
 }

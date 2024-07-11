@@ -3,21 +3,22 @@
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDao">
 
-	<!--페이저의 기능을 위해서 중첩 구문을 사용 자세한 설명은 inquiry.xml에 상세히 나와있다. -->
-	<select id="selectByPage" parameterType="pager"
-		resultType="Raffle">
-      <![CDATA[
+	<select id="selectByPage" parameterType="Map" resultType="Raffle">
       select rnum, rno, rtitle, rstartedat, rfinishedat
       from (
           select rownum as rnum, rno, rtitle, rstartedat, rfinishedat
           from (
               select rno, rtitle, rstartedat, rfinishedat
               from raffle
+              <if test="word != ''">
+              where rtitle like '%${word}%'
+              </if>
               order by rno desc
           )
-          where rownum <= #{endRowNo}
+      <![CDATA[
+          where rownum <= #{pager.endRowNo}
       )
-      where rnum >= #{startRowNo}
+      where rnum >= #{pager.startRowNo}
       ]]>
 	</select>
 
@@ -110,8 +111,10 @@
 		"raffleImage.rthumbnailimgoname"
 
 		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
-		where r.rtitle
-		like '%${word}%'
+		where r.rtitle like '%${word}%'
+		<![CDATA[ 
+		and r.rstartedat < systimestamp
+		]]>
 	</select>
 
 	<select id="getNewReleaseRaffles" resultType="RaffleRequest">
@@ -156,6 +159,12 @@
 		<if test='rcategory == "fashion"'>
 			WHERE rcategory = #{rcategory}
 		</if>
+	</select>
+	
+	<select id="getRaffleCountByWord" parameterType="String" resultType="int">
+		select count(*)
+		from raffle
+		WHERE rtitle like '%${word}%'
 	</select>
 	
 	<select id="ongoingRaffleCount" parameterType="String" resultType="int">

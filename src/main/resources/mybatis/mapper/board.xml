@@ -14,7 +14,7 @@
 		)
 		VALUES (
 		#{bno},#{mid},#{btitle},#{bcontent},#{bcategory},#{battachoname},
-		#{battachtype},#{battachdata},#{bhitcount},systimestamp,#{benabled}
+		#{battachtype},#{battachdata},#{bhitcount},systimestamp, 1
 		)
 	</insert>
 
