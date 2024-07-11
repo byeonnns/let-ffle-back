@@ -98,9 +98,6 @@ public class RaffleController {
 	@GetMapping("/getAdminRaffleList")
 	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo,
 			@RequestParam(defaultValue = "") String word) {
-
-		log.info("word : " + word);
-
 		int totalRows = 0;
 
 		if (!word.equals("")) {
@@ -179,7 +176,6 @@ public class RaffleController {
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/updateRaffle")
 	public RaffleRequest updateRaffle(RaffleRequest raffleRequest) {
-		log.info(raffleRequest + "너냐");
 		if (raffleRequest.getRaffleImage() != null) {
 			if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
 					&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
@@ -271,6 +267,7 @@ public class RaffleController {
 	}
 
 	// 당첨자 등록
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/createWinner")
 	public String createWinner(@RequestParam int rno, Authentication authentication) {
 		return raffleService.insertWinner(rno, authentication.getName());
@@ -312,6 +309,7 @@ public class RaffleController {
 	}
 
 	// 미션 참여 여부 수정
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PutMapping("/updateRdtMissionCleared/{rno}/{manswer}")
 	public String updateRdtMissionCleared(@PathVariable int rno, Authentication authentication,
 			@PathVariable String manswer) {
@@ -319,11 +317,13 @@ public class RaffleController {
 	}
 
 	// 베리 사용 내역
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PutMapping("/updateRdtBerrySpend")
 	public String updateRdtBerrySpend(int rno, int rdtBerrySpend, Authentication authentication) {
 		String result = "";
-		if (rdtBerrySpend > 0 && rdtBerrySpend <= 10)
+		if (rdtBerrySpend > 0 && rdtBerrySpend <= 10) {			
 			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), rdtBerrySpend);
+		}
 
 		return result;
 	}

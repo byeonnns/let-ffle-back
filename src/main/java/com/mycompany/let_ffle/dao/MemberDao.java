@@ -37,7 +37,7 @@ public interface MemberDao {
 	//마이페이지 내가 쓴 게시물의 갯수
 	int getMyBoardCount(String mid);
 	
-	String findId(String mphone);
+	public String findId(Member member);
 
 	int findPassword(String mphone, String mid);
 	

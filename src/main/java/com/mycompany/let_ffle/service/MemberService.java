@@ -171,8 +171,8 @@ public class MemberService {
 		return member;
 	}
 
-	public String findId(String mphone) {
-		return memberDao.findId(mphone);
+	public String findId(Member member) {
+		return memberDao.findId(member);
 	}
 
 	public int findPassword(String mphone, String mid) {

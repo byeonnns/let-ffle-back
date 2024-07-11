@@ -2,83 +2,69 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.mycompany.let_ffle.dao.RaffleDao">
-
 	<select id="selectByPage" parameterType="Map" resultType="Raffle">
-      select rnum, rno, rtitle, rstartedat, rfinishedat
-      from (
-          select rownum as rnum, rno, rtitle, rstartedat, rfinishedat
-          from (
-              select rno, rtitle, rstartedat, rfinishedat
-              from raffle
+      SELECT rnum, rno, rtitle, rstartedat, rfinishedat
+      FROM (
+          SELECT rownum as rnum, rno, rtitle, rstartedat, rfinishedat
+          FROM (
+              SELECT rno, rtitle, rstartedat, rfinishedat
+              FROM raffle
               <if test="word != ''">
-              where rtitle like '%${word}%'
+              WHERE rtitle like '%${word}%'
               </if>
-              order by rno desc
+              ORDER BY rno desc
           )
       <![CDATA[
-          where rownum <= #{pager.endRowNo}
+          WHERE rownum <= #{pager.endRowNo}
       )
-      where rnum >= #{pager.startRowNo}
+      WHERE rnum >= #{pager.startRowNo}
       ]]>
 	</select>
 
-	<!-- insert id = dao메소드명과 동일 parameterType = 파라미터로 받아온 타입 keyProperty = 
-		쿼리 결과로 얻은 시퀀스 값을 rno 속성에 설정, resultType = 쿼리 결과를 int(정수형)을 의미, order = 메인 
-		쿼리 문이 실행 전에 <selectkey>쿼리를 실행함 시퀀스 값이 메인 쿼리가 실행되기 전에 먼저 설정되도록 함 -->
 	<insert id="insertRaffle" parameterType="Raffle">
 		<selectKey keyProperty="rno" resultType="int" order="BEFORE">
 			SELECT
 			SEQ_RNO.NEXTVAL FROM dual
 		</selectKey>
-		insert into raffle(rno, rtitle, rsubtitle, rcontent, rcategory,
+		INSERT into raffle
+		(rno, rtitle, rsubtitle, rcontent, rcategory,
 		rwinnercount, rmissiontype, rstartedat, rfinishedat, rgift)
-		values(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},#{rwinnercount},
-		#{rmissiontype}, #{rstartedat},
-		#{rfinishedat},
-		#{rgift})
+		VALUES
+		(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},
+		#{rwinnercount}, #{rmissiontype}, #{rstartedat}, #{rfinishedat}, #{rgift})
 	</insert>
 
-	<!-- select id = dao메소드명과 동일하게 설정, parameterType = 파라미터로 받은 타입, resultType 
-		= 리턴 타입 래플 테이블로부터 rno가 조건절 #{rno}와 같은 것만 조회해서 가져옴 -->
 	<select id="selectByRno" parameterType="int" resultType="Raffle">
-		select *
-		from raffle
-		where rno=#{rno}
+		SELECT *
+		FROM raffle
+		WHERE rno=#{rno}
 	</select>
 
-	<!--inner join을 사용한 이유는 raffle테이블과 raffleImage테이블 합쳐서 rno 값을 가지는 레코드를 결합시키기 
-		위해서 사용 -->
 	<select id="selectByRaffleListForUser" parameterType="String"
 		resultType="RaffleRequest">
-		SELECT r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
-		r.rsubtitle
-		as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
-		r.rstartedat
-		as "raffle.rstartedat", r.rfinishedat as
-		"raffle.rfinishedat",
-		(SELECT COUNT(*) FROM raffleDetail rd
-		WHERE rd.rno = r.rno) AS
-		"raffle.rwinnercount"
+		SELECT r.rno AS "raffle.rno", r.rtitle AS "raffle.rtitle",
+		r.rsubtitle AS "raffle.rsubtitle", r.rcategory AS "raffle.rcategory",
+		r.rstartedat AS "raffle.rstartedat", r.rfinishedat AS "raffle.rfinishedat",
+		(SELECT COUNT(*) 
+		FROM raffleDetail rd
+		WHERE rd.rno = r.rno) AS "raffle.rwinnercount"
 
 		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
 		<if test="rcategory != 'all'">
 			WHERE r.rcategory = #{rcategory}
 		</if>
-
 		<if test="sortType == 'popular'">
 			<![CDATA[ 
 			AND r.rstartedat < systimestamp
 			]]>
 			ORDER by "raffle.rwinnercount" DESC
 		</if>
-
 		<if test="sortType == 'new'">
 			<![CDATA[ 
 			AND r.rstartedat < systimestamp
 			]]>
 			ORDER by r.rstartedat DESC
 		</if>
-
 		<if test="sortType == 'cutoffsoon'">
 			<![CDATA[ 
 			AND r.rstartedat < systimestamp
@@ -88,68 +74,64 @@
 	</select>
 
 	<update id="updateRaffle" parameterType="RaffleRequest">
-		update raffle
-		set
-		rtitle=#{rtitle}, rsubtitle=#{rsubtitle},
-		rstartedat=
-		#{rstartedat},rfinishedat= #{rfinishedat},
-		rcontent=#{rcontent},rcategory=#{rcategory},rwinnercount=#{rwinnercount}
-		,rmissiontype=#{rmissiontype},rgift=#{rgift}
-		where rno =#{rno}
+		UPDATE raffle
+		SET
+		rtitle = #{rtitle}, rsubtitle = #{rsubtitle},
+		rstartedat = #{rstartedat}, rfinishedat = #{rfinishedat}, 
+		rcontent = #{rcontent}, rcategory = #{rcategory}, rwinnercount = #{rwinnercount},
+		rmissiontype = #{rmissiontype}, rgift = #{rgift}
+		WHERE rno = #{rno}
 	</update>
 
 	<select id="searchRaffle" parameterType="String"
 		resultType="RaffleRequest">
-		SELECT r.rno as "raffle.rno", r.rtitle as "raffle.rtitle",
-		r.rsubtitle as "raffle.rsubtitle", r.rcategory as "raffle.rcategory",
-		r.rstartedat as "raffle.rstartedat", r.rfinishedat as
-		"raffle.rfinishedat",
-		ri.rthumbnailimg as "raffleImage.rthumbnailimg",
-		ri.rthumbnailimgtype as
-		"raffleImage.rthumbnailimgtype",
-		ri.rthumbnailimgoname as
-		"raffleImage.rthumbnailimgoname"
+		SELECT r.rno AS "raffle.rno", r.rtitle AS "raffle.rtitle",
+		r.rsubtitle AS "raffle.rsubtitle", r.rcategory AS "raffle.rcategory",
+		r.rstartedat AS "raffle.rstartedat", r.rfinishedat AS "raffle.rfinishedat",
+		ri.rthumbnailimg AS "raffleImage.rthumbnailimg",
+		ri.rthumbnailimgtype AS "raffleImage.rthumbnailimgtype",
+		ri.rthumbnailimgoname AS "raffleImage.rthumbnailimgoname"
 
 		FROM raffle r INNER JOIN raffleImage ri ON r.rno = ri.rno
-		where r.rtitle like '%${word}%'
+		WHERE r.rtitle like '%${word}%'
 		<![CDATA[ 
-		and r.rstartedat < systimestamp
+		AND r.rstartedat < systimestamp
 		]]>
 	</select>
 
 	<select id="getNewReleaseRaffles" resultType="RaffleRequest">
-	<![CDATA[ 
-	SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", 
-	rsubtitle AS "raffle.rsubtitle", rthumbnailimg AS "raffleimage.rthumbnailimg", rcreatedat AS "raffle.rcreatedat"
-	FROM (
-    	SELECT 
-        	r.rno, rtitle, rsubtitle, rthumbnailimg, rcreatedat,
-        	ROW_NUMBER() OVER (ORDER BY rcreatedat DESC) as row_num
-    	FROM raffle r
-    	INNER JOIN raffleimage ri ON r.rno = ri.rno
-	) subquery
-	WHERE row_num <= 3
-	]]>
+		<![CDATA[ 
+		SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", 
+		rsubtitle AS "raffle.rsubtitle", rthumbnailimg AS "raffleimage.rthumbnailimg", rcreatedat AS "raffle.rcreatedat"
+		FROM (
+	    	SELECT 
+	        	r.rno, rtitle, rsubtitle, rthumbnailimg, rcreatedat,
+	        	ROW_NUMBER() OVER (ORDER BY rcreatedat DESC) as row_num
+	    	FROM raffle r
+	    	INNER JOIN raffleimage ri ON r.rno = ri.rno
+		) subquery
+		WHERE row_num <= 3
+		]]>
 	</select>
 	
 	<select id="getCutOffSoonRaffles" resultType="RaffleRequest">
-	<![CDATA[ 
-	SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", 
-	rsubtitle AS "raffle.rsubtitle", rthumbnailimg AS "raffleimage.rthumbnailimg", rcreatedat AS "raffle.rcreatedat"
-	FROM (
-    	SELECT 
-        	r.rno, rtitle, rsubtitle, rthumbnailimg, rcreatedat, rfinishedat,
-        	ROW_NUMBER() OVER (ORDER BY rfinishedat DESC) as row_num
-    	FROM raffle r
-    	INNER JOIN raffleimage ri ON r.rno = ri.rno
-	) subquery
-	WHERE row_num <= 3
-	]]>
+		<![CDATA[ 
+		SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", 
+		rsubtitle AS "raffle.rsubtitle", rthumbnailimg AS "raffleimage.rthumbnailimg", rcreatedat AS "raffle.rcreatedat"
+		FROM (
+	    	SELECT 
+	        	r.rno, rtitle, rsubtitle, rthumbnailimg, rcreatedat, rfinishedat,
+	        	ROW_NUMBER() OVER (ORDER BY rfinishedat DESC) as row_num
+	    	FROM raffle r
+	    	INNER JOIN raffleimage ri ON r.rno = ri.rno
+		) subquery
+		WHERE row_num <= 3
+		]]>
 	</select>
 	
 	<select id="getRaffleCount" parameterType="String" resultType="int">
-		select count(*)
-		from raffle
+		SELECT count(*)
+		FROM raffle
 		<if test='rcategory == "sports"'>
 			WHERE rcategory = #{rcategory}
 		</if>
@@ -162,13 +144,13 @@
 	</select>
 	
 	<select id="getRaffleCountByWord" parameterType="String" resultType="int">
-		select count(*)
-		from raffle
+		SELECT count(*)
+		FROM raffle
 		WHERE rtitle like '%${word}%'
 	</select>
 	
 	<select id="ongoingRaffleCount" parameterType="String" resultType="int">
-		SELECT COUNT(*)
+		SELECT count(*)
 		FROM raffle
 		<![CDATA[
 		WHERE rstartedat <= systimestamp AND systimestamp <= rfinishedat
@@ -185,23 +167,24 @@
 	</select>
 	
 	<select id="closedRaffleCount" resultType="int">
-	<![CDATA[
+		<![CDATA[
 		SELECT COUNT(*)
 		FROM raffle
 		WHERE rfinishedat < systimestamp
-	]]>
+		]]>
 	</select>
 	
 	<select id="selectForMonitor" parameterType="int" resultType="RaffleRequest">
-	select rno "raffle.rno", rtitle "raffle.rtitle", rsubtitle "raffle.rsubtitle", rcreatedat "raffle.rcreatedat",
-		rstartedat "raffle.rstartedat", rfinishedat "raffle.rfinishedat", rcategory "raffle.rcategory",
-		rwinnercount "raffle.rwinnercount", rmissiontype "raffle.rmissiontype", rgift "raffle.rgift",
+		SELECT rno AS "raffle.rno", rtitle AS "raffle.rtitle", rsubtitle AS "raffle.rsubtitle", 
+		rcreatedat AS "raffle.rcreatedat", rstartedat AS "raffle.rstartedat", 
+		rfinishedat AS "raffle.rfinishedat", rcategory AS "raffle.rcategory",
+		rwinnercount AS "raffle.rwinnercount", rmissiontype AS "raffle.rmissiontype", rgift AS "raffle.rgift",
         (
             SELECT COUNT(*)
             FROM raffledetail
             WHERE rno = #{rno}
-        ) "raffleProcess"
-	from raffle
-	where rno = #{rno}
+        ) AS "raffleProcess"
+		FROM raffle
+		WHERE rno = #{rno}
 	</select>
-</mapper>    
+</mapper>

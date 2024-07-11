@@ -11,7 +11,6 @@ import com.mycompany.let_ffle.dto.request.RaffleRequest;
 
 @Mapper
 public interface RaffleDao {
-
 	public int insertRaffle(Raffle raffle);
 
 	public Raffle selectByRno(int rno);
@@ -41,5 +40,4 @@ public interface RaffleDao {
 	public RaffleRequest selectForMonitor(int rno);
 
 	public int getRaffleCountByWord(String word);
-
 }
