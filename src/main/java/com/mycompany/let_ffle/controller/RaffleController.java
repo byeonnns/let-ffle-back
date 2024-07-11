@@ -96,12 +96,22 @@ public class RaffleController {
 	// 관리자용 래플 목록 가져오기
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getAdminRaffleList")
-	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo) {
-		int totalRows = raffleService.getRaffleCount();
+	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo, 
+			@RequestParam(defaultValue = "") String word) {
+		
+		log.info("word : "+word);
+		
+		int totalRows = 0;
+		
+		if ( !word.equals("") ) {
+			totalRows = raffleService.getRaffleCountByWord(word);
+		} else {			
+			totalRows = raffleService.getRaffleCount();
+		}
 
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 
-		List<Raffle> list = raffleService.getRaffleListForAdmin(pager);
+		List<Raffle> list = raffleService.getRaffleListForAdmin(pager, word);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("Raffle", list);

@@ -98,10 +98,8 @@
 	<select id="selectTotalRaffle" parameterType="Map" resultType="int">
 		SELECT COUNT(*)
 		FROM raffleDetail
+		WHERE mid = #{mid}
 		<where>
-			<if test="role == 'ROLE_USER'">
-				AND mid = #{mid}
-			</if>
 			<if test="startDate!='null'">
 				AND rdtcreatedat BETWEEN #{startDate} AND #{endDate}
 			</if>
@@ -114,10 +112,8 @@
 		INNER JOIN raffle r ON rd.rno = r.rno
 		WHERE r.rstartedat <= systimestamp
 		AND systimestamp <= r.rfinishedat
+		AND rd.mid = #{mid}
 	]]>
-		<if test="role == 'ROLE_USER'">
-			AND rd.mid = #{mid}
-		</if>
 		<if test="startDate!='null'">
 			AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
 		</if>
@@ -128,10 +124,8 @@
 		FROM raffleDetail rd
 		INNER JOIN raffle r ON rd.rno = r.rno
 		WHERE r.rfinishedat < systimestamp
+		AND rd.mid = #{mid}
 	]]>
-		<if test="role == 'ROLE_USER'">
-			AND rd.mid = #{mid}
-		</if>
 		<if test="startDate!='null'">
 			AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
 		</if>

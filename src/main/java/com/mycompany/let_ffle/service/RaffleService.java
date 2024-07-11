@@ -97,9 +97,13 @@ public class RaffleService {
 	public int getRaffleCount() {
 		return raffleDao.getRaffleCount(null);
 	}
+	
+	public int getRaffleCountByWord(String word) {
+		return raffleDao.getRaffleCountByWord(word);
+	}
 
-	public List<Raffle> getRaffleListForAdmin(Pager pager) {
-		return raffleDao.selectByPage(pager);
+	public List<Raffle> getRaffleListForAdmin(Pager pager, String word) {
+		return raffleDao.selectByPage(pager, word);
 	}
 
 	public List<RaffleRequest> getRaffleListForUser(String rcategory, String sortType) {
@@ -446,4 +450,6 @@ public class RaffleService {
 		int endPoint;
 		int startPoint;
 	}
+
+
 }
