@@ -41,4 +41,5 @@ public interface RaffleDao {
 	public RaffleRequest selectForMonitor(int rno);
 
 	public int getRaffleCountByWord(String word);
+
 }
