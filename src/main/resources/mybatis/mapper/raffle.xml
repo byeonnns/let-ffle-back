@@ -204,5 +204,4 @@
 	from raffle
 	where rno = #{rno}
 	</select>
-	
 </mapper>    

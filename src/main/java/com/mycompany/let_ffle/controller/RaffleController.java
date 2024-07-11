@@ -99,7 +99,7 @@ public class RaffleController {
 	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo, 
 			@RequestParam(defaultValue = "") String word) {
 		
-		log.info("word : "+word);
+		log.info("word : "+ word);
 		
 		int totalRows = 0;
 		

@@ -451,5 +451,4 @@ public class RaffleService {
 		int startPoint;
 	}
 
-
 }
