@@ -59,7 +59,7 @@
 		wreceivername = #{wreceivername},
 		wreceiveraddress = #{wreceiveraddress},
 		wreceiverphone = #{wreceiverphone}
-		WHERE rno = #{rno}
+		WHERE rno = #{rno} AND mid = #{mid}
 	</update>
 
 	<select id="winnerCount" resultType="int">

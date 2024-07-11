@@ -574,8 +574,8 @@ public class MemberController {
 	}
 	
 	@PutMapping("/updateWinner")
-	public void updateWinner(Winner winner) {
-		log.info("" + winner);
+	public void updateWinner(Winner winner, Authentication authentication) {
+		winner.setMid(authentication.getName());
 		memberService.updateWinner(winner);
 	}
 	
