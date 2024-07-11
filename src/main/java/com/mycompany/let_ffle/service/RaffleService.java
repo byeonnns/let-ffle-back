@@ -70,8 +70,8 @@ public class RaffleService {
 	// 래플 수정
 	public void updateRaffle(RaffleRequest raffleRequest) {
 		raffleDao.updateRaffle(raffleRequest.getRaffle());
-		raffleImageDao.updateRaffleImage(raffleRequest.getRaffleImage());
-
+		if(raffleRequest.getRaffleImage() != null)
+			raffleImageDao.updateRaffleImage(raffleRequest.getRaffleImage());
 		if (raffleRequest.getRaffle().getRmissiontype().equals("time")) {
 			timeMissionDao.updateTimeMisson(raffleRequest.getTimeMission());
 			// raffle(dto)의 미션타입이 quiz이라면 quizMissionDao를 호출해 quizMission을 생성

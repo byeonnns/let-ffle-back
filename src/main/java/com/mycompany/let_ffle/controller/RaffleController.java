@@ -57,7 +57,7 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		if (raffleRequest.getRaffleImage().getRgiftattach() != null
 				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
 			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
@@ -79,9 +79,9 @@ public class RaffleController {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		raffleService.insertRaffle(raffleRequest);
-		
+
 		// JSON 응답 생성 : 변환되지 않는 필드를 null 처리
 		raffleRequest.getRaffleImage().setRthumbnailattach(null);
 		raffleRequest.getRaffleImage().setRthumbnailimg(null);
@@ -89,30 +89,30 @@ public class RaffleController {
 		raffleRequest.getRaffleImage().setRdetailimg(null);
 		raffleRequest.getRaffleImage().setRgiftattach(null);
 		raffleRequest.getRaffleImage().setRgiftimg(null);
-		
+
 		return raffleRequest;
 	}
 
 	// 관리자용 래플 목록 가져오기
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getAdminRaffleList")
-	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo, 
+	public Map<String, Object> getAdminRaffleList(@RequestParam(defaultValue = "1") int pageNo,
 			@RequestParam(defaultValue = "") String word) {
-		
-		log.info("word : "+word);
-		
+
+		log.info("word : " + word);
+
 		int totalRows = 0;
-		
-		if ( !word.equals("") ) {
+
+		if (!word.equals("")) {
 			totalRows = raffleService.getRaffleCountByWord(word);
-		} else {			
+		} else {
 			totalRows = raffleService.getRaffleCount();
 		}
 
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 
 		List<Raffle> list = raffleService.getRaffleListForAdmin(pager, word);
-		
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("Raffle", list);
 		map.put("pager", pager);
@@ -125,11 +125,11 @@ public class RaffleController {
 	public List<RaffleRequest> getRaffleList(@RequestParam(defaultValue = "all") String category,
 			@RequestParam(defaultValue = "popular") String sortType) {
 		List<RaffleRequest> list = raffleService.getRaffleListForUser(category, sortType);
-		
+
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
-		
+
 		return list;
 	}
 
@@ -137,11 +137,11 @@ public class RaffleController {
 	@GetMapping("/getNewReleaseRaffles")
 	public List<RaffleRequest> getNewReleaseRaffles() {
 		List<RaffleRequest> list = raffleService.getNewReleaseRaffles();
-		
+
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
-		
+
 		return list;
 	}
 
@@ -149,11 +149,11 @@ public class RaffleController {
 	@GetMapping("/getCutOffSoonRaffles")
 	public List<RaffleRequest> getCutOffSoonRaffles() {
 		List<RaffleRequest> list = raffleService.getCutOffSoonRaffles();
-		
+
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
-		
+
 		return list;
 	}
 
@@ -165,7 +165,7 @@ public class RaffleController {
 		for (RaffleRequest rr : list) {
 			rr.setRaffleImage(null);
 		}
-		
+
 		return list;
 	}
 
@@ -179,39 +179,42 @@ public class RaffleController {
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/updateRaffle")
 	public RaffleRequest updateRaffle(RaffleRequest raffleRequest) {
-		if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
-				&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
-			MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
-			raffleRequest.getRaffleImage().setRthumbnailimgoname(mf.getOriginalFilename());
-			raffleRequest.getRaffleImage().setRthumbnailimgtype(mf.getContentType());
-			try {
-				raffleRequest.getRaffleImage().setRthumbnailimg(mf.getBytes());
-			} catch (IOException e) {
+		log.info(raffleRequest + "너냐");
+		if (raffleRequest.getRaffleImage() != null) {
+			if (raffleRequest.getRaffleImage().getRthumbnailattach() != null
+					&& !raffleRequest.getRaffleImage().getRthumbnailattach().isEmpty()) {
+				MultipartFile mf = raffleRequest.getRaffleImage().getRthumbnailattach();
+				raffleRequest.getRaffleImage().setRthumbnailimgoname(mf.getOriginalFilename());
+				raffleRequest.getRaffleImage().setRthumbnailimgtype(mf.getContentType());
+				try {
+					raffleRequest.getRaffleImage().setRthumbnailimg(mf.getBytes());
+				} catch (IOException e) {
+				}
+			}
+
+			if (raffleRequest.getRaffleImage().getRgiftattach() != null
+					&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
+				MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
+				raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
+				raffleRequest.getRaffleImage().setRgiftimgtype(mf.getContentType());
+				try {
+					raffleRequest.getRaffleImage().setRgiftimg(mf.getBytes());
+				} catch (IOException e) {
+				}
+			}
+
+			if (raffleRequest.getRaffleImage().getRdetailattach() != null
+					&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
+				MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
+				raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
+				raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
+				try {
+					raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
+				} catch (IOException e) {
+				}
 			}
 		}
 
-		if (raffleRequest.getRaffleImage().getRgiftattach() != null
-				&& !raffleRequest.getRaffleImage().getRgiftattach().isEmpty()) {
-			MultipartFile mf = raffleRequest.getRaffleImage().getRgiftattach();
-			raffleRequest.getRaffleImage().setRgiftimgoname(mf.getOriginalFilename());
-			raffleRequest.getRaffleImage().setRgiftimgtype(mf.getContentType());
-			try {
-				raffleRequest.getRaffleImage().setRgiftimg(mf.getBytes());
-			} catch (IOException e) {
-			}
-		}
-
-		if (raffleRequest.getRaffleImage().getRdetailattach() != null
-				&& !raffleRequest.getRaffleImage().getRdetailattach().isEmpty()) {
-			MultipartFile mf = raffleRequest.getRaffleImage().getRdetailattach();
-			raffleRequest.getRaffleImage().setRdetailimgoname(mf.getOriginalFilename());
-			raffleRequest.getRaffleImage().setRdetailimgtype(mf.getContentType());
-			try {
-				raffleRequest.getRaffleImage().setRdetailimg(mf.getBytes());
-			} catch (IOException e) {
-			}
-		}
-		
 		raffleService.updateRaffle(raffleRequest);
 
 		return raffleRequest;
@@ -242,7 +245,7 @@ public class RaffleController {
 		map.put("mberry", raffleService.countMyBerry(authentication.getName()));
 		map.put("raffleDetail", raffleService.readRaffleDetail(authentication.getName(), rno));
 		map.put("raffleStatus", raffleService.readRaffleDetailStatus(authentication.getName(), rno));
-		
+
 		return map;
 	}
 
@@ -255,7 +258,7 @@ public class RaffleController {
 		Map<String, Object> map = new HashMap<>();
 		map = raffleService.getRaffleDetailList(authentication.getName(),
 				authentication.getAuthorities().iterator().next().toString(), pageNo, status, start, end);
-		
+
 		return map;
 	}
 
@@ -277,15 +280,15 @@ public class RaffleController {
 	@GetMapping("/readWinnerDetail")
 	public Map<String, Object> readWinnerDetail(@RequestParam int rno, @RequestParam(defaultValue = "1") int pageNo) {
 		int totalRows = raffleService.getMonitorWinCount(rno);
-		
+
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		
+
 		List<Winner> winner = raffleService.readWinnerDetail(rno, pager);
-		
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("winner", winner);
 		map.put("pager", pager);
-		
+
 		return map;
 	}
 
@@ -296,15 +299,15 @@ public class RaffleController {
 			@RequestParam(defaultValue = "1") int pageNo, @RequestParam(defaultValue = "null") String start,
 			@RequestParam(defaultValue = "null") String end) {
 		int totalRows = raffleService.getWinRaffleCount(authentication.getName(), start, end);
-		
+
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		
+
 		List<Raffle> list = raffleService.getWinnerDetailList(authentication.getName(), pager, start, end);
-		
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("pager", pager);
-		
+
 		return map;
 	}
 
@@ -333,10 +336,10 @@ public class RaffleController {
 		try {
 			String fileName = new String(raffleImage.getRthumbnailimgoname().getBytes("UTF-8"), "ISO-8859-1");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-			
+
 			// 파일 타입을 헤더에 추가
 			response.setContentType(raffleImage.getRthumbnailimgtype());
-			
+
 			// 응답 바디에 파일 데이터를 출력
 			OutputStream os = response.getOutputStream();
 			os.write(raffleImage.getRthumbnailimg());
@@ -355,10 +358,10 @@ public class RaffleController {
 		try {
 			String fileName = new String(raffleImage.getRgiftimgoname().getBytes("UTF-8"), "ISO-8859-1");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-			
+
 			// 파일 타입을 헤더에 추가
 			response.setContentType(raffleImage.getRgiftimgtype());
-			
+
 			// 응답 바디에 파일 데이터를 출력
 			OutputStream os = response.getOutputStream();
 			os.write(raffleImage.getRgiftimg());
@@ -377,10 +380,10 @@ public class RaffleController {
 		try {
 			String fileName = new String(raffleImage.getRdetailimgoname().getBytes("UTF-8"), "ISO-8859-1");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-			
+
 			// 파일 타입을 헤더에 추가
 			response.setContentType(raffleImage.getRdetailimgtype());
-			
+
 			// 응답 바디에 파일 데이터를 출력
 			OutputStream os = response.getOutputStream();
 			os.write(raffleImage.getRdetailimg());
@@ -416,11 +419,11 @@ public class RaffleController {
 	@GetMapping("/getMemberMonitor")
 	public Map<String, Object> getMemberMonitor(@RequestParam int rno, @RequestParam int pageNo) {
 		int totalRows = raffleService.countEntryMember(rno);
-		
+
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
-		
+
 		List<RaffleDetailRequest> list = raffleService.getMemberMonitor(rno, pager);
-		
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("member", list);
 		map.put("pager", pager);
