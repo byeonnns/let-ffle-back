@@ -151,7 +151,7 @@
 				<if test="startDate!='null'">
 					AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
 				</if>
-              order by r.rfinishedat desc
+              order by rd.rdtcreatedat desc
           )
           where rownum &lt;= #{pager.endRowNo}
       )
