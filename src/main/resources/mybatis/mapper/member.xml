@@ -104,11 +104,10 @@
       ]]>
 	</select>
 
-	<select id="findId" parameterType="String">
+	<select id="findId" parameterType="Member" resultType="String">
 		select mid
 		from member
-		where
-		mphone = #{mphone}
+		WHERE mphone = #{mphone} AND mname = #{mname}
 	</select>
 
 	<select id="findPassword" parameterType="String">

@@ -263,11 +263,11 @@ public class MemberController {
 		return map;
 	}
 
-	@PostMapping("/findId/{mphone}")
-	public Map<String, Object> findId(@PathVariable String mphone) {
-		log.info("mphone :" + mphone);
+	@PostMapping("/findId")
+	public Map<String, Object> findId(@RequestBody Member member) {
+		log.info("member" + member);
 		// 아이디 찾기 시 입력한 휴대폰 번호가 DB에 있는지 확인
-		String mid = memberService.findId(mphone);
+		String mid = memberService.findId(member);
 
 		Map<String, Object> map = new HashMap<>();
 
