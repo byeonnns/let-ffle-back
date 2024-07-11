@@ -2,40 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.mycompany.let_ffle.dao.LikeListDao">
-
 	<select id="likeListCount" parameterType="String" resultType="int">
-		select count(*)
-		from likelist
-		where mid = #{mid}
+		SELECT count(*)
+		FROM likelist
+		WHERE mid = #{mid}
 	</select>
 
 	<select id="selectLikeListByMid" parameterType="Map" resultType="RaffleRequest">	
-	<![CDATA[      
-      SELECT rnum, rno as "raffle.rno", rno as "raffleImage.rno", rtitle as "raffle.rtitle", rsubtitle as "raffle.rsubtitle",
-      rthumbnailimgoname as "raffleImage.rthumbnailimgoname", rthumbnailimgtype as "raffleImage.rthumbnailimgtype"
-      from (
-          select rownum as rnum, rno, rtitle, rsubtitle, rthumbnailimgoname, rthumbnailimgtype
-          from (
-              select r.rno, r.rtitle, r.rsubtitle, ri.rthumbnailimgoname, ri.rthumbnailimgtype
-              from likelist l INNER JOIN raffle r ON r.rno = l.rno
-			INNER JOIN raffleImage ri ON r.rno = ri.rno
-			where mid = #{mid}
-			order by r.rno desc
-          )
-          where rownum <= #{pager.endRowNo}
-      )
-      where rnum >= #{pager.startRowNo}
-      ]]>
+		<![CDATA[      
+		SELECT rnum, rno AS "raffle.rno", rno AS "raffleImage.rno", rtitle AS "raffle.rtitle", 
+		rsubtitle AS "raffle.rsubtitle", rthumbnailimgoname AS "raffleImage.rthumbnailimgoname", 
+		rthumbnailimgtype AS "raffleImage.rthumbnailimgtype"
+		FROM (
+			SELECT rownum AS rnum, rno, rtitle, rsubtitle, rthumbnailimgoname, rthumbnailimgtype
+			FROM (
+				SELECT r.rno, r.rtitle, r.rsubtitle, ri.rthumbnailimgoname, ri.rthumbnailimgtype
+				FROM likelist l INNER JOIN raffle r ON r.rno = l.rno
+				INNER JOIN raffleImage ri ON r.rno = ri.rno
+				WHERE mid = #{mid}
+				ORDER BY r.rno desc
+				)
+			WHERE rownum <= #{pager.endRowNo}
+			)
+		WHERE rnum >= #{pager.startRowNo}
+		]]>
 	</select>
 	
 	<insert id="insertAddLikeList" parameterType="Map">
-		insert into LikeList (mid, rno)
-		values (#{mid}, #{rno})
+		INSERT into LikeList (mid, rno)
+		VALUES (#{mid}, #{rno})
 	</insert>
 	
 	<delete id="deleteLikeList" parameterType="Map">
-		delete from LikeList
-		where mid = #{mid} AND rno = #{rno}
+		DELETE from LikeList
+		WHERE mid = #{mid} AND rno = #{rno}
 	</delete>
 	
 	<select id="readLikeStatus" parameterType="Map" resultType="int">

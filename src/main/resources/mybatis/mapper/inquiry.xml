@@ -2,105 +2,97 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.let_ffle.dao.InquiryDao">
-
-	<!--중첩 구문 ( 사용이유는 페이징의 기능을 구현하기 위해서 사용, oracle에서는 구현하기위해 rownum을 활용한 중첩 구문을 사용한것이다.) 
-외부 컬럼은 rnum 과 나머지 컬럼은 선택한다.
-rownum as rum = 별칭으로 사용됨
-내부 쿼리는 inquiry  테이블 안에서 테이블을 선택하고 (order by into = 내림차순 )으로 ino기준으로 정렬한다. 최신 inquiry가 먼저나오도록 설정한것이다. 
-여기서의 rownum endrowno 은 행들만 선택하며 상위 몇개의 행을 선택하기 위함이다.
-ex) 페이지 크가 5 인데 2페이지를 선택을 할경우에는 6~10인데 startnum 은 6  endnum 은 10 이다.-->
 	<select id="selectByPage" parameterType="Map" resultType="Inquiry">
-      
-      select rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-      from (
-          select DISTINCT rownum as rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-          from (
-              select ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-	              from inquiry
-	             	where mid = #{mid} 
-	              	order by ino desc
+		SELECT rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
+		FROM (
+			SELECT DISTINCT rownum as rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
+			FROM (
+				SELECT ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
+				FROM inquiry
+				WHERE mid = #{mid} 
+				ORDER BY ino desc
           )
-          <![CDATA[where rownum <= #{pager.endRowNo}]]>
+          <![CDATA[WHERE rownum <= #{pager.endRowNo}]]>
       )
-      <![CDATA[where rnum >= #{pager.startRowNo}]]>
-      
+      <![CDATA[WHERE rnum >= #{pager.startRowNo}]]>
 	</select>
 	
-	<select id="getUserInquiryList" parameterType="Map" resultType="Inquiry">
-		select rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-      from (
-          select DISTINCT rownum as rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-          from (
-              select ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
-	              from inquiry
-	              <if test="role == 'ROLE_USER'">
-	             	where mid = #{mid} 
-	              </if>
-	              	order by ino desc
-          )
-          <![CDATA[where rownum <= #{pager.endRowNo}]]>
-      )
-      <![CDATA[where rnum >= #{pager.startRowNo}]]>
+	<select id="getUserInquiryList" parameterType="Pager" resultType="Inquiry">
+		SELECT rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
+		FROM (
+			SELECT DISTINCT rownum as rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
+			FROM (
+				SELECT ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply
+				FROM inquiry
+				ORDER BY ino desc
+			)
+			<![CDATA[
+			WHERE rownum <= #{endRowNo}
+			]]>
+		)
+		<![CDATA[
+		WHERE rnum >= #{startRowNo}
+		]]>
 	</select>
 	
-	
-
-	<!--시퀀스를 부여한 이유 기본 키 값을 자동으로 생성하기 위해서 생성 (ino)-->
 	<insert id="insertInquiry" parameterType="Inquiry">
 		<selectKey keyProperty="ino" resultType="int" order="BEFORE">
 			SELECT
 			SEQ_INO.NEXTVAL FROM dual
-		</selectKey> insert into
-		inquiry(ino, mid, ititle , icontent, iattachoname,
-		iattachdata,iattachtype, icreatedat,iupdatedat,ireply) values
-		(#{ino}, #{mid}, #{ititle}, #{icontent}, #{iattachoname},
-		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp, #{ireply}) </insert>
+		</selectKey> 
+		INSERT into	inquiry (
+		ino, mid, ititle , icontent, iattachoname,
+		iattachdata,iattachtype, icreatedat,iupdatedat,ireply
+		) 
+		
+		VALUES (
+		#{ino}, #{mid}, #{ititle}, #{icontent}, #{iattachoname},
+		#{iattachdata}, #{iattachtype} , systimestamp, systimestamp, #{ireply}
+		) 
+	</insert>
 
 	<select id="getInquiryCount" parameterType="Map" resultType="int">
-		select count(*)
-		from inquiry
-			where mid = #{mid}
+		SELECT count(*)
+		FROM inquiry
+		WHERE mid = #{mid}
 	</select>
 	
 	<select id="getUserInquiryCount" parameterType="Map" resultType="int">
-		select count(*)
-		from inquiry
+		SELECT count(*)
+		FROM inquiry
 		<if test="role == 'ROLE_USER'">
-			where mid = #{mid}
+		WHERE mid = #{mid}
 		</if>
 	</select>
 
-	<select id="readInquiry" parameterType="int"
-		resultType="inquiry">
-		select *
-		from inquiry
-		where ino=#{ino}
+	<select id="readInquiry" parameterType="int" resultType="inquiry">
+		SELECT *
+		FROM inquiry
+		WHERE ino=#{ino}
 	</select>
 
-	<!--if문을 사용한 이유 조건에 맞게 포함 및 생략할 수 있게 사용하기위해서 사용
-if문에 들어간 내용은 문의하기의 이미지 파일 인데, 특정 값이 null이 아닐때만 해당필드를 업데이트 하고싶을때 사용이된다.
--->
-	<update id="updateInquiry" parameterType="Inquiry"> update inquiry set
-		ititle =#{ititle }, icontent=#{icontent}, iupdatedat=systimestamp,
-		ireply=#{ireply} <if test="iattachoname != null">
-			, iattachoname=#{iattachoname}
-			, iattachtype=#{iattachtype}
-			, iattachdata=#{iattachdata}
+	<update id="updateInquiry" parameterType="Inquiry"> 
+		UPDATE inquiry 
+		SET ititle = #{ititle}, icontent = #{icontent}, 
+		iupdatedat = systimestamp, ireply=#{ireply} 
+		<if test="iattachoname != null">
+		, iattachoname = #{iattachoname}
+		, iattachtype = #{iattachtype}
+		, iattachdata = #{iattachdata}
 		</if>
-		where ino=#{ino} </update>
+		WHERE ino=#{ino} 
+	</update>
 
-<!--문의가 온 내용을 관리자가 답변을 해줄때 -->
 	<update id="updateInquiryReply" parameterType="Inquiry">
-		update inquiry
-		set ireply =#{ireply}
-		where ino=#{ino}
+		UPDATE inquiry
+		SET ireply =#{ireply}
+		WHERE ino=#{ino}
 	</update>
 	
 	<select id="selectInquiryIno" parameterType="int" resultType="Inquiry">
-		select *
-		from inquiry
-		where ino = #{ino}
+		SELECT *
+		FROM inquiry
+		WHERE ino = #{ino}
 	</select>
-
 
 </mapper>    
