@@ -270,12 +270,12 @@ public class MemberService {
 		memberDao.updateMnickname(mid, mnickname);
 	}
 	
-	public int getInquiryCount(String mid, String role) {
-		return inquiryDao.getInquiryCount(mid, role);
+	public int getInquiryCount(String mid) {
+		return inquiryDao.getInquiryCount(mid);
 	}
 
-	public List<Inquiry> getInquiryList(Pager pager, String mid, String role) {
-		return inquiryDao.selectByPage(pager,mid,role);
+	public List<Inquiry> getInquiryList(Pager pager, String mid) {
+		return inquiryDao.selectByPage(pager,mid);
 	}
 
 	public Inquiry readInquiry(int ino) {
@@ -300,6 +300,14 @@ public class MemberService {
 
 	public Inquiry selectInquiryIno(int ino) {
 		return inquiryDao.selectInquiryIno(ino);
+	}
+
+	public int getUserInquiryCount(String mid, String role) {
+		return inquiryDao.getUserInquiryCount(mid,role);
+	}
+
+	public List<Inquiry> getUserInquiryList(Pager pager, String mid, String role) {
+		return inquiryDao.getUserInquiryList(pager,mid,role);
 	}
 
 }

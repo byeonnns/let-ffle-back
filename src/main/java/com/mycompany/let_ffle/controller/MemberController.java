@@ -462,10 +462,22 @@ public class MemberController {
 	// map 타입을 지정해주고 , @requestparam(defaultValu =1 ) 을 준 이유는 페이져를 할때 첫번째 페이지가
 	// 1번이라는 것을 지정해주기 위해 1을 기본 값으로 준것이다.
 	public Map<String, Object> getInquiryList(@RequestParam(defaultValue = "1") int pageNo, Authentication authentication) {
-		int totalRows = memberService.getInquiryCount(authentication.getName(), authentication.getAuthorities().iterator().next().toString());
+		int totalRows = memberService.getInquiryCount(authentication.getName());
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName());
+		Map<String, Object> map = new HashMap<>();
+		map.put("inquiry", list);
+		map.put("pager", pager);
+		return map;
+	}
+	
+	// 관리자 페이지 (회원 문의 목록 가져오기)
+	@GetMapping("/getUserInquiryList")
+	public Map<String, Object> getUserInquiryList(@RequestParam(defaultValue = "1") int pageNo, Authentication authentication) {
+		int totalRows = memberService.getUserInquiryCount(authentication.getName(), authentication.getAuthorities().iterator().next().toString());
 		Pager pager = new Pager(5, 5, totalRows, pageNo);
 		// 로그인한 유저의 이름과 유저의 권한을 얻어오기
-		List<Inquiry> list = memberService.getInquiryList(pager, authentication.getName(), authentication.getAuthorities().iterator().next().toString());
+		List<Inquiry> list = memberService.getUserInquiryList(pager, authentication.getName(), authentication.getAuthorities().iterator().next().toString());
 		Map<String, Object> map = new HashMap<>();
 		map.put("inquiry", list);
 		map.put("pager", pager);
