@@ -4,72 +4,63 @@
 <mapper namespace="com.mycompany.let_ffle.dao.NoticeDao">
 
 	<select id="selectByPage" resultType="Notice">
-      select rnum, nno, ntitle, nmaincategory,nsubcategory, ncontent,ncreatedat, nupdatedat
-      from (
-          select rownum as rnum, nno,ntitle, nmaincategory,nsubcategory, ncontent, ncreatedat, nupdatedat
-          from (
-              select nno, ntitle,nmaincategory,nsubcategory, ncontent,ncreatedat, nupdatedat
-              from notice
-              where nmaincategory = #{mainCategory}
-              <if test="subCategory != '전체'">
-              		AND nsubcategory = #{subCategory}
-              </if>
-              order by nno desc
-          )
-          where <![CDATA[rownum <= #{pager.endRowNo}]]>
-      )
-      where <![CDATA[rnum >= #{pager.startRowNo}]]>
+		SELECT rnum, nno, ntitle, nmaincategory, nsubcategory, ncontent, ncreatedat, nupdatedat
+		FROM (
+			SELECT rownum as rnum, nno, ntitle, nmaincategory,nsubcategory, ncontent, ncreatedat, nupdatedat
+			FROM (
+				SELECT nno, ntitle, nmaincategory, nsubcategory, ncontent, ncreatedat, nupdatedat
+				FROM notice
+				WHERE nmaincategory = #{mainCategory}
+				<if test="subCategory != '전체'">
+              	AND nsubcategory = #{subCategory}
+				</if>
+				ORDER BY nno desc
+			)
+			WHERE <![CDATA[rownum <= #{pager.endRowNo}]]>
+		)
+		WHERE <![CDATA[rnum >= #{pager.startRowNo}]]>
 	</select>
 
-
-	<!--시퀀스를 부여한 이유 기본 키 값을 자동으로 생성하기 위해서 생성 (nno) 여기서 systimestamp를 사용한 이유는 
-		DB에서 현재 시간을 자동으로 삽입 시키기 위해서 사용된다. -->
 	<insert id="insertNotice" parameterType="Notice">
 		<selectKey keyProperty="nno" resultType="int" order="BEFORE">
 			SELECT
 			SEQ_NNO.NEXTVAL FROM dual
 		</selectKey>
-		insert into Notice
-		(nno, ntitle, ncontent, nmaincategory, nsubcategory,
-		nattachoname,
-		nattachtype, nattachdata, ncreatedat, nupdatedat) VALUES
-		(#{nno},
-		#{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory},
-		#{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp,
-		systimestamp)
+		INSERT into Notice (
+		nno, ntitle, ncontent, nmaincategory, nsubcategory,
+		nattachoname, nattachtype, nattachdata, ncreatedat, nupdatedat) 
+		VALUES (
+		#{nno}, #{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory},
+		#{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp)
 	</insert>
 
 	<select id="noticeCount" parameterType="String" resultType="int">
-		select count (*)
-		from notice
-		where nmaincategory = #{mainCategory}
+		SELECT count(*)
+		FROM notice
+		WHERE nmaincategory = #{mainCategory}
 		<if test="subCategory != '전체'">
-             AND nsubcategory = #{subCategory}
+        AND nsubcategory = #{subCategory}
         </if>
 	</select>
 
 	<select id="selectByNno" parameterType="int" resultType="Notice">
-		select *
-		from notice
-		where nno=#{nno}
+		SELECT *
+		FROM notice
+		WHERE nno=#{nno}
 	</select>
 
-
 	<update id="updateNotice" parameterType="Notice">
-		update Notice
-		set
-		ntitle=#{ntitle}, ncontent=#{ncontent},
-		nmaincategory=#{nmaincategory}, nsubcategory=#{nsubcategory},
-		nattachoname=#{nattachoname},
-		nattachtype=#{nattachtype},nattachdata=#{nattachdata},
-		nupdatedat=systimestamp
-		where nno=#{nno}
+		UPDATE Notice
+		SET	ntitle = #{ntitle}, ncontent = #{ncontent},
+		nmaincategory = #{nmaincategory}, nsubcategory = #{nsubcategory},
+		nattachoname = #{nattachoname},	nattachtype = #{nattachtype},
+		nattachdata = #{nattachdata}, nupdatedat = systimestamp
+		WHERE nno=#{nno}
 	</update>
 
-	<delete id="deleteNotice" parameterType="Notice">
-		delete
-		from notice
-		where nno=#{nno}
+	<delete id="deleteNotice" parameterType="int">
+		DELETE 
+		FROM notice
+		WHERE nno=#{nno}
 	</delete>
-
 </mapper>    

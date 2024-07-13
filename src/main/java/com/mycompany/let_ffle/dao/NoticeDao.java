@@ -16,7 +16,7 @@ public interface NoticeDao {
 
 	public void updateNotice(Notice notice);
 
-	public void deleteNotice(Notice notice);
+	public void deleteNotice(int nno);
 
 	public int noticeCount(String mainCategory, String subCategory);
 

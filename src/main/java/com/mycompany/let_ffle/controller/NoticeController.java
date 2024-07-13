@@ -105,9 +105,8 @@ public class NoticeController {
 	}
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@DeleteMapping("/deleteNotice")
-	public Notice deleteNotice(Notice notice) {
-		noticeService.deleteNotice(notice);
-		return notice;
+	@DeleteMapping("/deleteNotice/{nno}")
+	public void deleteNotice(@PathVariable int nno) {
+		noticeService.deleteNotice(nno);
 	}
 }

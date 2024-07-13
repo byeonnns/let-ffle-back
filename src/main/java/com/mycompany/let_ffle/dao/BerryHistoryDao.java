@@ -9,7 +9,6 @@ import com.mycompany.let_ffle.dto.Pager;
 
 @Mapper
 public interface BerryHistoryDao {
-
 	void insertBerryHistory(BerryHistory berryHistory);
 
 	List<BerryHistory> selectByMid(String mid, Pager pager, String option);

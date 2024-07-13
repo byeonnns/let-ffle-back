@@ -11,7 +11,6 @@ import com.mycompany.let_ffle.dto.request.RaffleDetailRequest;
 
 @Mapper
 public interface WinnerDao {
-
 	public void insertWinner(int rno, String mid);
 
 	public List<Winner> selectWinnerDetail(int rno, Pager pager);

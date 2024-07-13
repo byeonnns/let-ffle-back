@@ -26,9 +26,8 @@ public class NoticeService {
 
 	}
 
-	public void deleteNotice(Notice notice) {
-
-		noticeDao.deleteNotice(notice);
+	public void deleteNotice(int nno) {
+		noticeDao.deleteNotice(nno);
 	}
 
 	public int getNoticeCount(String mainCategory, String subCategory) {

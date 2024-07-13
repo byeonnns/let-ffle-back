@@ -99,11 +99,9 @@
 		SELECT COUNT(*)
 		FROM raffleDetail
 		WHERE mid = #{mid}
-		<where>
-			<if test="startDate!='null'">
-				AND rdtcreatedat BETWEEN #{startDate} AND #{endDate}
-			</if>
-		</where>
+		<if test="startDate!='null'">
+			AND rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+		</if>
 	</select>
 	<select id="selectOngoingRaffle" parameterType="Map" resultType="int">
 	<![CDATA[

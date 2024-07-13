@@ -57,80 +57,58 @@ public class MemberService {
 	private WinnerDao winnerDao;
 
 	public void join(Member member) {
-
 		memberDao.insert(member);
-		// join이라는 변수명을 준 후 MemberDto에서 있는 값을, Memberdao에 insert라는 변수의 담아져 있는 member를
-		// 가져와라 라는 의미이다.
 	}
 
 	public Member selectByMid(String mid) {
 		return memberDao.selectByMid(mid);
 	}
 
-	// 회원 탈퇴
 	public void deleteByMid(String mid) {
-		// TODO Auto-generated method stub
 		memberDao.delete(mid);
 	}
 
-	// mypage에 휴대폰 번호 변경
 	public void updateMphone(String mid, String mphone) {
-		// memberDao에서 changeMphone이라는 변수 명을 둔후 MemberDao에 changeMphone이라는 메소드에 있는
-		// Member를 가져오라는 의미
 		memberDao.updateMphone(mid, mphone);
-
 	}
 
 	public void updateMpassword(String mid, String mpassword) {
-		// 받아온 유저의 아이디와 비밀번호를 가지고 memberDao를 호출햐여 데이터 베이스의 비밀번호를 변경하도록 함
-		// 쉽게말해 유저의 아이디랑 비밀번호 줄테니까 해당 유저의 비밀번호를 바꿔라 ~
 		memberDao.updateMpassword(mid, mpassword);
 	}
 
 	public void updateMaddress(String mid, String mzipcode, String maddress) {
-		// 컨트롤러에서 받아온 로그인한 유저의 아이디와 주소를 매개변수로 받아 dao를 호출해 데이터베이스에서 주소를 변경하도록 함
 		memberDao.updateMaddress(mid, mzipcode, maddress);
 	}
 
-	// 여기입둥
 	public void login(Member member, String mid, String mpassword) {
 		memberDao.login(member, mid, mpassword);
 	}
 
-	/* 1:1 문의 */
 	public void insertInquiry(Inquiry inquiry) {
 		inquiryDao.insertInquiry(inquiry);
 	}
 
-	// 문의 수정
 	public int updateInquiry(Inquiry inquiry) {
 		return inquiryDao.updateInquiry(inquiry);
 	}
 
-	// 문의 답변 등록 해주기
 	public void updateInquiryReply(int ino, String ireply) {
-
 		inquiryDao.updateInquiryReply(ino, ireply);
 	}
 
-	// 마이페이지 게시물 가져오기
 	public List<Board> getMyBoardList(Pager pager, String mid) {
-
 		return memberDao.getMyBoardList(pager, mid);
 	}
 
-	// 마이페이지 내가 작성한 게시물 갯수
 	public int getMyBoardCount(String mid) {
-
 		return memberDao.getMyBoardCount(mid);
 	}
 
-	// 마이페이지 내가찜한 리스트의 갯수
 	public int getLikeListCount(String mid) {
 		return likeListDao.likeListCount(mid);
 	}
 	
-	// 내가 보는 래플 찜 상태 확인
+	// 내가 보는 래플 좋아요 여부 확인
 	public boolean getLikeStatus(String mid, int rno) {
 		int isNull = likeListDao.readLikeStatus(mid, rno);
 		if(isNull == 0)
@@ -139,7 +117,7 @@ public class MemberService {
 			return true;
 	}
 
-	// 마이페이지 내가찜한 리스트 가져오기
+	// 마이페이지 내 관심 목록 가져오기
 	public List<RaffleRequest> getLikeList(Pager pager, String mid) {
 		return likeListDao.selectLikeListByMid(pager, mid);
 	}
@@ -196,29 +174,33 @@ public class MemberService {
 	}
 	
 	public int countByMphone(String mphone) {
-		// TODO Auto-generated method stub
 		return memberDao.countByMphone(mphone);
 	}
 
 	public Map<String, Object> getMyPageDashboard(String mid) {
-		Map<String, Object> map = new HashMap<>();
 		int cleardMission = 0;
-		map.put("mNickname", memberDao.selectByMid(mid).getMnickname());
+		
 		List<RaffleDetail> list = raffleDetailDao.selectTodayEntryRaffle(mid);
+		
 		for(RaffleDetail rd : list) {
 			if(raffleDetailDao.selectTodayClearedMission(mid, rd.getRno()) > 0)
 				cleardMission++;
 		}
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("mNickname", memberDao.selectByMid(mid).getMnickname());
 		map.put("todayEntryRaffle", list.size());
 		map.put("todayClearedMission", cleardMission);
+		
 		return map;
 	}
 
 	public Map<String, Object> getBerryHistoryList(String mid, int pageNo, String option) {
-		Map<String, Object> map = new HashMap<>();
 		int totalBerryHistory = berryHistoryDao.countTotalBH(mid);
 		int saveBerryHistory = berryHistoryDao.countSaveBH(mid);
 		int useBerryHistory = berryHistoryDao.countUseBH(mid);
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put("totalBerryHistory", totalBerryHistory);
 		map.put("saveBerryHistory", saveBerryHistory);
 		map.put("useBerryHistory", useBerryHistory);
@@ -239,6 +221,7 @@ public class MemberService {
 				item.setBhreason(raffleDao.selectByRno(Integer.parseInt(item.getBhreason())).getRtitle());
 		}
 		map.put("list", list);
+		
 		return map;
 	}
 
@@ -306,8 +289,7 @@ public class MemberService {
 		return inquiryDao.getUserInquiryCount(mid,role);
 	}
 
-	public List<Inquiry> getUserInquiryList(Pager pager, String mid, String role) {
-		return inquiryDao.getUserInquiryList(pager,mid,role);
+	public List<Inquiry> getUserInquiryList(Pager pager) {
+		return inquiryDao.getUserInquiryList(pager);
 	}
-
 }
