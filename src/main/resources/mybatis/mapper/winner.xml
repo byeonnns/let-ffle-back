@@ -34,7 +34,7 @@
 				from raffle r INNER JOIN winner w ON r.rno = w.rno
 				where w.mid = #{mid}
 				<if test="startDate!='null'">
-					AND r.rfinishedat BETWEEN #{startDate} AND #{endDate}
+					AND r.rfinishedat BETWEEN #{startDate} AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 				</if>
 				order by r.rfinishedat desc
           )
@@ -50,7 +50,7 @@
 		FROM winner w INNER JOIN raffle r ON r.rno = w.rno
 		WHERE w.mid = #{mid}
 		<if test="startDate!='null'">
-			AND r.rfinishedat BETWEEN #{startDate} AND #{endDate}
+			AND r.rfinishedat BETWEEN #{startDate} AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 		</if>
 	</select>
 	

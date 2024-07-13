@@ -85,7 +85,7 @@
 		rdt.mid as "raffleDetail.mid", rdt.rdtcreatedat as "raffleDetail.rdtcreatedat",
 		rdt.rdtmissioncleared as "raffleDetail.rdtmissioncleared", rdt.rdtberryspend as "raffleDetail.rdtberryspend"
 		from raffle r INNER JOIN raffleDetail rdt ON r.rno = rdt.rno
-		where rdt.mid = #{mid} AND rdt.rdtcreatedat between #{startdate} AND #{enddate}
+		where rdt.mid = #{mid} AND rdt.rdtcreatedat between #{startdate} AND TO_DATE(#{enddate}, 'YYYY-MM-DD') + 1
 	</select>
 	
 	<select id="getRaffleDetailList" parameterType="int" resultType="RaffleDetail">
@@ -100,7 +100,7 @@
 		FROM raffleDetail
 		WHERE mid = #{mid}
 		<if test="startDate!='null'">
-			AND rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+			AND rdtcreatedat BETWEEN #{startDate} AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 		</if>
 	</select>
 	<select id="selectOngoingRaffle" parameterType="Map" resultType="int">
@@ -113,7 +113,7 @@
 		AND rd.mid = #{mid}
 	]]>
 		<if test="startDate!='null'">
-			AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+			AND rd.rdtcreatedat BETWEEN #{startDate} AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 		</if>
 	</select>
 	<select id="selectClosedRaffle" parameterType="Map" resultType="int">
@@ -125,7 +125,7 @@
 		AND rd.mid = #{mid}
 	]]>
 		<if test="startDate!='null'">
-			AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+			AND rd.rdtcreatedat BETWEEN #{startDate} AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 		</if>
 	</select>
 	
@@ -147,7 +147,7 @@
 					AND r.rfinishedat &lt; systimestamp
 				</if>
 				<if test="startDate!='null'">
-					AND rd.rdtcreatedat BETWEEN #{startDate} AND #{endDate}
+					AND rd.rdtcreatedat BETWEEN #{startDate} AND TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
 				</if>
               order by rd.rdtcreatedat desc
           )
