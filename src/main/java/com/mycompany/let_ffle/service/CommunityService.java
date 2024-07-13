@@ -5,11 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dao.BoardCommentDao;
+import com.mycompany.let_ffle.dao.BoardDao;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.BoardComment;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.request.BoardCommentRequest;
 
 @Service
 public class CommunityService {
@@ -49,7 +50,7 @@ public class CommunityService {
 		return boardCommentDao.getCommentCount(bno);
 	}
 
-	public List<BoardComment> getCommentList(int bno) {
+	public List<BoardCommentRequest> getCommentList(int bno) {
 		return boardCommentDao.getCommentList(bno);
 	}
 

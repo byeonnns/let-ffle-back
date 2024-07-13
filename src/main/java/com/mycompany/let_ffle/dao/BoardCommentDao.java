@@ -5,10 +5,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mycompany.let_ffle.dto.BoardComment;
+import com.mycompany.let_ffle.dto.request.BoardCommentRequest;
 
 @Mapper
 public interface BoardCommentDao {
-	public List<BoardComment> getCommentList(int bno);
+	public List<BoardCommentRequest> getCommentList(int bno);
 
 	public void insertComment(BoardComment boardComment);
 

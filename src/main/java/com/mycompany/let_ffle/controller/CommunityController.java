@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mycompany.let_ffle.dto.Board;
 import com.mycompany.let_ffle.dto.BoardComment;
 import com.mycompany.let_ffle.dto.Pager;
+import com.mycompany.let_ffle.dto.request.BoardCommentRequest;
 import com.mycompany.let_ffle.service.CommunityService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -178,7 +179,7 @@ public class CommunityController {
 
 	// 게시물에 작성된 댓글들을 가져오기
 	@GetMapping("/getCommentList/{bno}")
-	public List<BoardComment> getCommentList(@PathVariable int bno) {
+	public List<BoardCommentRequest> getCommentList(@PathVariable int bno) {
 		// 사용자가 요청한 pageNo에 해당하는 댓글을 List로 가져오기
 		return communityService.getCommentList(bno);
 	}

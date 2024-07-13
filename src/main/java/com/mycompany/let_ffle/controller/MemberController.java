@@ -97,7 +97,6 @@ public class MemberController {
 		return map;
 	}
 	
-	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/mypage/main")
 	public Map<String, String> getMypage(Authentication authentication) {
 		Member member = memberService.selectByMid(authentication.getName());
@@ -151,7 +150,6 @@ public class MemberController {
 	}
 
 	// 아이디 중복 검사
-	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/idDuplicationCheck/{mid}")
 	public Map<String, String> idDuplicationCheck(@PathVariable String mid) {
 		int count = memberService.countByMid(mid);
@@ -168,7 +166,6 @@ public class MemberController {
 	}
 
 	// 닉네임 중복 검사
-	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/nicknameDuplicationCheck/{mnickname}")
 	public Map<String, String> nicknameDuplicationCheck(@PathVariable String mnickname) {
 		int count = memberService.countByMnickname(mnickname);
@@ -185,7 +182,6 @@ public class MemberController {
 	}
 
 	// 휴대폰 번호 중복 체크
-	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/phoneDuplicationCheck/{mphone}")
 	public Map<String, String> phoneDuplicationCheck(@PathVariable String mphone) {
 		int count = memberService.countByMphone(mphone);
@@ -200,7 +196,6 @@ public class MemberController {
 		return map;
 	}
 	
-	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/mypage/passwordMatchCheck/{mpassword}")
 	public Map<String, String> passwordMatchCheck(@PathVariable String mpassword, Authentication authentication) {
 		Member member = memberService.selectByMid(authentication.getName());

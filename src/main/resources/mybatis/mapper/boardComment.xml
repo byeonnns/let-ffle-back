@@ -2,11 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.let_ffle.dao.BoardCommentDao">
-	<select id="getCommentList" parameterType="int"
-		resultType="boardcomment">
-		SELECT mnickname AS mid, ccontent, ccreatedat, cno
-		FROM boardcomment bc INNER JOIN member m ON bc.mid = m.mid
-		WHERE bno = #{bno} AND cenabled = 1
+	<select id="getCommentList" parameterType="int" resultType="boardcommentRequest">
+	    select bc.mid AS "boardcomment.mid", bc.cno AS "boardcomment.cno", 
+	    bc.bno AS "boardcomment.bno", bc.ccontent AS "boardcomment.ccontent", 
+	    bc.ccreatedat AS "boardcomment.ccreatedat", 
+	    bc.cenabled AS "boardcomment.cenabled", m.mnickname
+	    from boardcomment bc  
+	    INNER JOIN member m ON bc.mid = m.mid
+	    WHERE bc.bno =  #{bno} AND bc.cenabled = 1
 	</select>
 
 	<insert id="insertComment" parameterType="BoardComment">

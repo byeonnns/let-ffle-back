@@ -29,6 +29,7 @@
 		<typeAlias alias="Pager" type="com.mycompany.let_ffle.dto.Pager" />
 		<typeAlias alias="RaffleRequest" type="com.mycompany.let_ffle.dto.request.RaffleRequest"/>
 		<typeAlias alias="RaffleDetailRequest" type="com.mycompany.let_ffle.dto.request.RaffleDetailRequest"/>
+		<typeAlias alias="BoardCommentRequest" type="com.mycompany.let_ffle.dto.request.BoardCommentRequest"/>
 	</typeAliases>
 	
 </configuration>
