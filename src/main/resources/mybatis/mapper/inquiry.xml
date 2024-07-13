@@ -17,23 +17,24 @@
       <![CDATA[WHERE rnum >= #{pager.startRowNo}]]>
 	</select>
 	
-
-	<select id="getUserInquiryList" parameterType="Map" resultType="Inquiry">
-		select rnum, ino, ititle,icontent, mid, iattachoname, icreatedat, iupdatedat, ireply
-      from (
-          select DISTINCT rownum as rnum, ino, ititle,icontent, mid, iattachoname, icreatedat, iupdatedat, ireply
-          from (
-              select ino, ititle,icontent, mid, iattachoname, icreatedat, iupdatedat, ireply
-	              from inquiry
-	              <if test="role == 'ROLE_USER'">
-	             	where mid = #{mid} 
-	              </if>
-	              	order by ino desc
-          )
-          <![CDATA[where rownum <= #{pager.endRowNo}]]>
-      )
-      <![CDATA[where rnum >= #{pager.startRowNo}]]>
+	<select id="getUserInquiryList" parameterType="Pager" resultType="Inquiry">
+		SELECT rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply, iattachoname
+		FROM (
+			SELECT DISTINCT rownum as rnum, ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply, iattachoname
+			FROM (
+				SELECT ino, ititle,icontent, mid, icreatedat, iupdatedat, ireply, iattachoname
+				FROM inquiry
+				ORDER BY ino desc
+			)
+			<![CDATA[
+			WHERE rownum <= #{endRowNo}
+			]]>
+		)
+		<![CDATA[
+		WHERE rnum >= #{startRowNo}
+		]]>
 	</select>
+	
 
 	
 	<insert id="insertInquiry" parameterType="Inquiry">
