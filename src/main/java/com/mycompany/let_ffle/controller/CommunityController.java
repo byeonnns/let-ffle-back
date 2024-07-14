@@ -32,26 +32,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/community")
 public class CommunityController {
-	
+
 	@Autowired
 	private CommunityService communityService;
 
 	// 게시물 목록 가져오기
 	@GetMapping("/getBoardList")
-	public Map<String, Object> getBoardList(@RequestParam(defaultValue = "1") int pageNo, 
+	public Map<String, Object> getBoardList(@RequestParam(defaultValue = "1") int pageNo,
 			@RequestParam(defaultValue = "") String searchType, @RequestParam(defaultValue = "") String word) {
 		int totalRows = 0;
-		
-		// 검색어가 있으면 해당 검색어가 포함된 게시물 갯수를 세고, 없으면 전체 게시물 갯수를 세기 
+
+		// 검색어가 있으면 해당 검색어가 포함된 게시물 갯수를 세고, 없으면 전체 게시물 갯수를 세기
 		if (!word.equals("")) {
 			totalRows = communityService.getBoardCountByWord(searchType, word);
 		} else {
 			totalRows = communityService.boardCount();
 		}
-		
+
 		Pager pager = new Pager(10, 5, totalRows, pageNo);
 
-		List<Board> list = communityService.getBoardList(pager, searchType ,word);
+		List<Board> list = communityService.getBoardList(pager, searchType, word);
 
 		// JSON 응답 생성 -> board와 pager를 모두 제공해야 하므로 Map을 이용
 		Map<String, Object> map = new HashMap<>();
@@ -60,10 +60,10 @@ public class CommunityController {
 
 		return map;
 	}
-	
+
 	// 해당 카테고리의 게시물 목록만 가져오기
 	@GetMapping("/getBoardListByCategory/{category}")
-	public Map<String, Object> getBoardListByCategory(@RequestParam(defaultValue = "1") int pageNo, 
+	public Map<String, Object> getBoardListByCategory(@RequestParam(defaultValue = "1") int pageNo,
 			@PathVariable String category) {
 		int totalRows = communityService.getBoardCountByCategory(category);
 
@@ -76,7 +76,7 @@ public class CommunityController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("board", list);
 		map.put("pager", pager);
-		
+
 		return map;
 	}
 
@@ -120,26 +120,28 @@ public class CommunityController {
 	}
 
 	// 게시글 첨부 다운로드
-	@PreAuthorize("hasAuthority('ROLE_USER')")
+	// @PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/battach/{bno}")
 	public void battach(@PathVariable int bno, HttpServletResponse response) {
 		Board board = communityService.getBoardByBno(bno);
 
-		try {
-			// 첨부파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 응답 헤더에 내용을 추가
-			String fileName = new String(board.getBattachoname().getBytes("UTF-8"), "ISO-8859-1");
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		if (board.getBattachoname() != null) {
+			try {
+				// 첨부파일 이름이 한글일 경우, 브라우저에서 한글 이름으로 다운로드 받기 위해 응답 헤더에 내용을 추가
+				String fileName = new String(board.getBattachoname().getBytes("UTF-8"), "ISO-8859-1");
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-			// 파일 타입을 헤더에 추가
-			response.setContentType(board.getBattachtype());
+				// 파일 타입을 헤더에 추가
+				response.setContentType(board.getBattachtype());
 
-			// Response Body에 파일 데이터 출력
-			OutputStream os = response.getOutputStream();
-			os.write(board.getBattachdata());
-			os.flush();
-			os.close();
-		} catch (IOException e) {
-			log.error(e.getMessage());
+				// Response Body에 파일 데이터 출력
+				OutputStream os = response.getOutputStream();
+				os.write(board.getBattachdata());
+				os.flush();
+				os.close();
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
 		}
 	}
 
@@ -157,7 +159,7 @@ public class CommunityController {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		board.setMid(authentication.getName());
 
 		communityService.updateBoard(board);
@@ -165,7 +167,7 @@ public class CommunityController {
 		// JSON으로 변환되지 않는 필드는 NULL 처리함
 		board.setBattach(null);
 		board.setBattachdata(null);
-		
+
 		return board;
 	}
 
