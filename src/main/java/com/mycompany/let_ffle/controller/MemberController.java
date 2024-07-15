@@ -87,7 +87,7 @@ public class MemberController {
 			map.put("mrole", mrole);
 			map.put("accessToken", accessToken);
 
-			Member member = memberService.selectLoginTime(mid);
+			map.put("berry", memberService.selectLoginTime(mid));
 
 		} else {
 			// 비밀번호가 일치하지 않은 경우 (false를 리턴받은 경우)

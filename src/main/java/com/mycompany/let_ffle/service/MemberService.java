@@ -132,8 +132,9 @@ public class MemberService {
 		return boardDao.getBoardTitleList(pager, mid);
 	}
 
-	public Member selectLoginTime(String mid) {
+	public String selectLoginTime(String mid) {
 		Member member = memberDao.selectLoginTime(mid);
+		String result;
 
 		Timestamp nowLoginDate = new Timestamp(System.currentTimeMillis());
 
@@ -142,11 +143,14 @@ public class MemberService {
 			BerryHistory berryHistory = new BerryHistory(0, mid, nowLoginDate, 1, "매일 최초 로그인");
 			memberDao.updateBerry(mid, 1);
 			berryHistoryDao.insertBerryHistory(berryHistory);
+			result = "berry";
+		} else {
+			result = "noBerrry";
 		}
 
 		/* 최종 로그인 시간 갱신 */
 		memberDao.updateLoginTime(mid);
-		return member;
+		return result;
 	}
 
 	public String findId(Member member) {
