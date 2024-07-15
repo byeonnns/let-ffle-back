@@ -320,9 +320,14 @@ public class RaffleController {
 	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PutMapping("/updateRdtBerrySpend")
 	public String updateRdtBerrySpend(int rno, int rdtBerrySpend, Authentication authentication) {
+		
+		log.info(rdtBerrySpend + "");
+		
 		String result = "";
 		if (rdtBerrySpend > 0 && rdtBerrySpend <= 10) {			
 			result = raffleService.updateRdtBerrySpend(rno, authentication.getName(), rdtBerrySpend);
+		} else {
+			result = "fail";
 		}
 
 		return result;
