@@ -296,8 +296,8 @@ public class RaffleService {
 		return raffleImageDao.getDetailImage(rno);
 	}
 
-	public Raffle deleteRaffle(int rno) {
-		return raffleDao.deleteRaffle(rno);
+	public void deleteRaffle(int rno) {
+		raffleDao.deleteRaffle(rno);
 	}
 
 	public int getWinRaffleCount(String mid, String startDate, String endDate) {

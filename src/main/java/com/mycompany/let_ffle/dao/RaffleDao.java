@@ -25,7 +25,7 @@ public interface RaffleDao {
 
 	public int updateRaffle(Raffle raffle);
 
-	public Raffle deleteRaffle(int rno);
+	public void deleteRaffle(int rno);
 
 	public List<RaffleRequest> selectByRaffleListForUser(String rcategory, String sortType);
 

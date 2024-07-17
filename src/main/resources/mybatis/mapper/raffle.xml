@@ -33,6 +33,12 @@
 		(#{rno},#{rtitle},#{rsubtitle},#{rcontent},#{rcategory},
 		#{rwinnercount}, #{rmissiontype}, #{rstartedat}, #{rfinishedat}, #{rgift})
 	</insert>
+	
+	<delete id="deleteRaffle" parameterType="int">
+		DELETE 
+		FROM raffle
+		WHERE rno = #{rno}
+	</delete>
 
 	<select id="selectByRno" parameterType="int" resultType="Raffle">
 		SELECT *

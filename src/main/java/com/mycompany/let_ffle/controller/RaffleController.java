@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -218,8 +219,8 @@ public class RaffleController {
 
 	// 래플 삭제
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@PutMapping("/deleteRaffle")
-	public void deleteRaffle(int rno) {
+	@DeleteMapping("/deleteRaffle/{rno}")
+	public void deleteRaffle(@PathVariable int rno) {
 		raffleService.deleteRaffle(rno);
 	}
 
