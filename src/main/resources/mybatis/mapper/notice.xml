@@ -28,7 +28,7 @@
 		</selectKey>
 		INSERT into Notice (
 		nno, ntitle, ncontent, nmaincategory, nsubcategory,
-		nattachoname, nattachtype, nattachdata, ncreatedat, nupdatedat) 
+		nattachoname, nattachtype, nattachdata, ncreatedat) 
 		VALUES (
 		#{nno}, #{ntitle}, #{ncontent}, #{nmaincategory}, #{nsubcategory},
 		#{nattachoname}, #{nattachtype}, #{nattachdata}, systimestamp)
