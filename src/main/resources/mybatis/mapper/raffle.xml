@@ -193,4 +193,10 @@
 		FROM raffle
 		WHERE rno = #{rno}
 	</select>
+	
+	<select id="selectByRnoWinnerCount" parameterType="int" resultType="int">
+		SELECT rwinnercount
+		FROM raffle
+		WHERE rno = #{rno}
+	</select>
 </mapper>

@@ -14,6 +14,8 @@ public interface RaffleDao {
 	public int insertRaffle(Raffle raffle);
 
 	public Raffle selectByRno(int rno);
+	
+	public int selectByRnoWinnerCount(int rno);
 
 	public int getRaffleCount(String rcategory);
 	

@@ -375,7 +375,8 @@ public class RaffleService {
 	}
 
 	public List<RaffleDetailRequest> getMemberMonitor(int rno, Pager pager) {
-		int winnerCount = winnerDao.getRaffleWinnerCount(rno);
+		int winnerCount = raffleDao.selectByRnoWinnerCount(rno);
+		int memberCount = raffleDetailDao.countEntryMember(rno);
 		List<RaffleDetailRequest> list = memberDao.getMonitorList(rno, pager);
 		
 		for (RaffleDetailRequest rdr : list) {
@@ -385,7 +386,11 @@ public class RaffleService {
 				rdr.getRaffleDetail().setRdtmissioncleared("실패");
 			else if (rdr.getRaffleDetail().getRdtmissioncleared().equals("PEND"))
 				rdr.getRaffleDetail().setRdtmissioncleared("미진행");
-			rdr.setProbability(computeProbability(rdr.getRaffleDetail().getMid(), rno, winnerCount));
+			
+			if(memberCount <= winnerCount)
+				rdr.setProbability("100");
+			else
+				rdr.setProbability(computeProbability(rdr.getRaffleDetail().getMid(), rno, winnerCount));
 		}
 		
 		return list;
