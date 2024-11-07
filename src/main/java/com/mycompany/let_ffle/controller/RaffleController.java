@@ -256,6 +256,7 @@ public class RaffleController {
 		map = raffleService.getRaffleDetailList(authentication.getName(),
 				authentication.getAuthorities().iterator().next().toString(), pageNo, status, start, end);
 
+		log.info("map : " + map);
 		return map;
 	}
 
